@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
             user.Medico.EspecialidadeId = medicoViewModel.EspecialidadeId;
             user.Medico.Crm = medicoViewModel.Crm;
 
-
+          _medicoRepository.CadastrarMedico(user);
             return Ok();
         }
 
