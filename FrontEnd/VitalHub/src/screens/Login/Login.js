@@ -9,36 +9,32 @@ import { Alert, Keyboard, TouchableWithoutFeedback } from "react-native"
 import { AntDesign } from '@expo/vector-icons';
 import { useState } from "react"
 import api, { loginResource } from "../../services/service"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const Login = ({ navigation }) => {
-    const [email, setEmail] = useState();
-    const [senha, setSenha] = useState();
+    const [email, setEmail] = useState("medico@medico.com");
+    const [senha, setSenha] = useState("123");
     const [user, setUser] = useState({
         email: "",
         senha: ""
     });
-    async function Login() {
-        navigation.replace("Main")
-    }
+
 
     async function handleSubmit() {
+
+
 try {
     
     const response = await api.post(loginResource, {
             email: email,
             senha: senha
         })
-        console.log(response.data);
-        Alert(response.data)
+  await AsyncStorage.setItem('token',JSON.stringify(response.data) );
+  navigation.replace("Main")
+
 } catch (error) {
     console.log(error + " aqui");
-}
-        //chamar a api de login
-
-  
-
-
-
+} 
     }
 
     return (

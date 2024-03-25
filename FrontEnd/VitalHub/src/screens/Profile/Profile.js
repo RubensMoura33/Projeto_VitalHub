@@ -5,29 +5,85 @@ import { ButtonTitle, SubTitleProfile, TitleProfile } from "../../components/Tit
 import { BoxInput } from "../../components/BoxInput/Index"
 import { Btn, ButtonGoOut } from "../../components/Button/Button"
 import { StatusBar } from "expo-status-bar"
-import { useState } from "react"
-import {  LinkCancelMargin } from "../../components/Link/Style"
+import { useEffect, useState } from "react"
+import { LinkCancelMargin } from "../../components/Link/Style"
+import { userDecodeToken } from "../../Utils/Auth"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import InputSelect from "../../components/InputSelect/InputSelect"
 
-export const Profile = ({navigation}) => {
+export const Profile = ({ navigation }) => {
 
-    const [profileEdit, setProfileEdit] = useState(false)
-    
+    const [profileEdit, setProfileEdit] = useState(false);
+    const [especialidade, setEspecialidade] = useState();
+    const [especialidades, setEspecialidades] = useState();
 
+    const [user, setUser] = useState({});
+
+    async function logOut() 
+    {
+        AsyncStorage.removeItem("token");
+        navigation.replace("Login")
+    }
+    async function loadData() {
+        const token = await  userDecodeToken();
+        setUser(token);
+    }
+
+    useEffect(() => {
+     const loadDados = async () => {
+
+     }
+
+loadData();
+    },[])
     return (
         <ContainerScroll>
-            {!profileEdit ? (
-                <>
 
+            {user.role == "Medico" ? (
+<>
+<ProfileImage source={require("../../assets/photo.png")} />
+
+<ContainerProfile>
+    <TitleProfile>{user.name}</TitleProfile>
+    <SubTitleProfile>{user.email}</SubTitleProfile>
+
+
+    <BoxInput
+        textLabel={'CRM'}
+        placeholder={'859********'}
+    />
+   
+
+
+<InputSelect 
+textButton="Selecionar horário"
+handleSelectedFn={setEspecialidade}
+
+/>
+    <Btn onPress={() => setProfileEdit(true)}>
+        <ButtonTitle>EDITAR</ButtonTitle>
+    </Btn>
+    <Btn onPress={() => logOut()}>
+        <ButtonTitle>SAIR</ButtonTitle>
+    </Btn>
+
+    <LinkCancelMargin onPress={() => navigation.replace("Main")}>Voltar</LinkCancelMargin>
+</ContainerProfile>
+</>
+            ) : null}
+            {/* {!profileEdit ? (
+                <>
+                   
                     <ProfileImage source={require("../../assets/photo.png")} />
 
                     <ContainerProfile>
-                        <TitleProfile>Richard Kosta</TitleProfile>
-                        <SubTitleProfile>richard.kosta@gmail.com</SubTitleProfile>
+                        <TitleProfile>{user.name}</TitleProfile>
+                        <SubTitleProfile>{user.email}</SubTitleProfile>
 
                         <BoxInput
                             textLabel={'Data de nascimento:'}
                             placeholder={'04/05/1999'}
-                            
+
                         />
                         <BoxInput
                             textLabel={'CPF'}
@@ -53,8 +109,11 @@ export const Profile = ({navigation}) => {
                         <Btn onPress={() => setProfileEdit(true)}>
                             <ButtonTitle>EDITAR</ButtonTitle>
                         </Btn>
+                        <Btn onPress={() => logOut()}>
+                            <ButtonTitle>SAIR</ButtonTitle>
+                        </Btn>
 
-                    <LinkCancelMargin onPress={() => navigation.replace("Main")}>Voltar</LinkCancelMargin>
+                        <LinkCancelMargin onPress={() => navigation.replace("Main")}>Voltar</LinkCancelMargin>
                     </ContainerProfile>
                 </>
             ) : (
@@ -63,8 +122,8 @@ export const Profile = ({navigation}) => {
 
 
                     <ViewTitle>
-                        <TitleProfile>Richard Kosta</TitleProfile>
-                        <SubTitleProfile>richard.kosta@gmail.com</SubTitleProfile>
+                        <TitleProfile>{user.name}</TitleProfile>
+                        <SubTitleProfile>{user.email}</SubTitleProfile>
                     </ViewTitle>
 
                     <ContainerSafeEdit>
@@ -103,12 +162,15 @@ export const Profile = ({navigation}) => {
                         <Btn onPress={() => setProfileEdit(false)}>
                             <ButtonTitle>SALVAR</ButtonTitle>
                         </Btn>
-
+                        <Btn onPress={() => logOut()}>
+                            <ButtonTitle>SAIR</ButtonTitle>
+                        </Btn>
                         <LinkCancelMargin onPress={() => { setProfileEdit(false) }}>Cancelar Edição</LinkCancelMargin>
 
                     </ContainerSafeEdit>
                 </>
-            )}
+            )} */}
+              
         </ContainerScroll>
     )
 }

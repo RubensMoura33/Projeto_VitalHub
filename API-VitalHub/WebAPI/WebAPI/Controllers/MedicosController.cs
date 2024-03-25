@@ -52,7 +52,15 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        [HttpGet("BuscarPorId")]
+        public IActionResult BuscarPorId(Guid idMedico)
+        {
+            
 
+            return Ok(_medicoRepository.BuscarPorId(idMedico));
+        }
+
+ 
 
     }
 }
