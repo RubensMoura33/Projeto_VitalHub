@@ -3,6 +3,8 @@ import axios from "axios";
 
 export const loginResource = "Login";
 
+export const especialidadeResource = "Especialidade"
+
 const porta = "4466"
 const ip = "172.16.39.120";
 

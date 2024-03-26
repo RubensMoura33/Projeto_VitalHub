@@ -56,7 +56,7 @@ loadData();
 
 
 <InputSelect 
-textButton="Selecionar horário"
+textButton="Selecionar Especialidade"
 handleSelectedFn={setEspecialidade}
 
 />
