@@ -7,6 +7,8 @@ export const especialidadeResource = "Especialidade"
 
 export const buscarPacienteResource = "Pacientes/BuscarPorID"
 
+export const medicosResource = "Medicos"
+
 const porta = "4466"
 const ip = "172.16.39.120";
 

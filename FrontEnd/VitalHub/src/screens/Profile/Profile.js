@@ -10,16 +10,16 @@ import { LinkCancelMargin } from "../../components/Link/Style"
 import { userDecodeToken } from "../../Utils/Auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import InputSelect from "../../components/InputSelect/InputSelect"
-import api, { especialidadeResource, buscarPacienteResource } from "../../services/service"
+import api, { especialidadeResource, buscarPacienteResource, medicosResource } from "../../services/service"
 
 export const Profile = ({ navigation }) => {
 
     const [profileEdit, setProfileEdit] = useState(false);
     const [especialidade, setEspecialidade] = useState();
     const [especialidades, setEspecialidades] = useState();
-    const [dataUser, setDataUser] = useState();
+    const [dataUser, setDataUser] = useState({});
 
-    const [user, setUser] = useState({});
+    const [role, setRole] = useState({});
 
     async function logOut() {
         AsyncStorage.removeItem("token");
@@ -28,34 +28,59 @@ export const Profile = ({ navigation }) => {
     
     async function loadData() {
         const token = await userDecodeToken();
-        setUser(token);
+        setRole(token);
 
-      if(token.user == "Medico")
-      {
+        console.log("TOKEN:::::::::::::::::::::::::::::");
+        console.log(token);
+        
 
-      }else{
-        const response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
-       setDataUser(response.data);
+        console.log("PERFIL:::::::::::::::::::::::::::::");
+        console.log(token.role);
 
-      }
+  
+        var response = null
 
+        if(token.role == "Medico")
+        {
+
+        }else{
+            try {
+                response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
+                
+            } catch (error) {
+                console.log(error + " erro senai");
+            }
+        }
+
+        console.log(' asdasdasd ');
+        console.log(response)
+        console.log("RESPONSE .DATA:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        console.log(response.data);
+        setDataUser(JSON.stringify(response.data.cpf));
+        
+        console.log(dataUser)
     }
 
 
     useEffect(() => {
+        // ( async () => { 
+        //     console.log(' aquii ')
 
+        //     await loadData() 
+        // } )();
         loadData();
     }, [])
+
     return (
         <ContainerScroll>
 
-            {user.role == "Medico" && !profileEdit ? (
+            {role.role == "Medico" && !profileEdit ? (
                 <>
                     <ProfileImage source={require("../../assets/photo.png")} />
 
                     <ContainerProfile>
-                        <TitleProfile>{user.name}</TitleProfile>
-                        <SubTitleProfile>{user.email}</SubTitleProfile>
+                        <TitleProfile>{role.name}</TitleProfile>
+                        <SubTitleProfile>{role.email}</SubTitleProfile>
 
 
                         <BoxInput
@@ -80,14 +105,14 @@ export const Profile = ({ navigation }) => {
                         <LinkCancelMargin onPress={() => navigation.replace("Main")}>Voltar</LinkCancelMargin>
                     </ContainerProfile>
                 </>
-            ) : user.role == "Medico" && profileEdit ? (
+            ) : role.role == "Medico" && profileEdit ? (
 
                 <>
                     <ProfileImage source={require("../../assets/photo.png")} />
 
                     <ContainerProfile>
-                        <TitleProfile>{user.name}</TitleProfile>
-                        <SubTitleProfile>{user.email}</SubTitleProfile>
+                        <TitleProfile>{role.name}</TitleProfile>
+                        <SubTitleProfile>{role.email}</SubTitleProfile>
 
 
                         <BoxInput
@@ -108,53 +133,55 @@ export const Profile = ({ navigation }) => {
                         <Btn onPress={() => logOut()}>
                             <ButtonTitle>SAIR</ButtonTitle>
                         </Btn>
-
-                        <LinkCancelMargin onPress={() => { setProfileEdit(false) }}>Cancelar Edição</LinkCancelMargin>
+                       <LinkCancelMargin onPress={() => { setProfileEdit(false) }}>Cancelar Edição</LinkCancelMargin>
 
                     </ContainerProfile>
                 </>
 
-            ) : user.role == "Paciente" && !profileEdit ? (<>
+            ) : role.role == "Paciente" && !profileEdit ? (<>
                 <ProfileImage source={require("../../assets/photo.png")} />
 
 
                 <ViewTitle>
-                    <TitleProfile>{user.name}</TitleProfile>
-                    <SubTitleProfile>{user.email}</SubTitleProfile>
+                    <TitleProfile>{role.name}</TitleProfile>
+                    <SubTitleProfile>{role.email}</SubTitleProfile>
                 </ViewTitle>
 
                 <ContainerSafeEdit>
-                    <BoxInput
+                     <BoxInput
                         textLabel={'Data de nascimento:'}
-                        placeholder={'04/05/1999'}
-                        editable={true}
+                        // fieldValue={new Date(dataUser.dataNascimento).toLocaleDateString("pt-BR")}
+                        editable={false}
 
                     />
+              
                     <BoxInput
                         textLabel={'CPF'}
-                        placeholder={'859********'}
-                        editable={true}
+                        // fieldValue={dataUser.cpf}
+                        editable={false}
                     />
+                          
                     <BoxInput
                         textLabel={'Endereço'}
-                        fieldValue={'Rua Vicenso Silva, 987'}
-                        editable={true}
+                        // fieldValue={dataUser.endereco.id}
+                        editable={false}
                     />
+                     {/*
                     <ViewFormat>
                         <BoxInput
                             textLabel={'Cep'}
-                            placeholder={'06548-909'}
+                           fieldValue={dataUser.endereco.cep}
                             fieldWidth={'45'}
-                            editable={true}
+                            editable={false}
                         />
                         <BoxInput
                             textLabel={'Cidade'}
                             placeholder={'Moema-SP'}
                             fieldWidth={'45'}
-                            editable={true}
+                            editable={false}
 
                         />
-                    </ViewFormat>
+                    </ViewFormat> */}
 
                     <Btn onPress={() => setProfileEdit(true)}>
                         <ButtonTitle>EDITAR</ButtonTitle>
@@ -172,8 +199,8 @@ export const Profile = ({ navigation }) => {
 
 
                     <ViewTitle>
-                        <TitleProfile>{user.name}</TitleProfile>
-                        <SubTitleProfile>{user.email}</SubTitleProfile>
+                        <TitleProfile>{role.name}</TitleProfile>
+                        <SubTitleProfile>{role.email}</SubTitleProfile>
                     </ViewTitle>
 
                     <ContainerSafeEdit>
