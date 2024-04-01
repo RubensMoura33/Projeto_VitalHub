@@ -11,8 +11,12 @@ export const buscarConsultasPaciente = "/Pacientes/BuscarPorData"
 
 export const medicosResource = "Medicos"
 
+export const clinicasResource = "Clinica/ListarTodas"
+
+export const medicosClinicaResource = "Medicos/BuscarPorIDClinica"
+
 const porta = "4466"
-const ip = "172.16.39.120";
+const ip = "172.16.39.103";
 
 const localApiUri = `http://${ip}:${porta}/api/`
 

@@ -5,8 +5,9 @@ import { Btn } from "../../components/Button/Button"
 import { ButtonTitle } from "../../components/Title/Style"
 import { ListComponent } from "../../components/List/List"
 import { CardClinic } from "../../components/CardClinic/CardClinic"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
+import api, { clinicasResource } from "../../services/service"
 
 
 const Clinicas = [
@@ -20,27 +21,42 @@ export const SelectClinic = ({ navigation }) => {
 
     const [selectedClinic, setSelectedClinic] = useState(null);
     const [showModalSchedule, setShowModalSchedule] = useState(false)
+    const [clinicas, setClinicas] = useState([])
 
-    const onPressHandle = () => {
+   useEffect(() => {
+        loadClinic()
+        console.log(selectedClinic);
+   }, [selectedClinic])
+
+      async function loadClinic() 
+      {
+        try {
+            response = await api.get(`${clinicasResource}`)
+            setClinicas(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.log(error + " erro senai");
+        }
+      }
+
+ const onPressHandle = () => {
         setShowModalSchedule(true)
         navigation.navigate("Main");
         
       }
-
-
     return (
         <Container>
             <Title>Selecionar clinica</Title>
 
             {<ListComponent
-                data={Clinicas}
+                data={clinicas}
                 renderItem={({ item }) =>
                 (
                     <BtnSelect onPress={() => setSelectedClinic(item.id)}>
-                        <CardClinic name={item.nome}
-                            loc={item.Localizacao}
-                            aval={item.Avaliacao}
-                            date={item.Abertura}
+                        <CardClinic name={item.nomeFantasia}
+                            loc={item.endereco.logradouro}
+                            aval={"4.5"}
+                            date={"Seg-Sex"}
                             isSelected={item.id == selectedClinic}
 
                         />
@@ -54,7 +70,7 @@ export const SelectClinic = ({ navigation }) => {
                 setShowModalSchedule={setShowModalSchedule}
             />
 
-            <Btn onPress={() => { navigation.replace("SelectDoctor") }}>
+            <Btn onPress={() => { navigation.replace("SelectDoctor" , {idClinica: selectedClinic}) }}>
                 <ButtonTitle >CONTINUAR</ButtonTitle>
             </Btn>
             <Cancel onPress={() => onPressHandle()}>Cancelar</Cancel>
