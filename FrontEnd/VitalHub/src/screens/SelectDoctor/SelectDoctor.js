@@ -6,7 +6,7 @@ import { ListComponent } from "../../components/List/List"
 import { ButtonTitle } from "../../components/Title/Style"
 import { BtnSelect, Cancel, Title } from "../SelectClinic/Style"
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
-import api, { medicosResource } from '../../services/service'
+import api, { medicosClinicaResource, medicosResource } from '../../services/service'
 
 
 const Medicos = [
@@ -19,14 +19,15 @@ const Medicos = [
 
 
 
-export const SelectDoctor = ({ navigation }) => {
+export const SelectDoctor = ({ navigation, route }) => {
 
+    const {idClinica} = route.params || null
     const [medicoLista, setMedicoLista] = useState([]);
 
     async function listarMedicos() {
         try {
-            const response = await api.get(medicosResource);
-         
+            const response = await api.get(`${medicosClinicaResource}?id=${idClinica}`);
+            console.log(response.data);
             setMedicoLista(response.data);
 
             
@@ -39,6 +40,7 @@ export const SelectDoctor = ({ navigation }) => {
     useEffect(() => {
         listarMedicos();
         console.log(medicoLista);
+        console.log(idClinica);
     }, [])
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [showModalSchedule, setShowModalSchedule] = useState(false)
