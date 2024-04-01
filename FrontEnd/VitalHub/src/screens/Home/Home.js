@@ -97,8 +97,14 @@ export const Home = ({ navigation }) => {
 
 async function loadData (){  
     const token = await userDecodeToken();
-
     setUserData(token);
+
+    if(token.role == "Medico")
+    {
+
+    }else{
+        
+    }
 }
 
 useEffect(() => {

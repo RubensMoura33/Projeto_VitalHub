@@ -38,13 +38,13 @@ namespace WebAPI.Controllers
             return Ok(pacienteRepository.BuscarRealizadas(idUsuario));
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("ConsultasCanceladas")]
-        public IActionResult BuscarCanceladas()
+        public IActionResult BuscarCanceladas(Guid idUsuario)
         {
-            Guid idUsuario = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti).Value);
-
-            return Ok(pacienteRepository.BuscarRealizadas(idUsuario));
+            //Guid idUsuario = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti).Value);
+           
+            return Ok(pacienteRepository.BuscarCanceladas(idUsuario));
         }
 
         [HttpGet("PerfilLogado")]
@@ -56,8 +56,8 @@ namespace WebAPI.Controllers
         }
 
         //[Authorize]
-        [HttpGet("BuscarPorID")]
-        public IActionResult BuscarPorID(Guid id)
+        [HttpGet("BuscarPorId")]
+        public IActionResult BuscarPorId(Guid id)
         {
             return Ok(pacienteRepository.BuscarPorId(id));
         }
@@ -84,6 +84,7 @@ namespace WebAPI.Controllers
             user.Paciente.Endereco.Logradouro = pacienteModel.Logradouro;
             user.Paciente.Endereco.Numero = pacienteModel.Numero;
             user.Paciente.Endereco.Cep = pacienteModel.Cep;
+            user.Paciente.Endereco.Cidade = pacienteModel.Cidade;
 
             pacienteRepository.Cadastrar(user);
 
