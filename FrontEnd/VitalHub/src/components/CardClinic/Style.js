@@ -46,7 +46,7 @@ export const TextName = styled.Text`
 font-family: 'MontserratAlternates_600SemiBold';    
 font-size: 16px;
 `
-export const TextLoc = styled.TextInput` 
+export const TextLoc = styled.Text` 
 font-family: 'Quicksand_600SemiBold';
 font-size: 16px;
 `   
