@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Btn } from "../../components/Button/Button"
 import { CardDoctor } from "../../components/CardDoctor/CardDoctor"
 import { Container } from "../../components/Container/Style"
@@ -6,6 +6,7 @@ import { ListComponent } from "../../components/List/List"
 import { ButtonTitle } from "../../components/Title/Style"
 import { BtnSelect, Cancel, Title } from "../SelectClinic/Style"
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
+import api, { medicosResource } from '../../services/service'
 
 
 const Medicos = [
@@ -20,6 +21,25 @@ const Medicos = [
 
 export const SelectDoctor = ({ navigation }) => {
 
+    const [medicoLista, setMedicoLista] = useState([]);
+
+    async function listarMedicos() {
+        try {
+            const response = await api.get(medicosResource);
+         
+            setMedicoLista(response.data);
+
+            
+        } catch (error) {
+           console.log(error); 
+        }
+    }
+
+
+    useEffect(() => {
+        listarMedicos();
+        console.log(medicoLista);
+    }, [])
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [showModalSchedule, setShowModalSchedule] = useState(false)
 
@@ -35,13 +55,13 @@ export const SelectDoctor = ({ navigation }) => {
             <Title>Selecionar Medico</Title>
 
             {<ListComponent
-                data={Medicos}
+                data={medicoLista}
                 renderItem={({ item }) =>
                 (
+         
                     <BtnSelect onPress={() => setSelectedDoctor(item.id)}>
-                        <CardDoctor name={item.nome}
-                            espec={item.Especialidade}
-                            photo={item.Foto}
+                        <CardDoctor name={item.idNavigation.nome}
+                            espec={item.especialidade.especialidade1}                       
                             isSelected={item.id == selectedDoctor}
                         />
                     </BtnSelect>

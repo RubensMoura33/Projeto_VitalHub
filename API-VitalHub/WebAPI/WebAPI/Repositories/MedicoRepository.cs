@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using WebAPI.Contexts;
 using WebAPI.Domains;
 using WebAPI.Interfaces;
@@ -8,7 +8,7 @@ using WebAPI.ViewModels;
 
 namespace WebAPI.Repositories
 {
-
+    
     public class MedicoRepository : IMedicoRepository
     {
         VitalContext ctx = new VitalContext();
@@ -34,26 +34,70 @@ namespace WebAPI.Repositories
             ctx.Medicos.Update(medicoBuscado);
             ctx.SaveChanges();
 
-            return medicoBuscado;
+            return medicoBuscado;   
 
         }
 
         public Medico BuscarPorId(Guid Id)
         {
-            return ctx.Medicos.FirstOrDefault(x => x.Id == Id);
-        }
+            //fazer logica para trazer medico e dados de seu usuario
+            Medico medicoBuscado = ctx.Medicos.
+                Include(m => m.IdNavigation).
+                FirstOrDefault(m => m.Id == Id)!;
 
-        public void CadastrarMedico(Usuario medico)
-        { 
-           medico.Senha = Criptografia.GerarHash(medico.Senha!);
-           ctx.Usuarios.Add(medico);
-            ctx.SaveChanges();
-       
+            return medicoBuscado;
+
         }
 
         public List<Medico> ListarTodos()
         {
-            return ctx.Medicos.ToList();
+            return ctx.Medicos.
+                Include(m => m.IdNavigation)
+                .Select(m => new Medico
+                {
+                    Id = m.Id,
+                    Crm = m.Crm,
+                    Especialidade = m.Especialidade,
+
+                    
+                    IdNavigation = new Usuario
+                    {
+                        Nome = m.IdNavigation.Nome,
+                        Foto = m.IdNavigation.Foto
+                    }
+                })
+                .ToList();
+        }
+
+        public void Cadastrar(Usuario user)
+        {
+            user.Senha = Criptografia.GerarHash(user.Senha!);
+            ctx.Usuarios.Add(user);
+            ctx.SaveChanges();
+        }
+
+        public List<Medico> ListarPorClinica(Guid id)
+        {
+            List<Medico> medicos = ctx.MedicosClinicas  
+                
+                .Where(mc => mc.ClinicaId == id)
+
+                .Select(mc => new Medico
+                {
+                    Id=mc.Id,
+                    Crm = mc.Medico!.Crm,
+                    Especialidade = mc.Medico.Especialidade,
+                    IdNavigation =new Usuario
+                    {
+                        Id = mc.Medico.IdNavigation.Id,
+                        Nome = mc.Medico.IdNavigation.Nome,
+                        Email = mc.Medico.IdNavigation.Email,
+                        Foto = mc.Medico.IdNavigation.Foto
+                    }
+                })
+                .ToList();
+
+            return medicos;
         }
     }
 }

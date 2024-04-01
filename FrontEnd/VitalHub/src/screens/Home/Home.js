@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { BtnAppointment } from "../../components/BtnAppointment/BtnAppointment"
 import { CalendarHome } from "../../components/CalendarHome/CalendarHome"
 import { Container, FilterAppointment, } from "../../components/Container/Style"
@@ -12,6 +12,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
 import { Text, TouchableOpacity } from "react-native"
 import { ModalSeeDoctor } from "../../components/ModalSeeDoctor/ModalSeeDoctor"
+import { userDecodeToken } from "../../Utils/Auth"
 
 const Lista = [
     {
@@ -90,12 +91,21 @@ export const Home = ({ navigation }) => {
     const [showModalAppointment, setShowModalAppointment] = useState(false)
     const [showModalSchedule, setShowModalSchedule] = useState(false)
     const [showModalSeeDoctor, setShowModalSeeDoctor] = useState(false)
+    const [userData, setUserData] = useState({});
 
-    const [userLogin, setUserLogin] = useState("paciente")
+    const [userLogin, setUserLogin] = useState("medico")
 
+async function loadData (){  
+    const token = await userDecodeToken();
 
+    setUserData(token);
+}
+
+useEffect(() => {
+    loadData();
+},[])
     return (
-        userLogin == "medico" ?
+       userData.role == "Medico" ?
             <Container>
                 <Header nome={'Dr. Joao'} ProfileImage={require('../../assets/medico.png')} onPress={() => navigation.replace("Profile")}/>
 

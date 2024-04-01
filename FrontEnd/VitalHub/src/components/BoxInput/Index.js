@@ -8,11 +8,12 @@ export const BoxInput = ({
     textLabel,
     placeholder,
     fieldValue,
-    fieldHeight = 60,
+    fieldHeight = 80,
     editable = false,
     multiline = false,
     marginBottom = 40,
-    insertRecord = false
+    insertRecord = false,
+    onChangeText,
 }) => {
     return (
         <FieldContent fieldWidth={fieldWidth} marginBottom={marginBottom}>
@@ -21,12 +22,15 @@ export const BoxInput = ({
             {insertRecord ? (
                 <>
                 <InputTextModificate 
+                onChangeText={onChangeText}
                 placeholder={placeholder} value={fieldValue} editable={editable}
                 fieldHeight={fieldHeight} multiline={multiline}/>
                 </>
             ) : (
                 <>
-                <InputText placeholder={placeholder} value={fieldValue} editable={editable}
+                <InputText
+                   onChangeText={onChangeText}
+                placeholder={placeholder} value={fieldValue} editable={editable}
                 fieldHeight={fieldHeight} multiline={multiline} />
                 </>
             )}

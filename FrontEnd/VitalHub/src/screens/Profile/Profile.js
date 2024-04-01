@@ -5,66 +5,202 @@ import { ButtonTitle, SubTitleProfile, TitleProfile } from "../../components/Tit
 import { BoxInput } from "../../components/BoxInput/Index"
 import { Btn, ButtonGoOut } from "../../components/Button/Button"
 import { StatusBar } from "expo-status-bar"
-import { useState } from "react"
-import {  LinkCancelMargin } from "../../components/Link/Style"
+import { useEffect, useState } from "react"
+import { LinkCancelMargin } from "../../components/Link/Style"
+import { userDecodeToken } from "../../Utils/Auth"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import InputSelect from "../../components/InputSelect/InputSelect"
+import api, { especialidadeResource, buscarPacienteResource, medicosResource } from "../../services/service"
 
-export const Profile = ({navigation}) => {
+export const Profile = ({ navigation }) => {
 
-    const [profileEdit, setProfileEdit] = useState(false)
+    const [profileEdit, setProfileEdit] = useState(false);
+    const [especialidade, setEspecialidade] = useState();
+    const [especialidades, setEspecialidades] = useState();
+    const [dataUser, setDataUser] = useState({});
+
+    const [role, setRole] = useState({});
+
+    async function logOut() {
+        AsyncStorage.removeItem("token");
+        navigation.replace("Login")
+    }
     
+    async function loadData() {
+        const token = await userDecodeToken();
+        setRole(token);
+
+        console.log("TOKEN:::::::::::::::::::::::::::::");
+        console.log(token);
+        
+
+        console.log("PERFIL:::::::::::::::::::::::::::::");
+        console.log(token.role);
+
+  
+        var response = null
+
+        if(token.role == "Medico")
+        {
+
+        }else{
+            try {
+                response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
+                
+            } catch (error) {
+                console.log(error + " erro senai");
+            }
+        }
+
+        console.log(' asdasdasd ');
+        console.log(response)
+        console.log("RESPONSE .DATA:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        console.log(response.data);
+        setDataUser(JSON.stringify(response.data.cpf));
+        
+        console.log(dataUser)
+    }
+
+
+    useEffect(() => {
+        // ( async () => { 
+        //     console.log(' aquii ')
+
+        //     await loadData() 
+        // } )();
+        loadData();
+    }, [])
 
     return (
         <ContainerScroll>
-            {!profileEdit ? (
-                <>
 
+            {role.role == "Medico" && !profileEdit ? (
+                <>
                     <ProfileImage source={require("../../assets/photo.png")} />
 
                     <ContainerProfile>
-                        <TitleProfile>Richard Kosta</TitleProfile>
-                        <SubTitleProfile>richard.kosta@gmail.com</SubTitleProfile>
+                        <TitleProfile>{role.name}</TitleProfile>
+                        <SubTitleProfile>{role.email}</SubTitleProfile>
+
 
                         <BoxInput
-                            textLabel={'Data de nascimento:'}
-                            placeholder={'04/05/1999'}
-                            
-                        />
-                        <BoxInput
-                            textLabel={'CPF'}
+                            textLabel={'CRM'}
                             placeholder={'859********'}
                         />
-                        <BoxInput
-                            textLabel={'Endereço'}
-                            placeholder={'Rua Vicenso Silva, 987'}
-                        />
-                        <ViewFormat>
-                            <BoxInput
-                                textLabel={'Cep'}
-                                placeholder={'06548-909'}
-                                fieldWidth={'45'}
-                            />
-                            <BoxInput
-                                textLabel={'Cidade'}
-                                placeholder={'Moema-SP'}
-                                fieldWidth={'45'}
-                            />
-                        </ViewFormat>
 
+
+
+                        <InputSelect
+                            textButton="Selecionar Especialidade"
+                            handleSelectedFn={setEspecialidade}
+                            data={especialidade}
+                        />
                         <Btn onPress={() => setProfileEdit(true)}>
                             <ButtonTitle>EDITAR</ButtonTitle>
                         </Btn>
+                        <Btn onPress={() => logOut()}>
+                            <ButtonTitle>SAIR</ButtonTitle>
+                        </Btn>
 
-                    <LinkCancelMargin onPress={() => navigation.replace("Main")}>Voltar</LinkCancelMargin>
+                        <LinkCancelMargin onPress={() => navigation.replace("Main")}>Voltar</LinkCancelMargin>
                     </ContainerProfile>
                 </>
-            ) : (
+            ) : role.role == "Medico" && profileEdit ? (
+
+                <>
+                    <ProfileImage source={require("../../assets/photo.png")} />
+
+                    <ContainerProfile>
+                        <TitleProfile>{role.name}</TitleProfile>
+                        <SubTitleProfile>{role.email}</SubTitleProfile>
+
+
+                        <BoxInput
+                            textLabel={'CRM'}
+                            placeholder={'859********'}
+                        />
+
+
+
+                        <InputSelect
+                            textButton="Selecionar Especialidade"
+                            handleSelectedFn={setEspecialidade}
+                            data={especialidade}
+                        />
+                        <Btn onPress={() => setProfileEdit(false)}>
+                            <ButtonTitle>SALVAR</ButtonTitle>
+                        </Btn>
+                        <Btn onPress={() => logOut()}>
+                            <ButtonTitle>SAIR</ButtonTitle>
+                        </Btn>
+                       <LinkCancelMargin onPress={() => { setProfileEdit(false) }}>Cancelar Edição</LinkCancelMargin>
+
+                    </ContainerProfile>
+                </>
+
+            ) : role.role == "Paciente" && !profileEdit ? (<>
+                <ProfileImage source={require("../../assets/photo.png")} />
+
+
+                <ViewTitle>
+                    <TitleProfile>{role.name}</TitleProfile>
+                    <SubTitleProfile>{role.email}</SubTitleProfile>
+                </ViewTitle>
+
+                <ContainerSafeEdit>
+                     <BoxInput
+                        textLabel={'Data de nascimento:'}
+                        // fieldValue={new Date(dataUser.dataNascimento).toLocaleDateString("pt-BR")}
+                        editable={false}
+
+                    />
+              
+                    <BoxInput
+                        textLabel={'CPF'}
+                        // fieldValue={dataUser.cpf}
+                        editable={false}
+                    />
+                          
+                    <BoxInput
+                        textLabel={'Endereço'}
+                        // fieldValue={dataUser.endereco.id}
+                        editable={false}
+                    />
+                     {/*
+                    <ViewFormat>
+                        <BoxInput
+                            textLabel={'Cep'}
+                           fieldValue={dataUser.endereco.cep}
+                            fieldWidth={'45'}
+                            editable={false}
+                        />
+                        <BoxInput
+                            textLabel={'Cidade'}
+                            placeholder={'Moema-SP'}
+                            fieldWidth={'45'}
+                            editable={false}
+
+                        />
+                    </ViewFormat> */}
+
+                    <Btn onPress={() => setProfileEdit(true)}>
+                        <ButtonTitle>EDITAR</ButtonTitle>
+                    </Btn>
+                    <Btn onPress={() => logOut()}>
+                        <ButtonTitle>SAIR</ButtonTitle>
+                    </Btn>
+                    
+                    <LinkCancelMargin onPress={() => navigation.replace("Main")}>Voltar</LinkCancelMargin>
+
+                </ContainerSafeEdit>
+            </>) : (
                 <>
                     <ProfileImage source={require("../../assets/photo.png")} />
 
 
                     <ViewTitle>
-                        <TitleProfile>Richard Kosta</TitleProfile>
-                        <SubTitleProfile>richard.kosta@gmail.com</SubTitleProfile>
+                        <TitleProfile>{role.name}</TitleProfile>
+                        <SubTitleProfile>{role.email}</SubTitleProfile>
                     </ViewTitle>
 
                     <ContainerSafeEdit>
@@ -103,12 +239,17 @@ export const Profile = ({navigation}) => {
                         <Btn onPress={() => setProfileEdit(false)}>
                             <ButtonTitle>SALVAR</ButtonTitle>
                         </Btn>
-
+                        <Btn onPress={() => logOut()}>
+                            <ButtonTitle>SAIR</ButtonTitle>
+                        </Btn>
                         <LinkCancelMargin onPress={() => { setProfileEdit(false) }}>Cancelar Edição</LinkCancelMargin>
 
                     </ContainerSafeEdit>
+
                 </>
             )}
+
+
         </ContainerScroll>
     )
 }

@@ -5,13 +5,38 @@ import { ButtonGoogleTitle, ButtonTitle, ImgGoogle, TextAccount, Title } from ".
 import { Input } from "../../components/Input/Style"
 import { LinkCreate, LinkMedium } from "../../components/Link/Style"
 import { Btn, BtnGoogle } from "../../components/Button/Button"
-import { Keyboard, TouchableWithoutFeedback } from "react-native"
+import { ActivityIndicator, Alert, Keyboard, TouchableWithoutFeedback } from "react-native"
 import { AntDesign } from '@expo/vector-icons';
+import { useState } from "react"
+import api, { loginResource } from "../../services/service"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const Login = ({ navigation }) => {
+    const [email, setEmail] = useState("artur@senai.com");
+    const [senha, setSenha] = useState("Senai@134");
+    const [spinner, setSpinner] = useState(false);
+    const [user, setUser] = useState({
+        email: "",
+        senha: ""
+    });
 
-    async function Login() {
-        navigation.replace("Main")
+
+    async function handleSubmit() {
+
+setSpinner(true)
+        try {
+
+            const response = await api.post(loginResource, {
+                email: email,
+                senha: senha
+            })
+            await AsyncStorage.setItem('token', JSON.stringify(response.data));
+            navigation.replace("Main")
+            
+        } catch (error) {
+            alert("Usuário não encontrado")
+        }
+        setSpinner(false)
     }
 
     return (
@@ -24,14 +49,23 @@ export const Login = ({ navigation }) => {
 
 
 
-                <Input placeholder={"Usuário ou E-mail"} />
-                <Input placeholder={"Senha"} />
+                <Input
+                    value={email}
+                    onChangeText={(txt) => setEmail(txt)}
+                    // onChange={event => event.nativeEnvent.text}
+                    placeholder={"Usuário ou E-mail"} />
+                <Input
+                    value={senha}
+                    onChangeText={(txt) => setSenha(txt)}
+                    secureTextEntry={true}
+                    placeholder={"Senha"} />
 
                 <LinkMedium onPress={() => navigation.replace("Recover")} >Esqueceu sua senha?</LinkMedium>
 
 
-                <Btn onPress={() => Login()}>
-                    <ButtonTitle>ENTRAR</ButtonTitle>
+                <Btn disabled={spinner} onPress={() => handleSubmit()}>
+                    {spinner ? (<ActivityIndicator size="large" color="#fff" />) : <ButtonTitle>ENTRAR</ButtonTitle>}
+
                 </Btn>
 
                 <BtnGoogle>
