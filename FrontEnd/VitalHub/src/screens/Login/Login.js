@@ -30,6 +30,7 @@ setSpinner(true)
                 email: email,
                 senha: senha
             })
+            console.log(response.data);
             await AsyncStorage.setItem('token', JSON.stringify(response.data));
             navigation.replace("Main")
             

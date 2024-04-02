@@ -18,6 +18,7 @@ export const Profile = ({ navigation }) => {
     const [especialidade, setEspecialidade] = useState();
     const [especialidades, setEspecialidades] = useState();
     const [dataUser, setDataUser] = useState({});
+    const [endereco, setEndereco] = useState({});
 
     const [role, setRole] = useState({});
 
@@ -30,12 +31,6 @@ export const Profile = ({ navigation }) => {
         const token = await userDecodeToken();
         setRole(token);
 
-        console.log("TOKEN:::::::::::::::::::::::::::::");
-        console.log(token);
-        
-
-        console.log("PERFIL:::::::::::::::::::::::::::::");
-        console.log(token.role);
 
   
         var response = null
@@ -46,28 +41,20 @@ export const Profile = ({ navigation }) => {
         }else{
             try {
                 response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
-                
+                  
             } catch (error) {
                 console.log(error + " erro senai");
             }
         }
 
-        console.log(' asdasdasd ');
-        console.log(response)
-        console.log("RESPONSE .DATA:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-        console.log(response.data);
-        setDataUser(JSON.stringify(response.data.cpf));
+        setDataUser(response.data);
+        setEndereco(response.data.endereco);
         
-        console.log(dataUser)
+        
     }
 
 
     useEffect(() => {
-        // ( async () => { 
-        //     console.log(' aquii ')
-
-        //     await loadData() 
-        // } )();
         loadData();
     }, [])
 
@@ -150,27 +137,27 @@ export const Profile = ({ navigation }) => {
                 <ContainerSafeEdit>
                      <BoxInput
                         textLabel={'Data de nascimento:'}
-                        // fieldValue={new Date(dataUser.dataNascimento).toLocaleDateString("pt-BR")}
+                        fieldValue={new Date(dataUser.dataNascimento).toLocaleDateString("pt-BR")}
                         editable={false}
 
                     />
               
                     <BoxInput
                         textLabel={'CPF'}
-                        // fieldValue={dataUser.cpf}
+                        fieldValue={dataUser.cpf}
                         editable={false}
                     />
-                          
+                              
                     <BoxInput
                         textLabel={'Endereço'}
-                        // fieldValue={dataUser.endereco.id}
+                        fieldValue={endereco.logradouro}
                         editable={false}
                     />
-                     {/*
+                 
                     <ViewFormat>
                         <BoxInput
                             textLabel={'Cep'}
-                           fieldValue={dataUser.endereco.cep}
+                           fieldValue={endereco.cep}
                             fieldWidth={'45'}
                             editable={false}
                         />
@@ -181,7 +168,7 @@ export const Profile = ({ navigation }) => {
                             editable={false}
 
                         />
-                    </ViewFormat> */}
+                    </ViewFormat>
 
                     <Btn onPress={() => setProfileEdit(true)}>
                         <ButtonTitle>EDITAR</ButtonTitle>

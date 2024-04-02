@@ -7,6 +7,8 @@ export const especialidadeResource = "Especialidade"
 
 export const buscarPacienteResource = "Pacientes/BuscarPorID"
 
+export const buscarConsultasPaciente = "/Pacientes/BuscarPorData"
+
 export const medicosResource = "Medicos"
 
 export const clinicasResource = "Clinica/ListarTodas"
