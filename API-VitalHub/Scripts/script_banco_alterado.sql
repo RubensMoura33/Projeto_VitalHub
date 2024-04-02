@@ -289,7 +289,4 @@ REFERENCES [dbo].[TiposUsuario] ([ID])
 GO
 ALTER TABLE [dbo].[Usuarios] CHECK CONSTRAINT [FK_Usuarios_TiposUsuario]
 GO
-USE [master]
-GO
-ALTER DATABASE [VitalHub] SET  READ_WRITE 
-GO
+
