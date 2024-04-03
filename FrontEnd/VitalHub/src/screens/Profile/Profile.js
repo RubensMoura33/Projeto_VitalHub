@@ -10,13 +10,15 @@ import { LinkCancelMargin } from "../../components/Link/Style"
 import { userDecodeToken } from "../../Utils/Auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import InputSelect from "../../components/InputSelect/InputSelect"
-import api, { especialidadeResource, buscarPacienteResource, medicosResource } from "../../services/service"
+import api, { especialidadeResource, buscarPacienteResource, medicosResource, GetSpecialtiesResource, buscarMedicoResource } from "../../services/service"
 
 export const Profile = ({ navigation }) => {
 
     const [profileEdit, setProfileEdit] = useState(false);
     const [especialidade, setEspecialidade] = useState();
-    const [especialidades, setEspecialidades] = useState();
+    const [logradouro, setLogradouro] = useState();
+    const [cep, setCep] = useState();
+    const [especialidades, setEspecialidades] = useState([]);
     const [dataUser, setDataUser] = useState({});
     const [endereco, setEndereco] = useState({});
 
@@ -31,17 +33,18 @@ export const Profile = ({ navigation }) => {
         const token = await userDecodeToken();
         setRole(token);
 
-
-  
         var response = null
 
         if(token.role == "Medico")
         {
-
+            response = await api.get(`${buscarMedicoResource}?id=${token.id}`)
+            setEspecialidade(response.data.especialidade.especialidade1)
+            setLogradouro(response.data.endereco.logradouro)
+            setCep(response.data.endereco.cep)
         }else{
             try {
                 response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
-                  
+                
             } catch (error) {
                 console.log(error + " erro senai");
             }
@@ -49,13 +52,40 @@ export const Profile = ({ navigation }) => {
 
         setDataUser(response.data);
         setEndereco(response.data.endereco);
-        
-        
+                
     }
+
+    async function GetSpecialties() {
+        try {
+
+             var response = await api.get(GetSpecialtiesResource)
+            setEspecialidades(response.data)
+                       
+        } catch (error) {
+            console.log(error + " erro senai");
+        }        
+    }
+
+    
+    //DEPARA
+  function dePara(retornoApi) {
+    let arrayOptions = [];
+    retornoApi.forEach((e) => {
+      arrayOptions.push({ value: e.id, text: e.especialidade1});
+    });
+    // let arrayText = [];
+    // arrayOptions.forEach((e) => {
+    //     arrayText.push({text: e.text})
+    // })
+    console.log(arrayOptions);
+    return arrayOptions;   
+  }
 
 
     useEffect(() => {
         loadData();
+        GetSpecialties();
+        dePara(especialidades)
     }, [])
 
     return (
@@ -73,15 +103,25 @@ export const Profile = ({ navigation }) => {
                         <BoxInput
                             textLabel={'CRM'}
                             placeholder={'859********'}
+                            fieldValue={dataUser.crm}
                         />
 
-
-
-                        <InputSelect
-                            textButton="Selecionar Especialidade"
-                            handleSelectedFn={setEspecialidade}
-                            data={especialidade}
+                        <BoxInput
+                            textLabel={'Especialidade'}
+                            placeholder={'Insira uma especialidade'}
+                            fieldValue={especialidade}
                         />
+                        <BoxInput
+                            textLabel={'Logradouro'}
+                            placeholder={'Insira um logradouro'}
+                            fieldValue={logradouro}
+                        />
+                        <BoxInput
+                            textLabel={'CEP'}
+                            placeholder={'Insira um CEP'}
+                            fieldValue={cep}
+                        />
+                        
                         <Btn onPress={() => setProfileEdit(true)}>
                             <ButtonTitle>EDITAR</ButtonTitle>
                         </Btn>
@@ -107,12 +147,10 @@ export const Profile = ({ navigation }) => {
                             placeholder={'859********'}
                         />
 
-
-
                         <InputSelect
                             textButton="Selecionar Especialidade"
                             handleSelectedFn={setEspecialidade}
-                            data={especialidade}
+                            data={dePara(especialidades)}
                         />
                         <Btn onPress={() => setProfileEdit(false)}>
                             <ButtonTitle>SALVAR</ButtonTitle>

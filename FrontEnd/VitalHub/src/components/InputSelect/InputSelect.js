@@ -8,11 +8,11 @@ export default function InputSelect({ textButton = '', handleSelectedFn = null, 
     <View>
       
       <SelectDropdown 
-          data={data}
+          data={data}         
           defaultButtonText={textButton}
           onSelect={( index) => {
               handleSelectedFn(index);
-          }}  
+          }}                
           buttonStyle={styles.button}
           buttonTextStyle={styles.buttonText}
           renderDropdownIcon={() => <AntDesign name="caretdown" size={22} color="#34898F" />}

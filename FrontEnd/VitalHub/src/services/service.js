@@ -9,11 +9,15 @@ export const buscarPacienteResource = "Pacientes/BuscarPorID"
 
 export const buscarConsultasPaciente = "/Pacientes/BuscarPorData"
 
+export const buscarMedicoResource = 'Medicos/BuscarPorId'
+
 export const medicosResource = "Medicos"
 
 export const clinicasResource = "Clinica/ListarTodas"
 
 export const medicosClinicaResource = "Medicos/BuscarPorIDClinica"
+
+export const GetSpecialtiesResource = "Especialidade"
 
 const porta = "4466"
 const ip = "172.16.39.103";
