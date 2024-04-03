@@ -5,33 +5,39 @@ import { ImageDoctor } from "../Images/Style"
 import { ViewDataDoctor, ViewTitleRecord } from "../Container/Style"
 import { Btn, BtnModalSeeDoctor } from "../Button/Button"
 import { LinkCancelMargin } from "../Link/Style"
+import { useEffect, useState } from "react"
 
-export const ModalSeeDoctor = ({ navigation, visible, setShowModalSeeDoctor, ...rest }) => {
-
+export const ModalSeeDoctor = ({ navigation, visible, setShowModalSeeDoctor,data, roleUsuario, ...rest }) => {
+const [loadPage, setLoadPage] = useState(false);
     const onPressHandle = () => {
-        navigation.navigate("SeeLocalAppointment");
+        navigation.replace("SeeLocalAppointment",{clinicaId: data.medicoClinica.clinicaId});
         setShowModalSeeDoctor(false)
       }
-
+useEffect(() => {
+if( data && data.dataConsulta != null){
+    setLoadPage(true)
+}
+},[data])
     return (
+        loadPage ? 
     <Modal {...rest} visible={visible} transparent={true} animationType="fade">
         <ViewModal>
             <ContentModal>
                 <ImageDoctor source={require("../../assets/doctor.png")}/>
-                <TitleProfile>Dr.Claudio</TitleProfile>
+                <TitleProfile>{data.medicoClinica.medico.idNavigation.nome}</TitleProfile>
 
                 <ViewDataDoctor>
-                    <SubtitleRecord>Cliníco geral</SubtitleRecord>
-                    <SubtitleRecord>CRM-15286</SubtitleRecord>
+                    <SubtitleRecord>{data.medicoClinica.medico.especialidade.especialidade1}</SubtitleRecord>
+                    <SubtitleRecord>{data.medicoClinica.medico.crm}</SubtitleRecord>
                 </ViewDataDoctor>
 
                 <BtnModalSeeDoctor onPress={() => {onPressHandle()}}>
                     <ButtonTitle>VER LOCAL DA CONSULTA</ButtonTitle>
                 </BtnModalSeeDoctor>
 
-                <LinkCancelMargin onPress={() => setShowModalSeeDoctor(false)}>Cancelar</LinkCancelMargin>
+                <LinkCancelMargin onPress={() => {console.log(data); setShowModalSeeDoctor(false);}}>Cancelar</LinkCancelMargin>
             </ContentModal>
         </ViewModal>
-    </Modal>
+    </Modal> : null
 )
 }

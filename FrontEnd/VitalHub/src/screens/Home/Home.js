@@ -13,6 +13,10 @@ import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
 import { Text, TouchableOpacity } from "react-native"
 import { ModalSeeDoctor } from "../../components/ModalSeeDoctor/ModalSeeDoctor"
 import { userDecodeToken } from "../../Utils/Auth"
+import api, { buscarConsultasPaciente } from "../../services/service"
+import moment, { duration } from 'moment';
+import { logProfileData } from "react-native-calendars/src/Profiler"
+
 
 const Lista = [
     {
@@ -83,8 +87,11 @@ const Lista = [
     }
 ]
 
-export const Home = ({ navigation }) => {
 
+
+export const Home = ({ navigation }) => {
+    const [listaConsultas, setListaConsultas] = useState([])
+    const [dataConsulta, setDataConsulta] = useState('');
     const [statusList, setStatusList] = useState("agendada")
 
     const [showModalCancel, setShowModalCancel] = useState(false)
@@ -92,30 +99,76 @@ export const Home = ({ navigation }) => {
     const [showModalSchedule, setShowModalSchedule] = useState(false)
     const [showModalSeeDoctor, setShowModalSeeDoctor] = useState(false)
     const [userData, setUserData] = useState({});
+    const [paciente, setPaciente] = useState()
+    const [medicoData, setMedicoData] = useState({});
+    const [consultaSelecionada, setConsultaSelecionada] = useState(null);
 
-    const [userLogin, setUserLogin] = useState("medico")
+    async function loadData() {
+        const token = await userDecodeToken();
 
-async function loadData (){  
-    const token = await userDecodeToken();
-    setUserData(token);
+        setUserData(token);
+        setDataConsulta( moment().format('YYYY-MM-DD') )
 
-    if(token.role == "Medico")
-    {
 
-    }else{
-        
     }
-}
+    async function ListarConsultas() {
+       
 
-useEffect(() => {
-    loadData();
-},[])
+        if (userData.role == "Medico") {
+const response =  await api.get(`${buscarConsultasPaciente}?data=${dataConsulta}&id=${userData.id}`)
+
+setMedicoData(response.data);
+        } else {
+
+            const response = await api.get(`${buscarConsultasPaciente}?data=${dataConsulta}&id=${userData.id}`)
+
+
+            setPaciente(response.data);
+       
+         
+        
+        }
+    }
+
+    function MostrarModal(tipoConsulta, consulta)
+    {
+        if(tipoConsulta == 'cancelar')
+        {
+            setShowModalCancel(true)
+
+            setConsultaSelecionada(consulta)
+        }
+    }
+
+ function MostrarModalProntuario(tipoConsulta, consulta)
+ {
+    if(tipoConsulta == 'cancelar')
+    {
+        setShowModalSeeDoctor(true)
+
+        setConsultaSelecionada(consulta)
+    }
+ }
+
+    useEffect(() => {
+        loadData();
+
+    }, [])
+
+    useEffect(() => {
+        if (dataConsulta != '' ){
+            ListarConsultas()
+        }
+    }, [dataConsulta])
+
     return (
-       userData.role == "Medico" ?
+        userData.role == "Medico" ?
             <Container>
-                <Header nome={'Dr. Joao'} ProfileImage={require('../../assets/medico.png')} onPress={() => navigation.replace("Profile")}/>
+                <Header nome={'Dr. Joao'} ProfileImage={require('../../assets/medico.png')} onPress={() => navigation.replace("Profile")} />
 
-                <CalendarHome />
+                <CalendarHome
+                    setDataConsulta={setDataConsulta}
+                />
 
 
                 <FilterAppointment>
@@ -143,7 +196,7 @@ useEffect(() => {
 
                 {/* Lista (FlatList)*/}
                 <ListComponent
-                    data={Lista}
+                    data={paciente}
                     keyExtractor={(item) => item.id}
 
                     renderItem={({ item }) => {
@@ -152,6 +205,7 @@ useEffect(() => {
                                 <TouchableOpacity onPress={() => { setShowModalAppointment(true) }}>
                                     <Card name={item.nome}
                                         status={item.status}
+                                        tipoUser={userData.role}
                                         age={item.idade}
                                         hour={item.horarioConsulta}
                                         typeAppointment={item.tipoConsulta}
@@ -161,25 +215,27 @@ useEffect(() => {
                             )
                         } else if (statusList === 'realizada' && item.status === "realizada" && item.typeUser == 'paciente') {
                             return (
-                                    <Card name={item.nome}
-                                        status={item.status}
-                                        age={item.idade}
-                                        hour={item.horarioConsulta}
-                                        typeAppointment={item.tipoConsulta}
-                                        onPressAppointment={() => {
-                                            navigation.replace('MedicalRecord')
-                                        }}
-                                    />
+                                <Card name={item.nome}
+                                    status={item.status}
+                                    tipoUser={userData.role}
+                                    age={item.idade}
+                                    hour={item.horarioConsulta}
+                                    typeAppointment={item.tipoConsulta}
+                                    onPressAppointment={() => {
+                                        navigation.replace('MedicalRecord')
+                                    }}
+                                />
 
                             )
                         } else if (statusList === 'cancelada' && item.status === "cancelada" && item.typeUser == 'paciente') {
                             return (
-                                    <Card name={item.nome}
-                                        status={item.status}
-                                        age={item.idade}
-                                        hour={item.horarioConsulta}
-                                        typeAppointment={item.tipoConsulta}
-                                    />
+                                <Card name={item.nome}
+                                    status={item.status}
+                                    tipoUser={userData.role}
+                                    age={item.idade}
+                                    hour={item.horarioConsulta}
+                                    typeAppointment={item.tipoConsulta}
+                                />
                             )
                         }
                     }
@@ -204,8 +260,10 @@ useEffect(() => {
             </Container>
             :
             <Container>
-                <Header nome={'Richard Kosta'} ProfileImage={require('../../assets/garro.jpeg')} onPress={() => navigation.replace("Profile")}/>
-                <CalendarHome />
+                <Header nome={'Richard Kosta'} ProfileImage={require('../../assets/garro.jpeg')} onPress={() => navigation.replace("Profile")} />
+                <CalendarHome
+                    setDataConsulta={setDataConsulta}
+                />
 
                 <FilterAppointment>
                     <BtnAppointment
@@ -228,47 +286,53 @@ useEffect(() => {
                 </FilterAppointment>
 
                 <ListComponent
-                    data={Lista}
+                    data={paciente}
                     keyExtractor={(item) => item.id}
-
-
-
-
-
                     renderItem={({ item }) => {
-                        if (statusList === 'agendada' && item.status === "agendada" && item.typeUser == 'medico') {
+                        if (statusList === 'agendada'  && item.situacao.situacao == 'Pendentes') {
                             return (
-                                <TouchableOpacity onPress={() => { setShowModalSeeDoctor(true) }}>
-                                    <Card name={item.nome}
-                                        status={item.status}
-                                        age={item.idade}
-                                        hour={item.horarioConsulta}
-                                        typeAppointment={item.tipoConsulta}
-                                        onPressCancel={() => setShowModalCancel(true)}
+                                <TouchableOpacity onPress={ async () => 
+                                    {
+                        MostrarModalProntuario('cancelar', item)
+                                
+                                     }}>
+                                    <Card
+                                     name={item.medicoClinica.medico.idNavigation.nome}
+                                     crm={item.medicoClinica.medico.crm}
+                                     tipoUser={userData.role}
+                                     status={item.situacao.situacao}
+                                        hour={new Date(item.dataConsulta).toLocaleDateString('pt-BR')}
+                                        typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ?  'Exames' : 'Urgencia'}
+                                        onPressCancel={() => MostrarModal('cancelar', item)}
                                     />
                                 </TouchableOpacity>
                             )
-                        } else if (statusList === 'realizada' && item.status === "realizada" && item.typeUser == 'medico') {
-                            return(
-                                    <Card name={item.nome}
-                                        status={item.status}
-                                        age={item.idade}
-                                        hour={item.horarioConsulta}
-                                        typeAppointment={item.tipoConsulta}
-                                        onPressAppointment={() => {
-                                            navigation.replace('SeePrescription')
-                                        }}
-                                    />
+                        } else if (statusList === 'realizada'&& item.situacao.situacao == 'Realizados' ) {
+                            return (
+                                <Card 
+                                name={item.medicoClinica.medico.idNavigation.nome}
+                                tipoUser={userData.role}
+                                crm={item.medicoClinica.medico.crm}
+                                status={item.situacao.situacao}
+                                    
+                                    hour={item.dataConsulta}
+                                    typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ?  'Exames' : 'Urgencia'}
+                                    onPressAppointment={() => {
+                                        navigation.replace('SeePrescription')
+                                    }}
+                                />
                             )
-                        } else if (statusList === 'cancelada' && item.status === "cancelada" && item.typeUser == 'medico') {
-                            return(
-                                    <Card name={item.nome}
-                                        status={item.status}
-                                        age={item.idade}
-                                        hour={item.horarioConsulta}
-                                        typeAppointment={item.tipoConsulta}
-                                        
-                                    />
+                        } else if (statusList === 'cancelada' && item.situacao.situacao == 'Cancelados' ) {
+                            return (
+                                <Card 
+                                name={item.medicoClinica.medico.idNavigation.nome}
+                                tipoUser={userData.role}
+                                crm={item.medicoClinica.medico.crm}
+                                    status={item.situacao.situacao}
+                                    hour={new Date(item.dataConsulta).toLocaleDateString('pt-BR')}
+                                    typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ?  'Exames' : 'Urgencia'}
+
+                                />
                             )
                         }
                     }}
@@ -298,6 +362,8 @@ useEffect(() => {
 
                 <ModalSeeDoctor
                     visible={showModalSeeDoctor}
+                    roleUsuario={userData.role}
+                    data={consultaSelecionada}
                     setShowModalSeeDoctor={setShowModalSeeDoctor}
                     navigation={navigation}
 

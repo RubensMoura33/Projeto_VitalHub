@@ -2,7 +2,8 @@ import moment from "moment";
 import { StyleSheet } from "react-native";
 import { StyledCalendarStrip } from "./Style";
 
-export const CalendarHome = () => {
+
+export const CalendarHome = ({ setDataConsulta }) => {
 
       //define padrão pt-br para calendário
   moment.updateLocale("pt-br", {
@@ -37,8 +38,9 @@ export const CalendarHome = () => {
 
   //define a data final como sendo o último dia do mês
   const endingDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    return(
-        <StyledCalendarStrip
+
+  return(
+    <StyledCalendarStrip
       // animação e seleção de cada data
       calendarAnimation={{ type: "sequence", duration: 30 }}
       daySelectionAnimation={ styles.selectedAnimationStyle }
@@ -46,6 +48,9 @@ export const CalendarHome = () => {
       // seta esquerda e direita para avançar e voltar(aqui como display none)
       iconLeftStyle={styles.iconsStyle}
       iconRightStyle={styles.iconsStyle}
+
+
+      onDateSelected={ date => setDataConsulta( moment(date).format('YYYY-MM-DD') )}
 
       // deixa uma marcação default - data atual
       selectedDate={currentDate}

@@ -6,10 +6,11 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 export const Card = ({
-    status = "agendada",
+    status = "Pendentes",
     onPressCancel,
     onPressAppointment,
-    name, age, hour, typeAppointment}) => {
+    tipoUser,
+    name, age, hour, typeAppointment, crm}) => {
 
     return (
         <ContainerCard>
@@ -19,16 +20,16 @@ export const Card = ({
 
             <ContentCard>
                 <DataProfile>   
-                    <ProfileName>{name}</ProfileName>
+                    <ProfileName>{tipoUser == "Paciente" ? 'Dr(a) ' + name : name}</ProfileName>
                     <ProfileData>
-                        <TextAge>{age} anos</TextAge>
+                        <TextAge>{tipoUser == "Paciente" ? crm : age + ' anos'} </TextAge>
                         <ImagePoint source={require('../../assets/point.png')} />
                         <TextBold>{typeAppointment}</TextBold>
                     </ProfileData>
                 </DataProfile>
                 <ViewRow>
                     <ClockCard status={status}>
-                        <AntDesign name="clockcircle" size={18} color={status == "agendada" ? '#49B3BA' : '#4E4B59'} />
+                        <AntDesign name="clockcircle" size={18} color={status == "Pendentes" ? '#49B3BA' : '#4E4B59'} />
                         <TextBold status={status}>{hour}</TextBold>
                     </ClockCard>
 
@@ -36,10 +37,10 @@ export const Card = ({
                     {/* valida e mostra o tipo de botao conforme a status */}
 
                     {
-                        status == "cancelada" ? (
+                        status == "Cancelados" ? (
                             <>
                             </>
-                        ) : status == "agendada" ? (
+                        ) : status == "Pendentes" ? (
                             <ButtonCard onPress={onPressCancel} >
                                 <ButtonText status={status}>Cancelar</ButtonText>
                             </ButtonCard>
