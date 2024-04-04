@@ -19,8 +19,11 @@ export const medicosClinicaResource = "Medicos/BuscarPorIDClinica"
 
 export const GetSpecialtiesResource = "Especialidade"
 
+export const PostUser = "Pacientes"
+
+
 const porta = "4466"
-const ip = "172.16.39.120";
+const ip = "172.16.39.103";
 
 const localApiUri = `http://${ip}:${porta}/api/`
 

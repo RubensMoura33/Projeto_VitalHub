@@ -122,11 +122,8 @@ setMedicoData(response.data);
 
             const response = await api.get(`${buscarConsultasPaciente}?data=${dataConsulta}&id=${userData.id}`)
 
-
             setPaciente(response.data);
-       
-         
-        
+                      
         }
     }
 
