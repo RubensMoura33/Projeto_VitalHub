@@ -15,6 +15,8 @@ export const clinicasResource = "Clinica/ListarTodas"
 
 export const medicosClinicaResource = "Medicos/BuscarPorIDClinica"
 
+export const buscarClinicId = "Clinica/BuscarPorId"
+
 const porta = "4466"
 const ip = "172.16.39.120";
 
