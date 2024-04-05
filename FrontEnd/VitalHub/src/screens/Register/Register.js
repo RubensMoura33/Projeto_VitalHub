@@ -7,6 +7,7 @@ import { Btn } from "../../components/Button/Button"
 import { LinkCancel } from "../../components/Link/Style"
 import * as Notifications from "expo-notifications"
 import { useState } from "react"
+import api, { PostUser } from "../../services/service"
 
 Notifications.requestPermissionsAsync()
 
@@ -22,7 +23,20 @@ Notifications.setNotificationHandler({
 })
 
 export const Register = ({ navigation }) => {
+
     const [spinner, setSpinner] = useState(false);
+    const [rg, setRg] = useState();
+    const [cpf, setCpf] = useState();
+    const [dataNascimento, setDataNascimento] = useState();
+    const [cep, setCep] = useState();
+    const[logradouro, setLograoduro] = useState()
+    const[numero, setNumero] = useState()
+    const[cidade, setCidade] = useState()
+    const [nome, setNome] = useState();
+    const [email, setEmail] = useState();
+    const [senha, setSenha] = useState();
+    const [confirmarSenha, setConfirmarSenha] = useState();
+    const [foto, setFoto] = useState();
 
     const handleCallNotifications = async () => {
 
@@ -51,8 +65,21 @@ export const Register = ({ navigation }) => {
 
     async function Register() {
         setSpinner(spinner ? false : true);
-        // navigation.replace("Main")
-        // handleCallNotifications()
+        if (confirmarSenha === senha) {
+            var promise = await api.post(PostUser,
+                {
+                    nome: nome,
+                    email: email,
+                    senha: senha,
+                    idTipoUsuario: "17D93BF6-DEF2-4055-84FB-B4DF80E25DA4"
+                })
+                navigation.replace("Login")
+        }
+        else{
+            console.log(error + " erro senai");
+        }
+
+
     }
 
     return (
@@ -63,9 +90,10 @@ export const Register = ({ navigation }) => {
 
             <TextRec>Insira seu endereço de e-mail e senha para realizar seu cadastro.</TextRec>
 
-            <Input placeholder={"Usuario ou Email"} />
-            <Input placeholder={"Senha"} />
-            <Input placeholder={"Confirmar senha"} />
+            <Input placeholder={"Nome"} value={nome} onChangeText={setNome} />
+            <Input placeholder={"Email"} value={email} onChangeText={setEmail} />
+            <Input placeholder={"Senha"} value={senha} onChangeText={setSenha} />
+            <Input placeholder={"Confirmar senha"} value={confirmarSenha} onChangeText={setConfirmarSenha} />
 
             <Btn disabled={spinner} onPress={() => Register()}>
                 {spinner ? (

@@ -25,8 +25,7 @@ export const SelectClinic = ({ navigation }) => {
 
    useEffect(() => {
         loadClinic()
-        console.log(selectedClinic);
-   }, [selectedClinic])
+   }, [])
 
       async function loadClinic() 
       {
