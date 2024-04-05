@@ -19,6 +19,8 @@ export const medicosClinicaResource = "Medicos/BuscarPorIDClinica"
 
 export const GetSpecialtiesResource = "Especialidade"
 
+export const buscarClinicId = "Clinica/BuscarPorId"
+
 export const PostUser = "Pacientes"
 
 
