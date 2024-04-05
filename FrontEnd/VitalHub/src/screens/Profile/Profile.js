@@ -29,13 +29,18 @@ export const Profile = ({ navigation }) => {
     const [cidade, setCidade] = useState()
     const [nome, setNome] = useState();
 
+   
+    //Configuracao token
 
     const [role, setRole] = useState({});
 
     async function logOut() {
         AsyncStorage.removeItem("token");
         navigation.replace("Login")
-    }
+    } 
+    const config = {
+        headers: { Authorization: `Bearer ${role}` }
+    };
 
     async function loadData() {
         const token = await userDecodeToken();
@@ -51,7 +56,11 @@ export const Profile = ({ navigation }) => {
         } else {
             try {
                 response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
-
+                setDataNascimento(response.data.dataNascimento)
+                setCpf(response.data.cpf)
+                setLogradouro(response.data.endereco.logradouro)
+                setCep(response.data.endereco.cep)
+                setCidade(response.data.endereco.cidade)
             } catch (error) {
                 console.log(error + " erro senai");
             }
@@ -74,11 +83,11 @@ export const Profile = ({ navigation }) => {
                 numero: numero,
                 cidade: cidade,
                 nome: nome,
-                email: email,
-                senha: senha,
-                idTipoUsuario: "17D93BF6-DEF2-4055-84FB-B4DF80E25DA4",
-
-            })
+                email: dataUser.idNavigation.email,
+                idTipoUsuario: "5f6bd789-1bea-4199-8ada-3cce3035272e",
+                
+            }, config)
+            console.log(dataUser.idNavigation.email);
             setProfileEdit(false)
 
         } catch (error) {
@@ -118,6 +127,7 @@ export const Profile = ({ navigation }) => {
     useEffect(() => {
         loadData();
         GetSpecialties();
+        console.log(dataUser);
         dePara(especialidades)
     }, [])
 
@@ -208,27 +218,27 @@ export const Profile = ({ navigation }) => {
                 <ContainerSafeEdit>
                     <BoxInput
                         textLabel={'Data de nascimento:'}
-                        fieldValue={new Date(dataUser.dataNascimento).toLocaleDateString("pt-BR")}
+                        fieldValue={new Date(dataNascimento).toLocaleDateString("pt-BR")}
                         editable={false}
 
                     />
 
                     <BoxInput
                         textLabel={'CPF'}
-                        fieldValue={dataUser.cpf}
+                        fieldValue={cpf}
                         editable={false}
                     />
 
                     <BoxInput
                         textLabel={'Logradouro'}
-                        fieldValue={endereco.logradouro}
+                        fieldValue={logradouro}
                         editable={false}
                     />
 
                     <ViewFormat>
                         <BoxInput
                             textLabel={'Cep'}
-                            fieldValue={endereco.cep}
+                            fieldValue={cep}
                             fieldWidth={'45'}
                             editable={false}
                         />
@@ -236,7 +246,7 @@ export const Profile = ({ navigation }) => {
                             textLabel={'Cidade'}
                             fieldWidth={'45'}
                             editable={false}
-                            fieldValue={endereco.cidade}
+                            fieldValue={cidade}
                         />
                     </ViewFormat>
 
@@ -264,7 +274,7 @@ export const Profile = ({ navigation }) => {
                         <BoxInput
                             textLabel={'Data de nascimento:'}
                             editable={true}
-                            fieldValue={dataNascimento}
+                            fieldValue={new Date(dataNascimento).toLocaleDateString("pt-BR")}
                             onChangeText={setDataNascimento}
                         />
                         <BoxInput
