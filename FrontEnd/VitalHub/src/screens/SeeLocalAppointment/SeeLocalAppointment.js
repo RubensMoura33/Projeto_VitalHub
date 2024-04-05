@@ -16,6 +16,7 @@ import {
 } from 'expo-location'
 import { useEffect, useRef, useState } from "react"
 import MapViewDirections from "react-native-maps-directions"
+import { ContainerHeader } from "../../components/Header/Style"
 
 export const SeeLocalAppointment = ({ navigation , route}) => {
 const[clinica, setClinica] = useState(null);
@@ -177,7 +178,7 @@ getClinic(clinicaId)
   />
   <BoxInput
       textLabel={'Bairro'}
-      placeholder={'Moema-SP'}
+      fieldValue={clinica.endereco.cidade}
       editable={false}
       fieldWidth={46}
   />
@@ -188,9 +189,12 @@ getClinic(clinicaId)
 </>
                     :
                     <>
-                        <Text>Localizacao nao Encontrada</Text>
+                    <ContainerHeader>
+                        <Text>Localização nao Encontrada</Text>
 
                         <ActivityIndicator />
+
+                    </ContainerHeader>
                     </>
             }
                       

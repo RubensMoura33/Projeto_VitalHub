@@ -6,8 +6,8 @@ import { Input } from "../../components/Input/Style"
 import { Btn } from "../../components/Button/Button"
 import { LinkCancel } from "../../components/Link/Style"
 import * as Notifications from "expo-notifications"
-import { useState } from "react"
-import api, { PostUser } from "../../services/service"
+import { useEffect, useState } from "react"
+import api, { PostUser, GetIdTipoUsuario } from "../../services/service"
 
 Notifications.requestPermissionsAsync()
 
@@ -37,11 +37,11 @@ export const Register = ({ navigation }) => {
     const [senha, setSenha] = useState();
     const [confirmarSenha, setConfirmarSenha] = useState();
     const [foto, setFoto] = useState();
+    const [idTipoUsuario, setIdTipoUsuario] = useState();
 
     const handleCallNotifications = async () => {
 
         const { status } = await Notifications.getPermissionsAsync()
-
         if (status !== "granted") {
             alert("Voce nao permitiu as notificacoes estarem ativas")
             return
@@ -71,7 +71,7 @@ export const Register = ({ navigation }) => {
                     nome: nome,
                     email: email,
                     senha: senha,
-                    idTipoUsuario: "17D93BF6-DEF2-4055-84FB-B4DF80E25DA4"
+                    idTipoUsuario: idTipoUsuario
                 })
                 navigation.replace("Login")
         }
@@ -81,6 +81,15 @@ export const Register = ({ navigation }) => {
 
 
     }
+
+    useEffect(() => {
+const loadData = async () => {
+    const promise = await api.get(`${GetIdTipoUsuario}?tipoUsuario=Paciente`);
+    console.log(promise.data);
+    setIdTipoUsuario(promise.data);
+}
+loadData();
+    },[])
 
     return (
         <Container>
