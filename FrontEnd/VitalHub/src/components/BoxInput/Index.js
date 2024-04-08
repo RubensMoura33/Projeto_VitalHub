@@ -11,7 +11,7 @@ export const BoxInput = ({
     fieldHeight = 80,
     editable = false,
     multiline = false,
-    marginBottom = 40,
+    marginBottom = 30,
     insertRecord = false,
     onChangeText,
 }) => {

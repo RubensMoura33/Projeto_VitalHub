@@ -9,6 +9,8 @@ export const buscarPacienteResource = "Pacientes/BuscarPorID"
 
 export const buscarConsultasPaciente = "Pacientes/BuscarPorData"
 
+export const buscarConsultasMedico = "Medicos/BuscarPorData"
+
 export const buscarMedicoResource = 'Medicos/BuscarPorId'
 
 export const medicosResource = "Medicos"
@@ -17,11 +19,15 @@ export const clinicasResource = "Clinica/ListarTodas"
 
 export const medicosClinicaResource = "Medicos/BuscarPorIDClinica"
 
-export const GetSpecialtiesResource = "Especialidade"
-
 export const buscarClinicId = "Clinica/BuscarPorId"
 
+export const GetSpecialtiesResource = "Especialidade"
+
 export const PostUser = "Pacientes"
+
+export const GetIdTipoUsuario = "TiposUsuario"
+
+export const PutStatusTipoUsuario = "Consultas/Status"
 
 
 const porta = "4466"

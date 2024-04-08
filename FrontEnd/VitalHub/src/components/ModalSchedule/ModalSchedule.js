@@ -20,7 +20,11 @@ export const ModalSchedule = ({ navigation, visible, setShowModalSchedule , ...r
 
   async function onPressHandle() {
     await setShowModalSchedule(false)
-    navigation.replace("SelectClinic");
+    if(typeAppointment != null){
+      navigation.replace("SelectClinic");
+    }else{
+          console.warn("É necessário selecionar o nível da consulta");
+    }
     
   }
 
