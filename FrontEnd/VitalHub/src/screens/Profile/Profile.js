@@ -10,7 +10,7 @@ import { LinkCancelMargin } from "../../components/Link/Style"
 import { userDecodeToken } from "../../Utils/Auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import InputSelect from "../../components/InputSelect/InputSelect"
-import api, { especialidadeResource, buscarPacienteResource, medicosResource, GetSpecialtiesResource, buscarMedicoResource, PostUser } from "../../services/service"
+import api, { especialidadeResource, buscarPacienteResource, medicosResource, GetSpecialtiesResource, buscarMedicoResource, PostUser, GetIdTipoUsuario } from "../../services/service"
 
 export const Profile = ({ navigation }) => {
 
@@ -24,22 +24,28 @@ export const Profile = ({ navigation }) => {
     const [spinner, setSpinner] = useState(false);
     const [rg, setRg] = useState();
     const [cpf, setCpf] = useState();
+    const [crm, setCrm] = useState();
     const [dataNascimento, setDataNascimento] = useState();
     const [numero, setNumero] = useState()
     const [cidade, setCidade] = useState()
     const [nome, setNome] = useState();
-
+    const [idTipoUsuario, setIdTipoUsuario] = useState();
+    const [dataTeste, setDataTeste] = useState()
+    //Configuracao token
 
     const [role, setRole] = useState({});
+    const [token, setToken] = useState()
 
     async function logOut() {
         AsyncStorage.removeItem("token");
         navigation.replace("Login")
     }
 
+
     async function loadData() {
         const token = await userDecodeToken();
         setRole(token);
+        setToken(token.token)
 
         var response = null
 
@@ -48,10 +54,16 @@ export const Profile = ({ navigation }) => {
             setEspecialidade(response.data.especialidade.especialidade1)
             setLogradouro(response.data.endereco.logradouro)
             setCep(response.data.endereco.cep)
+            setCrm(response.data.crm)
         } else {
             try {
                 response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
-
+                setDataNascimento(response.data.dataNascimento)
+                setDataTeste(new Date(response.data.dataNascimento).toLocaleDateString("pt-BR"))
+                setCpf(response.data.cpf)
+                setLogradouro(response.data.endereco.logradouro)
+                setCep(response.data.endereco.cep)
+                setCidade(response.data.endereco.cidade)
             } catch (error) {
                 console.log(error + " erro senai");
             }
@@ -64,7 +76,11 @@ export const Profile = ({ navigation }) => {
 
     async function updatePatient() {
         try {
-            var promise = await api.put(PostUser, {
+            const config = {
+                headers: { Authorization: `Bearer ${token}` }
+            };
+
+            await api.put(PostUser, {
 
                 rg: rg,
                 cpf: cpf,
@@ -74,11 +90,32 @@ export const Profile = ({ navigation }) => {
                 numero: numero,
                 cidade: cidade,
                 nome: nome,
-                email: email,
-                senha: senha,
-                idTipoUsuario: "17D93BF6-DEF2-4055-84FB-B4DF80E25DA4",
+                email: dataUser.idNavigation.email
 
-            })
+            }, config)
+            setProfileEdit(false)
+
+        } catch (error) {
+            console.log(error + " erro senai");
+        }
+    }
+
+    async function updateDoctor() {
+        try {
+            console.log(token);
+            const config = {
+                headers: { Authorization: `Bearer ${token}` }
+            };
+
+            await api.put(medicosResource, {
+
+                crm: crm,
+                cep: cep,
+                logradouro: logradouro,
+                especialidadeId: "5dfc3955-7fd8-47d6-96d9-f9753331fb8e",
+                numero: numero
+
+            }, config)
             setProfileEdit(false)
 
         } catch (error) {
@@ -98,13 +135,11 @@ export const Profile = ({ navigation }) => {
 
     }
 
-
-
     //DEPARA
     function dePara(retornoApi) {
         let arrayOptions = [];
         retornoApi.forEach((e) => {
-            arrayOptions.push({ value: e.id, text: e.especialidade1 });
+            arrayOptions.push({ value: e.id, text: e.especialidade1});
         });
         // let arrayText = [];
         // arrayOptions.forEach((e) => {
@@ -114,11 +149,11 @@ export const Profile = ({ navigation }) => {
         return arrayOptions;
     }
 
+    
 
     useEffect(() => {
         loadData();
         GetSpecialties();
-        dePara(especialidades)
     }, [])
 
     return (
@@ -136,14 +171,9 @@ export const Profile = ({ navigation }) => {
                         <BoxInput
                             textLabel={'CRM'}
                             placeholder={'859********'}
-                            fieldValue={dataUser.crm}
+                            fieldValue={crm}
                         />
 
-                        <BoxInput
-                            textLabel={'Especialidade'}
-                            placeholder={'Insira uma especialidade'}
-                            fieldValue={especialidade}
-                        />
                         <BoxInput
                             textLabel={'Logradouro'}
                             placeholder={'Insira um logradouro'}
@@ -155,6 +185,11 @@ export const Profile = ({ navigation }) => {
                             fieldValue={cep}
                         />
 
+                        <BoxInput
+                            textLabel={'Especialidade'}
+                            placeholder={'Insira uma especialidade'}
+                            fieldValue={especialidade}
+                        />
                         <Btn onPress={() => setProfileEdit(true)}>
                             <ButtonTitle>EDITAR</ButtonTitle>
                         </Btn>
@@ -178,14 +213,33 @@ export const Profile = ({ navigation }) => {
                         <BoxInput
                             textLabel={'CRM'}
                             placeholder={'859********'}
+                            fieldValue={crm}
+                            editable={true}
+                            onChangeText={setCrm}
                         />
 
-                        <InputSelect
-                            textButton="Selecionar Especialidade"
-                            handleSelectedFn={setEspecialidade}
-                            data={dePara(especialidades)}
+
+                        <BoxInput
+                            textLabel={'Logradouro'}
+                            placeholder={'Insira um logradouro'}
+                            fieldValue={logradouro}
+                            editable={true}
+                            onChangeText={setLogradouro}
                         />
-                        <Btn onPress={() => setProfileEdit(false)}>
+
+                        <BoxInput
+                            textLabel={'CEP'}
+                            fieldValue={cep}
+                            editable={true}
+                            onChangeText={setCep}
+                        />
+                            <InputSelect
+                                textButton="Selecionar Especialidade"
+                                handleSelectedFn={setEspecialidade}
+                                data={dePara(especialidades)}
+                            />
+
+                        <Btn onPress={() => updateDoctor()}>
                             <ButtonTitle>SALVAR</ButtonTitle>
                         </Btn>
                         <Btn onPress={() => logOut()}>
@@ -208,27 +262,27 @@ export const Profile = ({ navigation }) => {
                 <ContainerSafeEdit>
                     <BoxInput
                         textLabel={'Data de nascimento:'}
-                        fieldValue={new Date(dataUser.dataNascimento).toLocaleDateString("pt-BR")}
+                        fieldValue={new Date(dataNascimento).toLocaleDateString("pt-BR")}
                         editable={false}
 
                     />
 
                     <BoxInput
                         textLabel={'CPF'}
-                        fieldValue={dataUser.cpf}
+                        fieldValue={cpf}
                         editable={false}
                     />
 
                     <BoxInput
                         textLabel={'Logradouro'}
-                        fieldValue={endereco.logradouro}
+                        fieldValue={logradouro}
                         editable={false}
                     />
 
                     <ViewFormat>
                         <BoxInput
                             textLabel={'Cep'}
-                            fieldValue={endereco.cep}
+                            fieldValue={cep}
                             fieldWidth={'45'}
                             editable={false}
                         />
@@ -236,7 +290,7 @@ export const Profile = ({ navigation }) => {
                             textLabel={'Cidade'}
                             fieldWidth={'45'}
                             editable={false}
-                            fieldValue={endereco.cidade}
+                            fieldValue={cidade}
                         />
                     </ViewFormat>
 
@@ -264,7 +318,7 @@ export const Profile = ({ navigation }) => {
                         <BoxInput
                             textLabel={'Data de nascimento:'}
                             editable={true}
-                            fieldValue={dataNascimento}
+                            placeholder={dataTeste}
                             onChangeText={setDataNascimento}
                         />
                         <BoxInput
