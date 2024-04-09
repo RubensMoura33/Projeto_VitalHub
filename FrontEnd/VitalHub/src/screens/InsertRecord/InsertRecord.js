@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { BoxInput } from "../../components/BoxInput/Index"
 import { Btn } from "../../components/Button/Button"
 import { ContainerProfile, ContainerScroll, ViewTitleRecord } from "../../components/Container/Style"
@@ -5,16 +6,19 @@ import { ProfileImage } from "../../components/Images/Style"
 import { LinkCancelMargin } from "../../components/Link/Style"
 import { ButtonTitle, SubtitleRecord, TitleProfile } from "../../components/Title/Style"
 
-export const InsertRecord = ({navigation}) => {
+export const InsertRecord = ({navigation, route}) => {
+    useEffect(() => {
+
+    },[route.params])
     return (
         <ContainerScroll>
             <ProfileImage source={require("../../assets/photo.png")} />
 
             <ContainerProfile>
-                <TitleProfile>Richard Kosta</TitleProfile>
+                <TitleProfile>{route.params.paciente.idNavigation.nome}</TitleProfile>
                 <ViewTitleRecord>
-                    <SubtitleRecord>22 anos</SubtitleRecord>
-                    <SubtitleRecord>richard.kosta@gmail.com</SubtitleRecord>
+                    <SubtitleRecord>{route.params.paciente.idade} anos</SubtitleRecord>
+                    <SubtitleRecord>{route.params.paciente.idNavigation.email}</SubtitleRecord>
                 </ViewTitleRecord>
 
                 <BoxInput

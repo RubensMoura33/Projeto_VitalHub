@@ -12,7 +12,7 @@ import api, { loginResource } from "../../services/service"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const Login = ({ navigation }) => {
-    const [email, setEmail] = useState("artur@senai.com");
+    const [email, setEmail] = useState("rubens@senai.com");
     const [senha, setSenha] = useState("Senai@134");
     const [spinner, setSpinner] = useState(false);
     const [user, setUser] = useState({
@@ -30,7 +30,6 @@ setSpinner(true)
                 email: email,
                 senha: senha
             })
-            console.log(response.data);
             await AsyncStorage.setItem('token', JSON.stringify(response.data));
             navigation.replace("Main")
             

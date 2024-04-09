@@ -32,7 +32,7 @@ font-size: 16px;
 padding: 30px;
 `
 
-export const InputTextModificate = styled.TextInput.attrs(props => ({
+export const InputTextModificate = styled.TextInput.attrs( props => ({
     placeholderTextColor: '#34898F'
 }) )
 `
