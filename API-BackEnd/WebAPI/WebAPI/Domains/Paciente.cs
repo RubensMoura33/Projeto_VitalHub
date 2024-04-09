@@ -9,6 +9,28 @@ public partial class Paciente
 
     public DateTime? DataNascimento { get; set; }
 
+    public int? Idade
+    {
+        get
+        {
+            if (DataNascimento.HasValue)
+            {
+                DateTime now = DateTime.Now;
+                int age = now.Year - DataNascimento.Value.Year;
+                if (now < DataNascimento.Value.AddYears(age))
+                {
+                    age--;
+                }
+
+                return age;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
     public string? Rg { get; set; }
 
     public string? Cpf { get; set; }
