@@ -25,18 +25,35 @@ namespace WebAPI.Repositories
 
         public void EditarProntuario(Consulta consulta)
         {
-            Consulta buscada = ctx.Consultas.Find(consulta.Id)!;
+            Consulta buscada = ctx.Consultas.Include(x => x.Receita).FirstOrDefault(x => x.Id == consulta.Id)!;
 
             buscada.Descricao = consulta.Descricao;
             buscada.Diagnostico = consulta.Diagnostico;
+            if(buscada.ReceitaId != null)
+            {
+            buscada.Receita.Medicamento = consulta.Receita.Medicamento;
+            }
+            else
+            {
+                buscada.Receita = new Receita();
+                buscada.Receita.Medicamento = consulta.Receita.Medicamento;
+
+                ctx.Receitas.Add(buscada.Receita);
+                ctx.SaveChanges() ;
+
+                buscada.ReceitaId = buscada.Receita.Id;
+            }
+
             ctx.Update(buscada);
             ctx.SaveChanges();
         }
 
-        public void EditarStatus(Guid idConsulta)
+
+
+public void EditarStatus(Guid idConsulta)
         {
             var buscada = ctx.Consultas.Find(idConsulta);
-           Guid idSituacaoCancelada = Guid.Parse(ctx.Situacoes.Where(x => x.Situacao == "Cancelados").FirstOrDefault().Id.ToString());
+            Guid idSituacaoCancelada = Guid.Parse(ctx.Situacoes.Where(x => x.Situacao == "Cancelados").FirstOrDefault().Id.ToString());
             buscada.SituacaoId = idSituacaoCancelada ;
             ctx.Update(buscada);
             ctx.SaveChanges();

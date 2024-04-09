@@ -29,6 +29,8 @@ export const GetIdTipoUsuario = "TiposUsuario"
 
 export const PutStatusTipoUsuario = "Consultas/Status"
 
+export const InseririrProntuario = "Consultas/Prontuario"
+
 
 const porta = "4466"
 const ip = "172.16.39.120";

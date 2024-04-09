@@ -1,12 +1,40 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { BoxInput } from "../../components/BoxInput/Index"
 import { Btn } from "../../components/Button/Button"
 import { ContainerProfile, ContainerScroll, ViewTitleRecord } from "../../components/Container/Style"
 import { ProfileImage } from "../../components/Images/Style"
 import { LinkCancelMargin } from "../../components/Link/Style"
 import { ButtonTitle, SubtitleRecord, TitleProfile } from "../../components/Title/Style"
+import api, { InseririrProntuario } from "../../services/service"
 
 export const InsertRecord = ({navigation, route}) => {
+
+    const[descricaoConsulta, setDescricaoCounsulta] = useState();
+    const[dignostico, setDiagnostico] = useState();
+    const[prescricao, setPrescricao] = useState();
+
+
+async function UserSave(){
+
+
+try {
+    const promise  = await api.put(InseririrProntuario, {
+        Id: route.params.id,
+        descricao: descricaoConsulta,
+        Diagnostico: dignostico,
+        Receita:{
+            Medicamento: prescricao
+        }
+
+
+    });
+    navigation.replace("Main")
+
+} catch (error) {
+    console.log(error);
+}
+}
+
     useEffect(() => {
 
     },[route.params])
@@ -26,9 +54,11 @@ export const InsertRecord = ({navigation, route}) => {
                  placeholder={'Descricao'}
                  fieldHeight={150}
                  insertRecord={true}
+                onChangeText={setDescricaoCounsulta}
                  multiline={true}
                 />
                 <BoxInput
+                onChangeText={setDiagnostico}
                  textLabel={'Diagnóstico do paciente'}
                  placeholder={'Diagnóstico'}
                  fieldHeight={80}
@@ -36,6 +66,7 @@ export const InsertRecord = ({navigation, route}) => {
                  multiline={true}
                 />
                 <BoxInput
+                onChangeText={setPrescricao}
                  textLabel={'Prescrição médica'}
                  placeholder={'Prescrição medica'}
                  fieldHeight={150}
@@ -43,7 +74,7 @@ export const InsertRecord = ({navigation, route}) => {
                  multiline={true}
                 />
 
-                <Btn onPress={() => navigation.replace("Main")}>
+                <Btn onPress={() => UserSave()}>
                     <ButtonTitle>SALVAR</ButtonTitle>
                 </Btn>
 

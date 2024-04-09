@@ -97,9 +97,9 @@ export const Home = ({ navigation }) => {
         }
     }, [dataConsulta])
 
-    useEffect(() => {
-ListarConsultas();
-    },[showModalCancel])
+//     useEffect(() => {
+// ListarConsultas();
+//     },[showModalCancel])
 
     
 
