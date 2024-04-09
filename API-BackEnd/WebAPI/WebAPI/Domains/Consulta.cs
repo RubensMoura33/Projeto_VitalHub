@@ -18,7 +18,6 @@ public partial class Consulta
     public Guid? PrioridadeId { get; set; }
 
     public DateTime? DataConsulta { get; set; }
-    
 
     public string? Descricao { get; set; }
 

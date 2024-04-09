@@ -16,7 +16,7 @@ namespace WebAPI.Repositories
         public Medico AtualizarPerfil(Guid Id, MedicoViewModel medico)
         {
 
-            Medico medicoBuscado = ctx.Medicos.Include(x => x.Endereco).FirstOrDefault(x => x.Id == Id)!;
+            Medico medicoBuscado = ctx.Medicos.FirstOrDefault(x => x.Id == Id)!;
 
 
             if (medicoBuscado == null) return null!;
@@ -117,10 +117,11 @@ namespace WebAPI.Repositories
 .Include(x => x.Situacao)
 .Include(x => x.Paciente)
 .Include(x => x.Paciente.IdNavigation)
-.Include(x => x.MedicoClinica)
 .Include(x => x.MedicoClinica.Medico)
 .Include(x => x.MedicoClinica.Medico.IdNavigation)
+
 .Include(x => x.Prioridade)
+//.Where(x  => x.PacienteId == idPaciente && x.DataConsulta == dataConsulta)
 .Where(x => x.MedicoClinica.MedicoId == idMedico && EF.Functions.DateDiffDay(x.DataConsulta, dataConsulta) == 0)
 .ToList();
         }
