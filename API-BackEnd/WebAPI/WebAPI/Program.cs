@@ -18,6 +18,7 @@ builder.Services
         }
     );
 
+builder.Services.AddScoped<EmailSendingService>();
 //Adiciona serviço de Jwt Bearer (forma de autenticação)
 builder.Services.AddAuthentication(options =>
 {

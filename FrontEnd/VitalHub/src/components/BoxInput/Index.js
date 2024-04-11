@@ -9,7 +9,7 @@ export const BoxInput = ({
     placeholder,
     fieldValue,
     fieldHeight = 80,
-    editable = true,
+    editable = false,
     multiline = false,
     marginBottom = 30,
     insertRecord = false,
