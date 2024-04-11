@@ -11,6 +11,7 @@
         public string? Senha { get; set; }
 
         public string? Foto { get; set; }
+       
 
         public string? Cep { get; set; }
 
