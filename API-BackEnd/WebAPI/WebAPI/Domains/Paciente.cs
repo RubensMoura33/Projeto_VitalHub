@@ -9,6 +9,8 @@ public partial class Paciente
 
     public DateTime? DataNascimento { get; set; }
 
+   
+
     public string? Rg { get; set; }
 
     public string? Cpf { get; set; }

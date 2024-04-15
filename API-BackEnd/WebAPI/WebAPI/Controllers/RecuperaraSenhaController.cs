@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
         private readonly EmailSendingService _emailsendingService;
         public RecuperaraSenhaController(VitalContext context, EmailSendingService emailSendingService)
         {
-           
+
             _context = context;
             _emailsendingService = emailSendingService;
         }
@@ -40,28 +40,28 @@ namespace WebAPI.Controllers
                 await _context.SaveChangesAsync();
 
                 //envia código de confirmação por e-mail
-                await _emailsendingService.SendRecoveryPassword(user.Email!,recoveryCode);
+                await _emailsendingService.SendRecoveryPassword(user.Email!, recoveryCode);
 
                 return Ok("Código de confirmação enviado com sucesso!");
-               
+
 
             }
             catch (Exception ex)
             {
-              return BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
-        [HttpPost]
+        [HttpPost("ValidarSenha")]
         public async Task<IActionResult> ValidatePasswordRecoveryCode(string email, int codigo)
         {
             try
             {
                 var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
-                if(user == null)
+                if (user == null)
                 {
                     return NotFound("Usuário não encontrado");
                 }
-                if(user.CodRecupSenha !=  codigo)
+                if (user.CodRecupSenha != codigo)
                 {
                     return BadRequest("Código de recuperação é inválido!");
                 }
@@ -75,7 +75,7 @@ namespace WebAPI.Controllers
             catch (Exception ex)
             {
 
-               return BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
     }

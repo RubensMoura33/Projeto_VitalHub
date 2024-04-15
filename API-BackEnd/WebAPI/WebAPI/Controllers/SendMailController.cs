@@ -25,7 +25,7 @@ namespace WebAPI.Controllers
                 //Define endereço assunto e corpo do e-mail
                 mailRequest.ToEmail = email;
                 mailRequest.Subject = "Olá , esse é um email vindo da turma de DEV3DM";
-                mailRequest.Body = GetHtmlContent(userName);    
+                mailRequest.Body = GetHtmlContent(userName);
 
                 //Chamar o método para  o envio de e-mail
                 await emailService.SendEmailAsync(mailRequest);
@@ -39,9 +39,9 @@ namespace WebAPI.Controllers
             }
 
         }
-            private string GetHtmlContent(string userName)
-            {
-                string Response = @"
+        private string GetHtmlContent(string userName)
+        {
+            string Response = @"
 <div style=""width:100%; background-color:rgba(96, 191, 197, 1); padding: 20px;"">
     <div style=""max-width: 600px; margin: 0 auto; background-color:#FFFFFF; border-radius: 10px; padding: 20px;"">
         <img src=""https://blobvitalhub.blob.core.windows.net/containervitalhub/logotipo.png"" alt="" Logotipo da Aplicação"" style="" display: block; margin: 0 auto; max-width: 200px;"" />
@@ -55,8 +55,8 @@ namespace WebAPI.Controllers
     </div>
 </div>";
 
-                // Retorna o conteúdo HTML do e-mail
-                return Response;
-            }
+            // Retorna o conteúdo HTML do e-mail
+            return Response;
+        }
     }
 }
