@@ -1,9 +1,11 @@
+import { useState } from "react"
 import { Btn, BtnReturn, IconClose } from "../../components/Button/Button"
 import { Container } from "../../components/Container/Style"
 import { Input } from "../../components/Input/Style"
 import { Logo } from "../../components/Logo/Style"
 import { ButtonTitle, TextRec, Title } from "../../components/Title/Style"
 import * as Notifications from "expo-notifications"
+import api from "../../services/service"
 
 Notifications.requestPermissionsAsync()
 
@@ -19,8 +21,10 @@ Notifications.setNotificationHandler({
     })
 })
 
-export const ResetPwd = ({ navigation }) => {
-
+export const ResetPwd = ({ navigation, route }) => {
+    
+    const [newSenha, setNewSenha] = useState('');
+    const [confirmNewSenha, setConfirmNewSenha] = useState('');
     const handleCallNotifications = async () => {
 
         const { status } = await Notifications.getPermissionsAsync()
@@ -46,9 +50,23 @@ export const ResetPwd = ({ navigation }) => {
         })
     }
 
-    function onPressHandle() {
-        navigation.replace("Login")
-        handleCallNotifications()
+    async function  onPressHandle() {
+        if(newSenha != confirmNewSenha)
+        {
+            alert("As senhas precisam estar identicas")
+            return;
+        }
+   
+
+await api.put(`Usuario/AlterarSenha?email=${route.params.email}`,{
+    senhaNova: newSenha
+}).then(() => {
+    navigation.replace("Login", {email: route.params.email})
+    handleCallNotifications()
+}).catch(error => {
+    console.log(error);
+})
+
     }
 
     return (
@@ -65,8 +83,8 @@ export const ResetPwd = ({ navigation }) => {
 
             <TextRec>Insira e confirme a sua nova senha</TextRec>
 
-            <Input placeholder={"Nova senha"} />
-            <Input placeholder={"Confirmar nova senha"} />
+            <Input value={newSenha} onChangeText={(txt) => setNewSenha(txt)} placeholder={"Nova senha"} />
+            <Input value={confirmNewSenha} onChangeText={(txt) => setConfirmNewSenha(txt)} placeholder={"Confirmar nova senha"} />
 
             <Btn onPress={() => onPressHandle()}>
                 <ButtonTitle>Confirmar nova senha</ButtonTitle>

@@ -61,13 +61,15 @@ export const ModalCancel = ({ visible, setShowModalCancel,data, ...rest }) => {
 
   async function onPressHandle() {
    
-    try {
-      const promise = await api.put(`${PutStatusTipoUsuario}?idConsulta=${idConsulta}`) 
+
+      const promise = await api.put(`Consultas/Status`,{
+        idConsulta: idConsulta,
+        status: 'Cancelados'}).then(() => {console.log("Deu certo!!!")}).catch(error => {
+          console.log(error);
+        })
+   
     
-      console.log("Deu certo");
-    } catch (error) {
-      console.log(error);
-    }
+  
     handleCallNotifications();
     setShowModalCancel(false);
   }
