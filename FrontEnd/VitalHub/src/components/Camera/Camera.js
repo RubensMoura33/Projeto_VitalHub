@@ -12,13 +12,14 @@ import { ButtonTitle } from "../Title/Style";
 import { LinkCancel } from "../Link/Style";
 import { EvilIcons } from '@expo/vector-icons';
 
-export const CameraPhoto = ({ navigation, }) => {
+
+export const CameraPhoto = ({ navigation, route }) => {
     const cameraRef = useRef(null)
     const [photo, setPhoto] = useState(null)
     const [openModal, setOpenModal] = useState(false)
     const [tipoCamera, setTipoCamera] = useState(Camera.Constants.Type.front)
     const [flashOn, setFlashOn] = useState(Camera.Constants.FlashMode.off);
-
+    const [latestPhoto, setLatestPhoto] = useState(null);
     async function CapturePhoto() {
         if (cameraRef) {
             const photo = await cameraRef.current.takePictureAsync()
@@ -30,10 +31,27 @@ export const CameraPhoto = ({ navigation, }) => {
         }
     }
 
+    async function GetLastPhoto(){
+        const assets = await MediaLibrary.getAssetsAsync({sortBy: [[MediaLibrary.SortBy.creationTime, false]], first : 1})
+        console.log(assets);
+    }
+
+
+    useEffect(() => {
+   
+        if ( route.params.getMediaLibrary) {
+            GetLastPhoto();
+        }
+    }, [route.params])
     async function onPressToSend() {
         await setOpenModal(false)
 
-        navigation.navigate("SeePrescription", { photoUri: photo })
+        if (route.params.imageProfile) {
+            navigation.navigate("Profile", { photoUri: photo })
+        } else {
+
+            navigation.navigate("SeePrescription", { photoUri: photo })
+        }
     }
 
     useEffect(() => {

@@ -10,6 +10,7 @@ import { Image } from "react-native"
 import { useState } from "react"
 import { InputExame } from "../../components/Input/Style"
 
+
 export const SeePrescription = ({ navigation, route }) => {
     const { photoUri } = route.params || {};
     const[isPhoto,setIsPhoto] = useState(true)

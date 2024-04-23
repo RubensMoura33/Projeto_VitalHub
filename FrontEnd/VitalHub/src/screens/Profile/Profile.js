@@ -10,9 +10,11 @@ import { LinkCancelMargin } from "../../components/Link/Style"
 import { userDecodeToken } from "../../Utils/Auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import InputSelect from "../../components/InputSelect/InputSelect"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 import api, { especialidadeResource, buscarPacienteResource, medicosResource, GetSpecialtiesResource, buscarMedicoResource, PostUser, GetIdTipoUsuario } from "../../services/service"
+import { ButtonCamera, ContainerImage } from "./Style"
 
-export const Profile = ({ navigation }) => {
+export const Profile = ({ navigation, route }) => {
 
     const [profileEdit, setProfileEdit] = useState(false);
     const [especialidade, setEspecialidade] = useState();
@@ -36,6 +38,8 @@ export const Profile = ({ navigation }) => {
     const [role, setRole] = useState({});
     const [token, setToken] = useState()
 
+    const { photoUri } = route.params || {};
+    const[isPhoto,setIsPhoto] = useState(true)
     async function logOut() {
         AsyncStorage.removeItem("token");
         navigation.replace("Login")
@@ -139,7 +143,7 @@ export const Profile = ({ navigation }) => {
     function dePara(retornoApi) {
         let arrayOptions = [];
         retornoApi.forEach((e) => {
-            arrayOptions.push({ value: e.id, text: e.especialidade1});
+            arrayOptions.push({ value: e.id, text: e.especialidade1 });
         });
         // let arrayText = [];
         // arrayOptions.forEach((e) => {
@@ -149,7 +153,12 @@ export const Profile = ({ navigation }) => {
         return arrayOptions;
     }
 
-    
+
+    function onPressPhoto() {
+        console.log("estou aqui");
+        navigation.navigate("CameraPhoto", {imageProfile: true, getMediaLibrary: true });
+        setIsPhoto(true)
+    }
 
     useEffect(() => {
         loadData();
@@ -161,7 +170,10 @@ export const Profile = ({ navigation }) => {
 
             {role.role == "Medico" && !profileEdit ? (
                 <>
-                    <ProfileImage source={require("../../assets/photo.png")} />
+                    <ContainerImage>
+                        <ProfileImage source={require("../../assets/photo.png")} />
+
+                    </ContainerImage>
 
                     <ContainerProfile>
                         <TitleProfile>{role.name}</TitleProfile>
@@ -233,11 +245,11 @@ export const Profile = ({ navigation }) => {
                             editable={true}
                             onChangeText={setCep}
                         />
-                            <InputSelect
-                                textButton="Selecionar Especialidade"
-                                handleSelectedFn={setEspecialidade}
-                                data={dePara(especialidades)}
-                            />
+                        <InputSelect
+                            textButton="Selecionar Especialidade"
+                            handleSelectedFn={setEspecialidade}
+                            data={dePara(especialidades)}
+                        />
 
                         <Btn onPress={() => updateDoctor()}>
                             <ButtonTitle>SALVAR</ButtonTitle>
@@ -251,13 +263,20 @@ export const Profile = ({ navigation }) => {
                 </>
 
             ) : role.role == "Paciente" && !profileEdit ? (<>
-                <ProfileImage source={require("../../assets/photo.png")} />
+
+                <ContainerImage>
+
+                    <ProfileImage source={{uri: photoUri}} />
 
 
-                <ViewTitle>
-                    <TitleProfile>{role.name}</TitleProfile>
-                    <SubTitleProfile>{role.email}</SubTitleProfile>
-                </ViewTitle>
+                    <ViewTitle>
+                        <TitleProfile>{role.name}</TitleProfile>
+                        <SubTitleProfile>{role.email}</SubTitleProfile>
+                    <ButtonCamera onPress={() => {!photoUri ? onPressPhoto() : null}}>
+                        <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb"/>
+                    </ButtonCamera>
+                    </ViewTitle>
+                </ContainerImage>
 
                 <ContainerSafeEdit>
                     <BoxInput
@@ -306,13 +325,15 @@ export const Profile = ({ navigation }) => {
                 </ContainerSafeEdit>
             </>) : (
                 <>
-                    <ProfileImage source={require("../../assets/photo.png")} />
 
-
-                    <ViewTitle>
-                        <TitleProfile>{role.name}</TitleProfile>
-                        <SubTitleProfile>{role.email}</SubTitleProfile>
-                    </ViewTitle>
+                    <ContainerImage>
+                        <ProfileImage source={require("../../assets/photo.png")} />
+                        <ViewTitle>
+                            <TitleProfile>{role.name}</TitleProfile>
+                            <SubTitleProfile>{role.email}</SubTitleProfile>
+                        </ViewTitle>
+                        <ButtonCamera />
+                    </ContainerImage>
 
                     <ContainerSafeEdit>
                         <BoxInput
@@ -325,7 +346,7 @@ export const Profile = ({ navigation }) => {
                             textLabel={'CPF'}
                             editable={true}
                             fieldValue={cpf}
-                            onChangeText={setCep}
+                            onChangeText={setCpf}
                         />
                         <BoxInput
                             textLabel={'Logradouro'}
