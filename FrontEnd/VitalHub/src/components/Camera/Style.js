@@ -39,3 +39,12 @@ background-color: white;
 border: 3px solid black;
 border-radius: 40px;
 `
+
+export const  LastPhoto = styled.Image`
+width: 40px;
+height: 40px;
+border-radius: 5px;
+`
+export const Options = styled.TouchableOpacity`
+padding: 10px;
+`

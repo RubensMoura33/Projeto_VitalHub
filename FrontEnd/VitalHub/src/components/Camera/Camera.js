@@ -1,7 +1,7 @@
 import { Image, Modal, StyleSheet, View } from "react-native"
 import { Container } from "../Container/Style"
 import { useEffect, useRef, useState } from "react"
-import { BoxCamera, BtnCapture, BtnFlash, BtnFlip, ConfigBtnCapture } from "./Style"
+import { BoxCamera, BtnCapture, BtnFlash, BtnFlip, ConfigBtnCapture, LastPhoto, Options } from "./Style"
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { Btn, BtnReturn, BtnReturnPhoto, IconReturn } from "../Button/Button";
 import { ButtonTitle } from "../Title/Style";
 import { LinkCancel } from "../Link/Style";
 import { EvilIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker'
 
 
 export const CameraPhoto = ({ navigation, route }) => {
@@ -32,8 +33,11 @@ export const CameraPhoto = ({ navigation, route }) => {
     }
 
     async function GetLastPhoto(){
-        const assets = await MediaLibrary.getAssetsAsync({sortBy: [[MediaLibrary.SortBy.creationTime, false]], first : 1})
-        console.log(assets);
+        const {assets} = await MediaLibrary.getAssetsAsync({sortBy: [[MediaLibrary.SortBy.creationTime, false]], first : 1})
+        console.log(assets[0].uri);
+        if(assets.length > 0){
+            setLatestPhoto(assets[0].uri)
+        }
     }
 
 
@@ -47,10 +51,24 @@ export const CameraPhoto = ({ navigation, route }) => {
         await setOpenModal(false)
 
         if (route.params.imageProfile) {
-            navigation.navigate("Profile", { photoUri: photo })
+            navigation.navigate("Main", { photoUri: photo })
         } else {
 
             navigation.navigate("SeePrescription", { photoUri: photo })
+        }
+    }
+    async function SelectImageGallery()
+    {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1
+        });
+
+        if(!result.canceled)
+        {
+            setPhoto(result.assets[0].uri);
+            setOpenModal(true)
+           
         }
     }
 
@@ -75,9 +93,21 @@ export const CameraPhoto = ({ navigation, route }) => {
                 </BtnReturnPhoto>
                 <BoxCamera>
 
-                    <BtnFlash onPress={() => setFlashOn(flashOn == FlashMode.on ? FlashMode.off : FlashMode.on)}>
+                    {/* <BtnFlash onPress={() => setFlashOn(flashOn == FlashMode.on ? FlashMode.off : FlashMode.on)}>
                         <Ionicons name={flashOn === FlashMode.on ? "flash" : "flash-off"} size={42} color={flashOn === FlashMode.on ? "yellow" : "white"} />
-                    </BtnFlash>
+                    </BtnFlash> */}
+               
+                    <Options onPress={() => SelectImageGallery()}>
+{
+    latestPhoto != null ?  (
+        <LastPhoto
+        source={{uri: latestPhoto}}
+        />
+    )
+    :
+    <LastPhoto />
+}
+                    </Options>
 
                     <BtnCapture onPress={() => CapturePhoto()}>
                         <ConfigBtnCapture></ConfigBtnCapture>

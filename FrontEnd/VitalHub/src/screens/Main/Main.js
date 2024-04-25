@@ -8,7 +8,7 @@ import {Profile} from '../Profile/Profile'
 
 import {FontAwesome, FontAwesome5} from '@expo/vector-icons'
 
-export const Main = () => {
+export const Main = ({navigation, route}) => {
     return(
         <BottomTab.Navigator
           initialRouteName="Home"
@@ -51,8 +51,10 @@ export const Main = () => {
 
             <BottomTab.Screen
              name="Profile"
-             component={Profile}
-            />
+            //  component={Profile}
+            >
+                {(props) => <Profile navigation={navigation} route={route}/>}
+        </BottomTab.Screen>
         </BottomTab.Navigator>
     )
 }

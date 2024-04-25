@@ -161,10 +161,40 @@ export const Profile = ({ navigation, route }) => {
     }
 
     useEffect(() => {
-        loadData();
+       
         GetSpecialties();
     }, [])
 
+
+
+    useEffect(() => {
+        loadData();
+        if(photoUri ){
+            AlterarFotoPerfil();
+        }
+    },[photoUri])
+
+
+    async function AlterarFotoPerfil(){
+        const formData = new FormData();
+        formData.append("Arquivo", {
+            uri: photoUri ,
+            name:`image.${photoUri.split(".")[1]}` ,
+            type: `image/${photoUri.split(".")[1]}`
+        })
+   
+        console.log(role.id + " iddddddd");
+        console.log(`Usuario/AlterarFotoPerfil?id=${role.id}`);
+        await api.put(`Usuario/AlterarFotoPerfil?id=${role.id}`, formData, {
+            headers: {
+                "Content-Type" : "multipart/form-data"
+            }
+        }).then(response => {
+            console.log(response);
+        }).catch(error => {
+            console.log(error);
+        })
+    }
     return (
         <ContainerScroll>
 
@@ -221,12 +251,13 @@ export const Profile = ({ navigation, route }) => {
                         <TitleProfile>{role.name}</TitleProfile>
                         <SubTitleProfile>{role.email}</SubTitleProfile>
 
-
+          
                         <BoxInput
                             textLabel={'CRM'}
                             placeholder={'859********'}
                             fieldValue={crm}
                             editable={true}
+                            insertRecord={true}
                             onChangeText={setCrm}
                         />
 
@@ -266,8 +297,8 @@ export const Profile = ({ navigation, route }) => {
 
                 <ContainerImage>
 
-                    <ProfileImage source={{uri: photoUri}} />
-
+                    <ProfileImage source={photoUri != null ? {uri: photoUri} : require("../../assets/photo.png")} />
+                   
 
                     <ViewTitle>
                         <TitleProfile>{role.name}</TitleProfile>
@@ -340,11 +371,13 @@ export const Profile = ({ navigation, route }) => {
                             textLabel={'Data de nascimento:'}
                             editable={true}
                             placeholder={dataTeste}
+                            insertRecord={true}
                             onChangeText={setDataNascimento}
                         />
                         <BoxInput
                             textLabel={'CPF'}
                             editable={true}
+                            insertRecord={true}
                             fieldValue={cpf}
                             onChangeText={setCpf}
                         />
@@ -352,6 +385,7 @@ export const Profile = ({ navigation, route }) => {
                             textLabel={'Logradouro'}
                             editable={true}
                             fieldValue={logradouro}
+                            insertRecord={true}
                             onChangeText={setLogradouro}
                         />
                         <ViewFormat>
@@ -359,12 +393,14 @@ export const Profile = ({ navigation, route }) => {
                                 textLabel={'Cep'}
                                 fieldWidth={'45'}
                                 editable={true}
+                                insertRecord={true}
                                 fieldValue={cep}
                                 onChangeText={setCep}
                             />
                             <BoxInput
                                 textLabel={'Cidade'}
                                 fieldWidth={'45'}
+                                insertRecord={true}
                                 editable={true}
                                 fieldValue={cidade}
                                 onChangeText={setCidade}
