@@ -13,9 +13,11 @@ import InputSelect from "../../components/InputSelect/InputSelect"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import api, { especialidadeResource, buscarPacienteResource, medicosResource, GetSpecialtiesResource, buscarMedicoResource, PostUser, GetIdTipoUsuario } from "../../services/service"
 import { ButtonCamera, ContainerImage } from "./Style"
+import { SelectList } from "react-native-dropdown-select-list"
+import { InputLabel } from "../../components/BoxInput/Style"
 
 export const Profile = ({ navigation, route }) => {
-
+    
     const [profileEdit, setProfileEdit] = useState(false);
     const [especialidade, setEspecialidade] = useState();
     const [logradouro, setLogradouro] = useState();
@@ -33,19 +35,24 @@ export const Profile = ({ navigation, route }) => {
     const [nome, setNome] = useState();
     const [idTipoUsuario, setIdTipoUsuario] = useState();
     const [dataTeste, setDataTeste] = useState()
+    const [selected, setSelected] = useState("");
     //Configuracao token
-
+    
     const [role, setRole] = useState({});
     const [token, setToken] = useState()
-
+    
     const { photoUri } = route.params || {};
     const[isPhoto,setIsPhoto] = useState(true)
     async function logOut() {
         AsyncStorage.removeItem("token");
         navigation.replace("Login")
     }
-
-
+    
+    useEffect(() => {
+        loadData();
+        GetSpecialties();
+    }, [])
+    
     async function loadData() {
         const token = await userDecodeToken();
         setRole(token);
@@ -55,10 +62,12 @@ export const Profile = ({ navigation, route }) => {
 
         if (token.role == "Medico") {
             response = await api.get(`${buscarMedicoResource}?id=${token.id}`)
-            setEspecialidade(response.data.especialidade.especialidade1)
-            setLogradouro(response.data.endereco.logradouro)
-            setCep(response.data.endereco.cep)
-            setCrm(response.data.crm)
+           setEspecialidade(response.data.especialidade.especialidade1);
+           console.log(response.data);
+            setLogradouro(response.data.endereco.logradouro);
+            setCep(response.data.endereco.cep);
+            setCrm(response.data.crm);
+
         } else {
             try {
                 response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
@@ -111,18 +120,17 @@ export const Profile = ({ navigation, route }) => {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
-            await api.put(medicosResource, {
-
+            const response = await api.put(medicosResource, {
                 crm: crm,
                 cep: cep,
                 logradouro: logradouro,
-                especialidadeId: "5dfc3955-7fd8-47d6-96d9-f9753331fb8e",
-                numero: numero
+                especialidadeId: especialidade,
 
             }, config)
+            await loadData()
             setProfileEdit(false)
-
-        } catch (error) {
+        } 
+        catch (error) {
             console.log(error + " erro senai");
         }
     }
@@ -132,6 +140,7 @@ export const Profile = ({ navigation, route }) => {
 
             var response = await api.get(GetSpecialtiesResource)
             setEspecialidades(response.data)
+            console.log(especialidades);
 
         } catch (error) {
             console.log(error + " erro senai");
@@ -143,12 +152,9 @@ export const Profile = ({ navigation, route }) => {
     function dePara(retornoApi) {
         let arrayOptions = [];
         retornoApi.forEach((e) => {
-            arrayOptions.push({ value: e.id, text: e.especialidade1 });
+            arrayOptions.push({ key: e.id, value: e.especialidade1 });
         });
-        // let arrayText = [];
-        // arrayOptions.forEach((e) => {
-        //     arrayText.push({text: e.text})
-        // })
+
         console.log(arrayOptions);
         return arrayOptions;
     }
@@ -160,10 +166,13 @@ export const Profile = ({ navigation, route }) => {
         setIsPhoto(true)
     }
 
+<<<<<<< HEAD
     useEffect(() => {
        
         GetSpecialties();
     }, [])
+=======
+>>>>>>> 53827b1d98bbcd92de0840d658510ef81248f892
 
 
 
@@ -276,12 +285,22 @@ export const Profile = ({ navigation, route }) => {
                             editable={true}
                             onChangeText={setCep}
                         />
-                        <InputSelect
-                            textButton="Selecionar Especialidade"
-                            handleSelectedFn={setEspecialidade}
-                            data={dePara(especialidades)}
+
+                        <InputLabel>Especialidades</InputLabel>
+                        <SelectList
+                        boxStyles={{width: "100%", height: 70, alignItems: "center", marginTop: 20}}
+                        fontFamily="Quicksand_500Medium"
+                        searchPlaceholder="Pesquise"
+                        placeholder="Selecione uma especialidade"
+                        maxHeight={140}
+                        dropdownTextStyles={{fontSize:18}}
+                        inputStyles= {{fontSize: 18}}
+                        setSelected={(val) => setEspecialidade(val)} 
+                        data={dePara(especialidades)}
+                        save="especialidade1"
                         />
 
+                    
                         <Btn onPress={() => updateDoctor()}>
                             <ButtonTitle>SALVAR</ButtonTitle>
                         </Btn>
