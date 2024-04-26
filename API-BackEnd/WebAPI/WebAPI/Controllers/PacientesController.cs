@@ -8,6 +8,7 @@ using WebAPI.Repositories;
 using WebAPI.Utils.BlobStorage;
 using WebAPI.Utils.Mail;
 using WebAPI.ViewModels;
+using static System.Net.WebRequestMethods;
 
 namespace WebAPI.Controllers
 {
@@ -58,8 +59,11 @@ namespace WebAPI.Controllers
                 user.Email = pacienteModel.Email;
                 user.TipoUsuarioId = pacienteModel.IdTipoUsuario;
 
-                var connectionString = "";
+                var connectionString ="";
                 var containerName = "";
+               
+
+
 
                 user.Foto = await AzureBlobStorageHelper.UploadImageBlobAsync(pacienteModel.Arquivo, connectionString, containerName);
 

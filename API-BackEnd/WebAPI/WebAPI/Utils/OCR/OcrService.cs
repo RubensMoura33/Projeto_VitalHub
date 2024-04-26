@@ -9,6 +9,8 @@ namespace WebAPI.Utils.OCR
         private readonly string _subscriptionKey = "";
         private readonly string _endpoint = "";
        
+
+
         //Método para reconhecer o caracter(texto) a partir de uma imagem
         public async Task<string> RecognizeTextAsync(Stream imageStream)
         {

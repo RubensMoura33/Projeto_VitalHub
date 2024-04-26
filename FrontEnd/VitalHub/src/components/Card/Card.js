@@ -7,6 +7,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 export const Card = ({
     status = "Pendentes",
+    id,
     onPressCancel,
     onPressAppointment,
     tipoUser,
