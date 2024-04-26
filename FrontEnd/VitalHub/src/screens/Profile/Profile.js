@@ -84,9 +84,6 @@ export const Profile = ({ navigation, route }) => {
 
 
                 setFoto(response.data.idNavigation.foto);
-                setDataNascimento(response.data.dataNascimento)
-                setDataTeste(new Date(response.data.dataNascimento).toLocaleDateString("pt-BR"))
-
                 setCpf(response.data.cpf)
                 setLogradouro(response.data.endereco.logradouro)
                 setCep(response.data.endereco.cep)
@@ -182,13 +179,6 @@ export const Profile = ({ navigation, route }) => {
         navigation.navigate("CameraPhoto", { imageProfile: true, getMediaLibrary: true });
         setIsPhoto(true)
     }
-
-
-
-
-
-
-
 
 
     async function AlterarFotoPerfil() {

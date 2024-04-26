@@ -64,21 +64,27 @@ export const Register = ({ navigation }) => {
     }
 
     async function Register() {
-        setSpinner(spinner ? false : true);
         if (confirmarSenha === senha) {
-            var promise = await api.post(PostUser,
-                {
-                    nome: nome,
-                    email: email,
-                    senha: senha,
-                    idTipoUsuario: idTipoUsuario
-                })
-                navigation.replace("Login")
+            const formData = new FormData();
+            formData.append('Nome', nome);
+            formData.append('Email', email);
+            formData.append('Senha', senha);
+            formData.append('IdTipoUsuario', idTipoUsuario);
+            try {
+                await api.post("Pacientes", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                navigation.replace("Login");
+                handleCallNotifications();
+            } catch (error) {
+                
+            }
         }
-        else{
-            console.log(error + " erro senai");
+        else {
+            Alert.alert("Senha de confirmacao nao corresponde a sua senha")
         }
-
 
     }
 
@@ -101,8 +107,8 @@ loadData();
 
             <Input placeholder={"Nome"} value={nome} onChangeText={setNome} />
             <Input placeholder={"Email"} value={email} onChangeText={setEmail} />
-            <Input placeholder={"Senha"} value={senha} onChangeText={setSenha} />
-            <Input placeholder={"Confirmar senha"} value={confirmarSenha} onChangeText={setConfirmarSenha} />
+            <Input placeholder={"Senha"} value={senha} onChangeText={setSenha} secureTextEntry={true}/>
+            <Input placeholder={"Confirmar senha"} value={confirmarSenha} onChangeText={setConfirmarSenha} secureTextEntry={true}/>
 
             <Btn disabled={spinner} onPress={() => Register()}>
                 {spinner ? (
