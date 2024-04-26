@@ -7,16 +7,18 @@ import { BtnCancelPhoto, BtnInsertPhoto } from "../../components/Button/Button"
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinkCancelMargin } from "../../components/Link/Style"
 import { Image } from "react-native"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { InputExame } from "../../components/Input/Style"
+import api from "../../services/service"
 
 
 export const SeePrescription = ({ navigation, route }) => {
     const { photoUri } = route.params || {};
-    const[isPhoto,setIsPhoto] = useState(true)
+    const [isPhoto, setIsPhoto] = useState(true)
+    const [descricaoExame, setDescricaoExame] = useState();
 
     function onPressPhoto() {
-        navigation.navigate("CameraPhoto");
+        navigation.navigate("CameraPhoto", { imageProfile: false, getMediaLibrary: true });
         setIsPhoto(true)
     }
 
@@ -24,6 +26,37 @@ export const SeePrescription = ({ navigation, route }) => {
         setIsPhoto(false);
         route.params = null
     }
+
+    async function inserirExame() {
+        console.log(`${route.params}` + " iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+        const formData = new FormData();
+        
+        formData.append("Imagem", {
+            uri: photoUri,
+            name: `image.${photoUri.split('.').pop()}`,
+            type: `image.${photoUri.split('.').pop()}`,
+        });
+
+        await api.post('Exame/Cadastrar', formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }).then(response => {
+            console.log(response.data.descricao + "teste");
+            setDescricaoExame(descricaoExame + "\n" + response.data.descricao)
+        }).catch(error => {
+            console.log(error + "error");
+        });
+    }
+
+
+
+
+    useEffect(() => {
+if(photoUri != null){
+    inserirExame();
+}
+    },[photoUri])
 
     return (
         <ContainerScroll>
@@ -39,6 +72,7 @@ export const SeePrescription = ({ navigation, route }) => {
                 <BoxInput
                     multiline={true}
                     textLabel={"Descrição da consulta"}
+                    fieldValue={descricaoExame}
                     placeholder={`O paciente possuí uma infecção no ouvido. Necessário repouse de 2 dias e acompanhamento médico constante`}
                     fieldHeight={150}
                 />
@@ -71,7 +105,7 @@ export const SeePrescription = ({ navigation, route }) => {
 
                 <ViewInsertPhoto>
 
-                    <BtnInsertPhoto onPress={() => {!photoUri ? onPressPhoto() : null}}>
+                    <BtnInsertPhoto onPress={() => { !photoUri ? onPressPhoto() : null }}>
                         <MaterialCommunityIcons name="camera-plus-outline" size={26} color="white" />
                         <BtnProfile>Enviar</BtnProfile>
                     </BtnInsertPhoto>

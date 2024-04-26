@@ -53,6 +53,7 @@ export const Home = ({ navigation }) => {
         } else {
 
             const response = await api.get(`${buscarConsultasPaciente}?data=${dataConsulta}&id=${userData.id}`)
+   
             setPaciente(response.data);
     
 
@@ -147,7 +148,9 @@ export const Home = ({ navigation }) => {
                                     MostrarModalInserir('cancelar', item)
 
                                 }}>
-                                    <Card name={item.paciente.idNavigation.nome}
+                                    <Card 
+                                    id={item.id}
+                                    name={item.paciente.idNavigation.nome}
                                         status={item.situacao.situacao}
                                         tipoUser={userData.role}
                                         age={item.paciente.idade}
@@ -254,15 +257,15 @@ export const Home = ({ navigation }) => {
                         } else if (statusList === 'realizada' && item.situacao.situacao == 'Realizados') {
                             return (
                                 <Card
+                                id={item.id}
                                     name={item.medicoClinica.medico.idNavigation.nome}
                                     tipoUser={userData.role}
                                     crm={item.medicoClinica.medico.crm}
                                     status={item.situacao.situacao}
-
                                     hour={item.dataConsulta}
                                     typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
                                     onPressAppointment={() => {
-                                        navigation.replace('SeePrescription')
+                                        navigation.replace('SeePrescription', {data: item})
                                     }}
                                 />
                             )

@@ -17,7 +17,7 @@ import { SelectList } from "react-native-dropdown-select-list"
 import { InputLabel } from "../../components/BoxInput/Style"
 
 export const Profile = ({ navigation, route }) => {
-    
+
     const [profileEdit, setProfileEdit] = useState(false);
     const [especialidade, setEspecialidade] = useState();
     const [logradouro, setLogradouro] = useState();
@@ -30,6 +30,7 @@ export const Profile = ({ navigation, route }) => {
     const [cpf, setCpf] = useState();
     const [crm, setCrm] = useState();
     const [dataNascimento, setDataNascimento] = useState();
+    const [foto, setFoto] = useState();
     const [numero, setNumero] = useState()
     const [cidade, setCidade] = useState()
     const [nome, setNome] = useState();
@@ -37,22 +38,29 @@ export const Profile = ({ navigation, route }) => {
     const [dataTeste, setDataTeste] = useState()
     const [selected, setSelected] = useState("");
     //Configuracao token
-    
+
     const [role, setRole] = useState({});
     const [token, setToken] = useState()
-    
+
     const { photoUri } = route.params || {};
-    const[isPhoto,setIsPhoto] = useState(true)
+    const [isPhoto, setIsPhoto] = useState(true)
     async function logOut() {
         AsyncStorage.removeItem("token");
         navigation.replace("Login")
     }
-    
+
     useEffect(() => {
         loadData();
         GetSpecialties();
     }, [])
-    
+
+    useEffect(() => {
+        loadData();
+        if (photoUri) {
+            AlterarFotoPerfil();
+        }
+    }, [photoUri])
+
     async function loadData() {
         const token = await userDecodeToken();
         setRole(token);
@@ -62,8 +70,10 @@ export const Profile = ({ navigation, route }) => {
 
         if (token.role == "Medico") {
             response = await api.get(`${buscarMedicoResource}?id=${token.id}`)
-           setEspecialidade(response.data.especialidade.especialidade1);
-           console.log(response.data);
+        
+            setFoto(response.data.idNavigation.foto)
+            setEspecialidade(response.data.especialidade.especialidade1);
+            console.log(response.data);
             setLogradouro(response.data.endereco.logradouro);
             setCep(response.data.endereco.cep);
             setCrm(response.data.crm);
@@ -71,6 +81,8 @@ export const Profile = ({ navigation, route }) => {
         } else {
             try {
                 response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
+
+                setFoto(response.data.idNavigation.foto);
                 setDataNascimento(response.data.dataNascimento)
                 setDataTeste(new Date(response.data.dataNascimento).toLocaleDateString("pt-BR"))
                 setCpf(response.data.cpf)
@@ -129,7 +141,7 @@ export const Profile = ({ navigation, route }) => {
             }, config)
             await loadData()
             setProfileEdit(false)
-        } 
+        }
         catch (error) {
             console.log(error + " erro senai");
         }
@@ -162,41 +174,30 @@ export const Profile = ({ navigation, route }) => {
 
     function onPressPhoto() {
         console.log("estou aqui");
-        navigation.navigate("CameraPhoto", {imageProfile: true, getMediaLibrary: true });
+        navigation.navigate("CameraPhoto", { imageProfile: true, getMediaLibrary: true });
         setIsPhoto(true)
     }
 
-<<<<<<< HEAD
-    useEffect(() => {
-       
-        GetSpecialties();
-    }, [])
-=======
->>>>>>> 53827b1d98bbcd92de0840d658510ef81248f892
 
 
 
-    useEffect(() => {
-        loadData();
-        if(photoUri ){
-            AlterarFotoPerfil();
-        }
-    },[photoUri])
 
 
-    async function AlterarFotoPerfil(){
+
+
+    async function AlterarFotoPerfil() {
         const formData = new FormData();
         formData.append("Arquivo", {
-            uri: photoUri ,
-            name:`image.${photoUri.split(".")[1]}` ,
+            uri: photoUri,
+            name: `image.${photoUri.split(".")[1]}`,
             type: `image/${photoUri.split(".")[1]}`
         })
-   
-        console.log(role.id + " iddddddd");
+
+
         console.log(`Usuario/AlterarFotoPerfil?id=${role.id}`);
         await api.put(`Usuario/AlterarFotoPerfil?id=${role.id}`, formData, {
             headers: {
-                "Content-Type" : "multipart/form-data"
+                "Content-Type": "multipart/form-data"
             }
         }).then(response => {
             console.log(response);
@@ -210,9 +211,12 @@ export const Profile = ({ navigation, route }) => {
             {role.role == "Medico" && !profileEdit ? (
                 <>
                     <ContainerImage>
-                        <ProfileImage source={require("../../assets/photo.png")} />
-
+                        <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }}  />
+                            <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                                <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                            </ButtonCamera>
                     </ContainerImage>
+
 
                     <ContainerProfile>
                         <TitleProfile>{role.name}</TitleProfile>
@@ -254,13 +258,19 @@ export const Profile = ({ navigation, route }) => {
             ) : role.role == "Medico" && profileEdit ? (
 
                 <>
-                    <ProfileImage source={require("../../assets/photo.png")} />
+                    <ContainerImage>
+                        <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
+                            <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                                <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                            </ButtonCamera>
+                    </ContainerImage>
+
 
                     <ContainerProfile>
                         <TitleProfile>{role.name}</TitleProfile>
                         <SubTitleProfile>{role.email}</SubTitleProfile>
 
-          
+
                         <BoxInput
                             textLabel={'CRM'}
                             placeholder={'859********'}
@@ -288,19 +298,19 @@ export const Profile = ({ navigation, route }) => {
 
                         <InputLabel>Especialidades</InputLabel>
                         <SelectList
-                        boxStyles={{width: "100%", height: 70, alignItems: "center", marginTop: 20}}
-                        fontFamily="Quicksand_500Medium"
-                        searchPlaceholder="Pesquise"
-                        placeholder="Selecione uma especialidade"
-                        maxHeight={140}
-                        dropdownTextStyles={{fontSize:18}}
-                        inputStyles= {{fontSize: 18}}
-                        setSelected={(val) => setEspecialidade(val)} 
-                        data={dePara(especialidades)}
-                        save="especialidade1"
+                            boxStyles={{ width: "100%", height: 70, alignItems: "center", marginTop: 20 }}
+                            fontFamily="Quicksand_500Medium"
+                            searchPlaceholder="Pesquise"
+                            placeholder="Selecione uma especialidade"
+                            maxHeight={140}
+                            dropdownTextStyles={{ fontSize: 18 }}
+                            inputStyles={{ fontSize: 18 }}
+                            setSelected={(val) => setEspecialidade(val)}
+                            data={dePara(especialidades)}
+                            save="especialidade1"
                         />
 
-                    
+
                         <Btn onPress={() => updateDoctor()}>
                             <ButtonTitle>SALVAR</ButtonTitle>
                         </Btn>
@@ -316,15 +326,15 @@ export const Profile = ({ navigation, route }) => {
 
                 <ContainerImage>
 
-                    <ProfileImage source={photoUri != null ? {uri: photoUri} : require("../../assets/photo.png")} />
-                   
+                    <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
+
 
                     <ViewTitle>
                         <TitleProfile>{role.name}</TitleProfile>
                         <SubTitleProfile>{role.email}</SubTitleProfile>
-                    <ButtonCamera onPress={() => {!photoUri ? onPressPhoto() : null}}>
-                        <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb"/>
-                    </ButtonCamera>
+                        <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                            <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                        </ButtonCamera>
                     </ViewTitle>
                 </ContainerImage>
 
@@ -377,7 +387,7 @@ export const Profile = ({ navigation, route }) => {
                 <>
 
                     <ContainerImage>
-                        <ProfileImage source={require("../../assets/photo.png")} />
+                        <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
                         <ViewTitle>
                             <TitleProfile>{role.name}</TitleProfile>
                             <SubTitleProfile>{role.email}</SubTitleProfile>

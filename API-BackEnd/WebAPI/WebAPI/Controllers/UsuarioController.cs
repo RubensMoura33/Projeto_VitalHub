@@ -64,8 +64,6 @@ namespace WebAPI.Controllers
                 }
 
 
-
-
                 var connectionString = "";
                 var containerName = "";
 
