@@ -20,7 +20,7 @@ export const ModalAppointment = ({ setShowModalAppointment, navigation, visible,
     }, [data])
     return (
         dataPaciente ?
-            <Modal {...rest} visible={visible} transparent={true} animationType="fade">
+            <Modal {...rest} visible={visible} transparent={true} animationType="fade" animationsOutTiming={0}>
                 <ViewModal>
                     <ContentModal>
                         <Image source={require('../../assets/nicole.png')} />

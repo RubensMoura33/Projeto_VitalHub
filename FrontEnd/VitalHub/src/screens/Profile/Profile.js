@@ -34,7 +34,6 @@ export const Profile = ({ navigation, route }) => {
     const [cidade, setCidade] = useState()
     const [nome, setNome] = useState();
     const [idTipoUsuario, setIdTipoUsuario] = useState();
-    const [dataTeste, setDataTeste] = useState()
     const [selected, setSelected] = useState("");
     //Configuracao token
     
@@ -71,8 +70,7 @@ export const Profile = ({ navigation, route }) => {
         } else {
             try {
                 response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
-                setDataNascimento(response.data.dataNascimento)
-                setDataTeste(new Date(response.data.dataNascimento).toLocaleDateString("pt-BR"))
+                setDataNascimento(new Date(response.data.dataNascimento).toLocaleDateString("pt-BR"))
                 setCpf(response.data.cpf)
                 setLogradouro(response.data.endereco.logradouro)
                 setCep(response.data.endereco.cep)
@@ -88,16 +86,19 @@ export const Profile = ({ navigation, route }) => {
     }
 
     async function updatePatient() {
+    
+        const partes = dataNascimento.split("/");
+        const novaDataFormatada = `${partes[2]}-${partes[1]}-${partes[0]}`;
+ 
         try {
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
-            await api.put(PostUser, {
-
+            await api.put(`${PostUser}?idUsuario=${role.id}`, {
                 rg: rg,
                 cpf: cpf,
-                dataNascimento: dataNascimento,
+                dataNascimento: novaDataFormatada,
                 cep: cep,
                 logradouro: logradouro,
                 numero: numero,
@@ -166,13 +167,10 @@ export const Profile = ({ navigation, route }) => {
         setIsPhoto(true)
     }
 
-<<<<<<< HEAD
     useEffect(() => {
        
         GetSpecialties();
     }, [])
-=======
->>>>>>> 53827b1d98bbcd92de0840d658510ef81248f892
 
 
 
@@ -331,7 +329,7 @@ export const Profile = ({ navigation, route }) => {
                 <ContainerSafeEdit>
                     <BoxInput
                         textLabel={'Data de nascimento:'}
-                        fieldValue={new Date(dataNascimento).toLocaleDateString("pt-BR")}
+                        fieldValue={dataNascimento}
                         editable={false}
 
                     />
@@ -389,9 +387,11 @@ export const Profile = ({ navigation, route }) => {
                         <BoxInput
                             textLabel={'Data de nascimento:'}
                             editable={true}
-                            placeholder={dataTeste}
+                            fieldValue={dataNascimento}
                             insertRecord={true}
-                            onChangeText={setDataNascimento}
+                            onChangeText={(text) =>{
+                              setDataNascimento(text)  ;
+                            } }
                         />
                         <BoxInput
                             textLabel={'CPF'}
