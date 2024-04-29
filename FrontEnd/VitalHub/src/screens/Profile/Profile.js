@@ -24,8 +24,6 @@ export const Profile = ({ navigation, route }) => {
     const [cep, setCep] = useState();
     const [especialidades, setEspecialidades] = useState([]);
     const [dataUser, setDataUser] = useState({});
-    const [endereco, setEndereco] = useState({});
-    const [spinner, setSpinner] = useState(false);
     const [rg, setRg] = useState();
     const [cpf, setCpf] = useState();
     const [crm, setCrm] = useState();
@@ -36,6 +34,7 @@ export const Profile = ({ navigation, route }) => {
     const [nome, setNome] = useState();
     const [idTipoUsuario, setIdTipoUsuario] = useState();
     const [selected, setSelected] = useState("");
+
     //Configuracao token
 
     const [role, setRole] = useState({});
@@ -69,7 +68,7 @@ export const Profile = ({ navigation, route }) => {
 
         if (token.role == "Medico") {
             response = await api.get(`${buscarMedicoResource}?id=${token.id}`)
-        
+
             setFoto(response.data.idNavigation.foto)
             setEspecialidade(response.data.especialidade.especialidade1);
             console.log(response.data);
@@ -94,7 +93,7 @@ export const Profile = ({ navigation, route }) => {
         }
 
         setDataUser(response.data);
-        setEndereco(response.data.endereco);
+
 
     }
 
@@ -145,7 +144,7 @@ export const Profile = ({ navigation, route }) => {
             setProfileEdit(false)
         }
         catch (error) {
-            console.log(error + " erro senai");
+            console.log(error);
         }
     }
 
@@ -157,7 +156,7 @@ export const Profile = ({ navigation, route }) => {
             console.log(especialidades);
 
         } catch (error) {
-            console.log(error + " erro senai");
+            console.log(error);
         }
 
     }
@@ -207,10 +206,10 @@ export const Profile = ({ navigation, route }) => {
             {role.role == "Medico" && !profileEdit ? (
                 <>
                     <ContainerImage>
-                        <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }}  />
-                            <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
-                                <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
-                            </ButtonCamera>
+                        <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
+                        <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                            <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                        </ButtonCamera>
                     </ContainerImage>
 
 
@@ -256,9 +255,9 @@ export const Profile = ({ navigation, route }) => {
                 <>
                     <ContainerImage>
                         <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
-                            <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
-                                <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
-                            </ButtonCamera>
+                        <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                            <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                        </ButtonCamera>
                     </ContainerImage>
 
 
@@ -382,13 +381,19 @@ export const Profile = ({ navigation, route }) => {
             </>) : (
                 <>
 
+
                     <ContainerImage>
+
                         <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
+
+
                         <ViewTitle>
                             <TitleProfile>{role.name}</TitleProfile>
                             <SubTitleProfile>{role.email}</SubTitleProfile>
+                            <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                                <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                            </ButtonCamera>
                         </ViewTitle>
-                        <ButtonCamera />
                     </ContainerImage>
 
                     <ContainerSafeEdit>

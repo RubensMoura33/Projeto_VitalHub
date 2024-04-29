@@ -59,9 +59,9 @@ namespace WebAPI.Controllers
                 user.Email = pacienteModel.Email;
                 user.TipoUsuarioId = pacienteModel.IdTipoUsuario;
 
-                var connectionString ="";
+                var connectionString = "";
                 var containerName = "";
-               
+
 
 
 

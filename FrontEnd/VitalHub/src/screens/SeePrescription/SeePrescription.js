@@ -10,12 +10,14 @@ import { Image } from "react-native"
 import { useEffect, useState } from "react"
 import { InputExame } from "../../components/Input/Style"
 import api from "../../services/service"
+import { LinearGradient } from "expo-linear-gradient"
 
 
 export const SeePrescription = ({ navigation, route }) => {
     const { photoUri } = route.params || {};
     const [isPhoto, setIsPhoto] = useState(true)
     const [descricaoExame, setDescricaoExame] = useState();
+    const [dataConsulta, setDataConsulta] = useState();
 
     function onPressPhoto() {
         navigation.navigate("CameraPhoto", { imageProfile: false, getMediaLibrary: true });
@@ -26,24 +28,39 @@ export const SeePrescription = ({ navigation, route }) => {
         setIsPhoto(false);
         route.params = null
     }
+useEffect(() => {
+if(route.params.data != null){
+    console.log(route.params.data);
+    setDataConsulta(route.params.data)
+}
+},[route])
 
     async function inserirExame() {
-        console.log(`${route.params}` + " iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+
         const formData = new FormData();
-        
+        formData.append("ConsultaId", dataConsulta.id)
         formData.append("Imagem", {
             uri: photoUri,
             name: `image.${photoUri.split('.').pop()}`,
             type: `image.${photoUri.split('.').pop()}`,
         });
 
+        console.log(dataConsulta.id);
+        console.log({
+            uri: photoUri,
+            name: `image.${photoUri.split('.').pop()}`,
+            type: `image.${photoUri.split('.').pop()}`,
+        });
+
+   
         await api.post('Exame/Cadastrar', formData, {
             headers: {
-                "Content-Type": "multipart/form-data"
+                "Content-Type" : "multipart/form-data"
             }
+
         }).then(response => {
-            console.log(response.data.descricao + "teste");
-            setDescricaoExame(descricaoExame + "\n" + response.data.descricao)
+            console.log(response.data.descricao);
+            // setDescricaoExame(descricaoExame + "\n" + response.data.descricao)
         }).catch(error => {
             console.log(error + "error");
         });
@@ -53,10 +70,10 @@ export const SeePrescription = ({ navigation, route }) => {
 
 
     useEffect(() => {
-if(photoUri != null){
-    inserirExame();
-}
-    },[photoUri])
+        if (photoUri != null) {
+            inserirExame();
+        }
+    }, [photoUri])
 
     return (
         <ContainerScroll>
