@@ -68,7 +68,6 @@ namespace WebAPI.Controllers
                 user.TipoUsuarioId = medicoModel.IdTipoUsuario;
 
 
-
                 var connectionString = "";
                 var containerName = "";
 

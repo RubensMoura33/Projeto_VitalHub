@@ -34,7 +34,7 @@ export const RecuperarSenha = "RecuperaraSenha?email="
 
 
 const porta = "4466"
-const ip = "172.16.39.120";
+const ip = "192.168.21.116";
 
 const localApiUri = `http://${ip}:${porta}/api/`
 

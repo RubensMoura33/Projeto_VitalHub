@@ -257,7 +257,7 @@ export const Home = ({ navigation }) => {
                         } else if (statusList === 'realizada' && item.situacao.situacao == 'Realizados') {
                             return (
                                 <Card
-                                id={item.id}
+                                    id={item.id}
                                     name={item.medicoClinica.medico.idNavigation.nome}
                                     tipoUser={userData.role}
                                     crm={item.medicoClinica.medico.crm}
