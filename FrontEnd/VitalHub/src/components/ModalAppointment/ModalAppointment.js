@@ -4,6 +4,7 @@ import { Btn } from "../Button/Button"
 import { LinkCancel } from "../Link/Style"
 import { ButtonModal, Cancel, ContentModal, TextAge, TextEmail, ViewData, ViewModal } from "./Style"
 import { useEffect, useState } from "react"
+import { ProfileImage } from "../Images/Style"
 
 export const ModalAppointment = ({ setShowModalAppointment, navigation, visible, data, ...rest }) => {
 
@@ -14,7 +15,8 @@ export const ModalAppointment = ({ setShowModalAppointment, navigation, visible,
 
     const [dataPaciente, setDataPaciente] = useState();
     useEffect(() => {
-        if (data && data.dataConsulta != null) {
+        if (data && data.dataConsulta &&  data.paciente.idNavigation.foto != null) {
+            
             setDataPaciente(true);
         }
     }, [data])
@@ -23,7 +25,7 @@ export const ModalAppointment = ({ setShowModalAppointment, navigation, visible,
             <Modal {...rest} visible={visible} transparent={true} animationType="fade" animationsOutTiming={0}>
                 <ViewModal>
                     <ContentModal>
-                        <Image source={require('../../assets/nicole.png')} />
+                        <ProfileImage  source={{uri: data.paciente.idNavigation.foto}} />
 
                         <TitleProfile>{data.paciente.idNavigation.nome}</TitleProfile>
 

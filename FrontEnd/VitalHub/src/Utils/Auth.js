@@ -29,6 +29,7 @@ export const userDecodeToken = async () => {
     return{
         token: token,
         role: decoded.role,
+        foto: decoded.foto,
         name: decoded.name,
         email: decoded.email,
         id: decoded.jti

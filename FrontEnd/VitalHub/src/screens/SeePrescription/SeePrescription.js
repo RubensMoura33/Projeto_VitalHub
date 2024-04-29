@@ -28,41 +28,38 @@ export const SeePrescription = ({ navigation, route }) => {
         setIsPhoto(false);
         route.params = null
     }
-useEffect(() => {
-if(route.params.data != null){
-    console.log(route.params.data);
-    setDataConsulta(route.params.data)
-}
-},[route])
+    useEffect(() => {
+        if (route.params.data != null) {
+            console.log(route.params.data);
+            setDataConsulta(route.params.data)
+        }
+    }, [route])
 
     async function inserirExame() {
 
         const formData = new FormData();
-        formData.append("ConsultaId", dataConsulta.id)
+
         formData.append("Imagem", {
             uri: photoUri,
             name: `image.${photoUri.split('.').pop()}`,
-            type: `image.${photoUri.split('.').pop()}`,
+            type: `image/${photoUri.split('.').pop()}`,
         });
+        console.log(photoUri);
+        formData.append("ConsultaId", dataConsulta.id)
 
         console.log(dataConsulta.id);
-        console.log({
-            uri: photoUri,
-            name: `image.${photoUri.split('.').pop()}`,
-            type: `image.${photoUri.split('.').pop()}`,
-        });
 
-   
+
+
         await api.post('Exame/Cadastrar', formData, {
             headers: {
-                "Content-Type" : "multipart/form-data"
+                "Content-Type": "multipart/form-data"
             }
 
         }).then(response => {
-            console.log(response.data.descricao);
-            // setDescricaoExame(descricaoExame + "\n" + response.data.descricao)
+            setDescricaoExame(descricaoExame + "\n" + response.data.descricao)
         }).catch(error => {
-            console.log(error + "error");
+            console.log(error);
         });
     }
 
@@ -140,6 +137,7 @@ if(route.params.data != null){
                     placeholder={"Resultado do exame de sangue : tudo normal"}
                     multiline={true}
                     fieldHeight={120}
+                    fieldValue={descricaoExame}
                     marginBottom={0}
                 />
 

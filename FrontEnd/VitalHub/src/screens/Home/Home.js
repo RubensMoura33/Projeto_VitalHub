@@ -22,7 +22,7 @@ import { logProfileData } from "react-native-calendars/src/Profiler"
 
 
 export const Home = ({ navigation }) => {
-    const [listaConsultas, setListaConsultas] = useState([])
+   
     const [dataConsulta, setDataConsulta] = useState('');
     const [statusList, setStatusList] = useState("agendada")
 
@@ -39,6 +39,7 @@ export const Home = ({ navigation }) => {
         const token = await userDecodeToken();
 
         setUserData(token);
+        console.log(token.foto);
         setDataConsulta(moment().format('YYYY-MM-DD'))
 
 
@@ -48,13 +49,17 @@ export const Home = ({ navigation }) => {
 
         if (userData.role == "Medico") {
             const response = await api.get(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
+            console.log(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
             setMedicoData(response.data);
+            // console.log(response.data);
+        
             
         } else {
 
             const response = await api.get(`${buscarConsultasPaciente}?data=${dataConsulta}&id=${userData.id}`)
    
             setPaciente(response.data);
+            
     
 
         }
@@ -107,7 +112,7 @@ export const Home = ({ navigation }) => {
     return (
         userData.role == "Medico" ?
             <Container>
-                <Header nome={'Dr. Joao'} ProfileImage={require('../../assets/medico.png')} onPress={() => navigation.replace("Profile")} />
+                <Header nome={`Dr(a). ${userData.name}`} ProfileImage={{uri: userData.foto}} onPress={() => navigation.replace("Profile")} />
 
                 <CalendarHome
                     setDataConsulta={setDataConsulta}
@@ -149,20 +154,23 @@ export const Home = ({ navigation }) => {
 
                                 }}>
                                     <Card 
-                                    id={item.id}
-                                    name={item.paciente.idNavigation.nome}
+                                        id={item.id}
+                                        foto={item.paciente.idNavigation.foto}
+                                        name={item.paciente.idNavigation.nome}
                                         status={item.situacao.situacao}
                                         tipoUser={userData.role}
                                         age={item.paciente.idade}
                                         hour={item.dataConsulta}
                                         typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
-                                 onPressCancel={() => MostrarModal('cancelar', item)}
+                                        onPressCancel={() => MostrarModal('cancelar', item)}
                                     />
                                 </TouchableOpacity>
                             )
                         } else if (statusList === 'realizada' && item.situacao.situacao == 'Realizados') {
                             return (
-                                <Card name={item.paciente.idNavigation.nome}
+                                <Card 
+                                name={item.paciente.idNavigation.nome}
+                                foto={item.paciente.idNavigation.foto}
                                 status={item.situacao.situacao}
                                 tipoUser={userData.role}
                                 age={item.paciente.idade}
@@ -174,7 +182,9 @@ export const Home = ({ navigation }) => {
                             )
                         } else if (statusList === 'cancelada'&& item.situacao.situacao == 'Cancelados') {
                             return (
-                                <Card name={item.paciente.idNavigation.nome}
+                                <Card 
+                                name={item.paciente.idNavigation.nome}
+                                foto={item.paciente.idNavigation.foto}
                                 status={item.situacao.situacao}
                                 tipoUser={userData.role}
                                 age={item.paciente.idade}
@@ -208,7 +218,7 @@ export const Home = ({ navigation }) => {
             </Container>
             :
             <Container>
-                <Header nome={'Richard Kosta'} ProfileImage={require('../../assets/garro.jpeg')} onPress={() => navigation.replace("Profile")} />
+                <Header nome={userData.name} ProfileImage={{uri: userData.foto}} onPress={() => navigation.replace("Profile")} />
                 <CalendarHome
                     setDataConsulta={setDataConsulta}
                 />

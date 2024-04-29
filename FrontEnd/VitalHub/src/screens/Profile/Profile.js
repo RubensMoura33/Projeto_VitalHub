@@ -52,12 +52,7 @@ export const Profile = ({ navigation, route }) => {
         GetSpecialties();
     }, []);
 
-    useEffect(() => {
-        loadData();
-        if (photoUri) {
-            AlterarFotoPerfil();
-        }
-    }, [photoUri])
+
 
     async function loadData() {
         const token = await userDecodeToken();
@@ -189,17 +184,24 @@ export const Profile = ({ navigation, route }) => {
         })
 
 
-        console.log(`Usuario/AlterarFotoPerfil?id=${role.id}`);
+  
         await api.put(`Usuario/AlterarFotoPerfil?id=${role.id}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data"
             }
         }).then(response => {
-            console.log(response);
+            console.log("Deu certo Alteração da foto");
         }).catch(error => {
             console.log(error);
         })
     }
+    useEffect(() => {
+      
+        if (photoUri) {
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+            AlterarFotoPerfil();
+        }
+    }, [photoUri])
     return (
         <ContainerScroll>
 

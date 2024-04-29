@@ -8,6 +8,7 @@ import { AntDesign } from '@expo/vector-icons';
 export const Card = ({
     status = "Pendentes",
     id,
+    foto,
     onPressCancel,
     onPressAppointment,
     tipoUser,
@@ -16,7 +17,7 @@ export const Card = ({
     return (
         <ContainerCard>
             {/* Imagem do Card */}
-            <ProfileImage source={require('../../assets/nicole.png')} />
+            <ProfileImage source={{uri: foto}} />
 
 
             <ContentCard>

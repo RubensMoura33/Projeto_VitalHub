@@ -25,8 +25,6 @@ export const CameraPhoto = ({ navigation, route }) => {
         if (cameraRef) {
             const photo = await cameraRef.current.takePictureAsync()
             setPhoto(photo.uri)
-
-
             setOpenModal(true)
 
         }
