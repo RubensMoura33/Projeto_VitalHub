@@ -17,32 +17,44 @@ const Clinicas = [
     { id: 4, nome: "SP Oncologia Clínica", Localizacao: "Taboão, SP", Avaliacao: "4,2", Abertura: "Seg-Sab" },
 ]
 
-export const SelectClinic = ({ navigation }) => {
+export const SelectClinic = ({ navigation, route }) => {
 
     const [selectedClinic, setSelectedClinic] = useState(null);
     const [showModalSchedule, setShowModalSchedule] = useState(false)
     const [clinicas, setClinicas] = useState([])
+    const [clinica, setClinica] = useState([])
 
-   useEffect(() => {
+    useEffect(() => {
         loadClinic()
-   }, [])
+    }, [])
 
-      async function loadClinic() 
-      {
+    function handleContinue() {
+        navigation.replace("SelectDoctor" , {
+            agendamento:{
+            ...route.params.agendamento,
+            ...selectedClinic
+        }
+        })
+    }
+    function passandoInfo ()
+    {
+
+    }
+    async function loadClinic() {
         try {
-            response = await api.get(`${clinicasResource}`)
+            response = await api.get(`/Clinica/BuscarPorCidade?cidade=${route.params.agendamento.localizacao}`)
             setClinicas(response.data);
             console.log(response.data);
         } catch (error) {
             console.log(error + " erro senai");
         }
-      }
+    }
 
- const onPressHandle = () => {
+    const onPressHandle = () => {
         setShowModalSchedule(true)
         navigation.navigate("Main");
-        
-      }
+
+    }
     return (
         <Container>
             <Title>Selecionar clinica</Title>
@@ -51,12 +63,15 @@ export const SelectClinic = ({ navigation }) => {
                 data={clinicas}
                 renderItem={({ item }) =>
                 (
-                    <BtnSelect onPress={() => setSelectedClinic(item.id)}>
+                    <BtnSelect onPress={() => setSelectedClinic({
+                        clinicaId : item.id,
+                        clinicaLabel: item.nomeFantasia
+                    })}>
                         <CardClinic name={item.nomeFantasia}
                             loc={item.endereco.logradouro}
                             aval={"4.5"}
                             date={"Seg-Sex"}
-                            isSelected={item.id == selectedClinic}
+                            isSelected={selectedClinic ? item.id == selectedClinic.clinicaId : false }
 
                         />
                     </BtnSelect>
@@ -69,7 +84,7 @@ export const SelectClinic = ({ navigation }) => {
                 setShowModalSchedule={setShowModalSchedule}
             />
 
-            <Btn onPress={() => { navigation.replace("SelectDoctor" , {idClinica: selectedClinic}) }}>
+            <Btn onPress={() => { handleContinue() }}>
                 <ButtonTitle >CONTINUAR</ButtonTitle>
             </Btn>
             <Cancel onPress={() => onPressHandle()}>Cancelar</Cancel>

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FullCalender from "../../components/CalendarSelectDate/CalendarSelectDate";
 import { ContainerSelectDate } from "../../components/Container/Style"
 import { Title } from "../SelectClinic/Style"
@@ -10,7 +10,7 @@ import InputSelect from "../../components/InputSelect/InputSelect";
 import { ModalResumeAppointment } from "../../components/ModalResumeAppointment/ModalResumeAppointment";
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule";
 
-export const SelectDate = ({ navigation }) => {
+export const SelectDate = ({ navigation , route}) => {
     const [selectedDate, setSelectedDate] = useState();
     const [selectedTime, setSelectedTime] = useState();
 
@@ -18,6 +18,10 @@ export const SelectDate = ({ navigation }) => {
 
     const [showModalResume, setShowModalResume] = useState(false)
     const [showModalSchedule, setShowModalSchedule] = useState(false)
+
+    useEffect(() => {
+        console.log(route.params);
+    }, [route])
 
     const onPressHandle = () => {
         setShowModalSchedule(true)

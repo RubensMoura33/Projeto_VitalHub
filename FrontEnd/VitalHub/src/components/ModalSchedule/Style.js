@@ -52,7 +52,8 @@ font-size: 15px;
 
 export const InputAppointment = styled.TextInput.attrs({
     placeholderTextColor: '#34898F'
-})`
+})
+`
 padding: 10px;
 margin-bottom: 0px;
 border: 2px #60BFC5;

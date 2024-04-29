@@ -21,21 +21,34 @@ const Medicos = [
 
 export const SelectDoctor = ({ navigation, route }) => {
 
-    const {idClinica} = route.params || null
+    const { idClinica } = route.params || null
     const [medicoLista, setMedicoLista] = useState([]);
+
+    function handleContinue() {
+        navigation.replace("SelectDate", {
+            agendamento : {
+                ...route.params.agendamento,
+                ...selectedDoctor
+            }
+        })
+    }
 
     async function listarMedicos() {
         try {
-            const response = await api.get(`${medicosClinicaResource}?id=${idClinica}`);
+            const response = await api.get(`${medicosClinicaResource}?id=${route.params.agendamento.clinicaId}`);
             console.log(response.data);
             setMedicoLista(response.data);
 
-            
+
         } catch (error) {
-           console.log(error); 
+            console.log(error);
         }
     }
 
+
+    useEffect(() => {
+        console.log(route.params);
+    }, [route])
 
     useEffect(() => {
         listarMedicos();
@@ -60,11 +73,16 @@ export const SelectDoctor = ({ navigation, route }) => {
                 data={medicoLista}
                 renderItem={({ item }) =>
                 (
-         
-                    <BtnSelect onPress={() => setSelectedDoctor(item.id)}>
+
+                    <BtnSelect onPress={() => setSelectedDoctor(
+                        {
+                            medicoClinicaId : item.id,
+                            medicoLabel : item.idNavigation.nome
+                        }
+                    )}>
                         <CardDoctor name={item.idNavigation.nome}
-                            espec={item.especialidade.especialidade1}                       
-                            isSelected={item.id == selectedDoctor}
+                            espec={item.especialidade.especialidade1}
+                            isSelected={selectedDoctor ? item.id == selectedDoctor.medicoClinicaId : false}
                         />
                     </BtnSelect>
                 )}
@@ -76,7 +94,7 @@ export const SelectDoctor = ({ navigation, route }) => {
                 setShowModalSchedule={setShowModalSchedule}
             />
 
-            <Btn onPress={() => navigation.replace("SelectDate")}>
+            <Btn onPress={() => handleContinue()}>
                 <ButtonTitle>CONTINUAR</ButtonTitle>
             </Btn>
             <Cancel onPress={() => onPressHandle()}>Cancelar</Cancel>

@@ -4,7 +4,7 @@ import { Container, ContainerMap, ViewFormat, ViewLocal } from "../../components
 import { LinkCancelMargin } from "../../components/Link/Style"
 import { SubTitleModalResume, TitleProfile } from "../../components/Title/Style"
 import { ActivityIndicator, StyleSheet, Text } from "react-native"
-import api,{buscarClinicId} from '../../services/service'
+import api, { buscarClinicId } from '../../services/service'
 import { mapskey } from "../../Utils/MapsKey/mapsApiKey"
 import {
     requestForegroundPermissionsAsync, // solicita o acesso a localizacao
@@ -18,16 +18,15 @@ import { useEffect, useRef, useState } from "react"
 import MapViewDirections from "react-native-maps-directions"
 import { ContainerHeader } from "../../components/Header/Style"
 
-export const SeeLocalAppointment = ({ navigation , route}) => {
-const[clinica, setClinica] = useState(null);
-const[clinicaId, setClinicaId] = useState();
-const [finalPosition, setFinalPosition] = useState({
-    latitude: null,
-    longitude: null
-})
+export const SeeLocalAppointment = ({ navigation, route }) => {
+    const [clinica, setClinica] = useState(null);
+    const [clinicaId, setClinicaId] = useState();
+    const [finalPosition, setFinalPosition] = useState({
+        latitude: null,
+        longitude: null
+    })
 
-    async function getClinic(id)
-    {
+    async function getClinic(id) {
 
         const promise = await api.get(`${buscarClinicId}?id${id}`)
         setClinica(promise.data);
@@ -40,12 +39,12 @@ const [finalPosition, setFinalPosition] = useState({
     }
 
     useEffect(() => {
-           setClinicaId(route.params.clinicaId);
-    },[route.params])
+        setClinicaId(route.params.clinicaId);
+    }, [route.params])
 
-useEffect(() => {
-getClinic(clinicaId)
-},[clinica]);
+    useEffect(() => {
+        getClinic(clinicaId)
+    }, [clinica]);
 
 
     const mapReference = useRef(null)
@@ -103,102 +102,102 @@ getClinic(clinicaId)
 
     return (
         <Container>
-                      {
-                    initialPosition && clinica && clinica.nomeFantasia != null
-?
+            {
+                initialPosition && clinica && clinica.nomeFantasia != null
+                    ?
 
-<>
-<ContainerMap>
-      
-      <MapView
-          initialRegion={{
-              latitude: initialPosition.coords.latitude,
-              longitude: initialPosition.coords.longitude,
-              longitudeDelta: 0.005,
-              latitudeDelta: 0.005,
+                    <>
+                        <ContainerMap>
 
-          }}
-          customMapStyle={grayMapStyle}
-          provider={PROVIDER_GOOGLE}
-          style={styles.map}
-      >
-          <Marker
-              coordinate={{
-                  latitude: initialPosition.coords.latitude,
-                  longitude: initialPosition.coords.longitude,
-                  longitudeDelta: 0.005,
-                  latitudeDelta: 0.005,
-              }}
-              title='Clinica Aqui'
-              description='Marcador que representa localizacao da clinica'
-              pinColor={'blue'}
-          />
-          <MapViewDirections
-              origin={initialPosition.coords}
-              destination={{
-                  latitude: -23.6497517,
-                  longitude: -46.5624046,
-                  longitudeDelta: 0.005,
-                  latitudeDelta: 0.005,
-              }}
-              apikey={mapskey}
-              strokeWidth={5}
-              strokeColor='#496BBA'
-          />
-          <Marker
-              coordinate={{
-                  latitude: finalPosition.latitude,
-                  longitude: finalPosition.longitude,
-                  longitudeDelta: 0.005,
-                  latitudeDelta: 0.005,
-              }}
-              title='Voce esta aqui'
-              description='Marcador que representa sua localizacao'
-              pinColor={'red'}
-          />
-      </MapView>
+                            <MapView
+                                initialRegion={{
+                                    latitude: initialPosition.coords.latitude,
+                                    longitude: initialPosition.coords.longitude,
+                                    longitudeDelta: 0.005,
+                                    latitudeDelta: 0.005,
 
-</ContainerMap>
-<ViewLocal>
-<TitleProfile>{clinica.nomeFantasia}</TitleProfile>
-<SubTitleModalResume>São Paulo, SP</SubTitleModalResume>
+                                }}
+                                customMapStyle={grayMapStyle}
+                                provider={PROVIDER_GOOGLE}
+                                style={styles.map}
+                            >
+                                <Marker
+                                    coordinate={{
+                                        latitude: initialPosition.coords.latitude,
+                                        longitude: initialPosition.coords.longitude,
+                                        longitudeDelta: 0.005,
+                                        latitudeDelta: 0.005,
+                                    }}
+                                    title='Clinica Aqui'
+                                    description='Marcador que representa localizacao da clinica'
+                                    pinColor={'blue'}
+                                />
+                                <MapViewDirections
+                                    origin={initialPosition.coords}
+                                    destination={{
+                                        latitude: -23.6497517,
+                                        longitude: -46.5624046,
+                                        longitudeDelta: 0.005,
+                                        latitudeDelta: 0.005,
+                                    }}
+                                    apikey={mapskey}
+                                    strokeWidth={5}
+                                    strokeColor='#496BBA'
+                                />
+                                <Marker
+                                    coordinate={{
+                                        latitude: finalPosition.latitude,
+                                        longitude: finalPosition.longitude,
+                                        longitudeDelta: 0.005,
+                                        latitudeDelta: 0.005,
+                                    }}
+                                    title='Voce esta aqui'
+                                    description='Marcador que representa sua localizacao'
+                                    pinColor={'red'}
+                                />
+                            </MapView>
 
-<BoxInput
-  textLabel={'Logradouro'}
-  editable={false}
- fieldValue={clinica.endereco.logradouro}
-/>
-<ViewFormat>
+                        </ContainerMap>
+                        <ViewLocal>
+                            <TitleProfile>{clinica.nomeFantasia}</TitleProfile>
+                            <SubTitleModalResume>São Paulo, SP</SubTitleModalResume>
 
-  <BoxInput
-      textLabel={'Número'}
-      fieldValue={clinica.endereco.numero}
-      editable={false}
-      fieldWidth={45}
-  />
-  <BoxInput
-      textLabel={'Bairro'}
-      fieldValue={clinica.endereco.cidade}
-      editable={false}
-      fieldWidth={46}
-  />
+                            <BoxInput
+                                textLabel={'Logradouro'}
+                                editable={false}
+                                fieldValue={clinica.endereco.logradouro}
+                            />
+                            <ViewFormat>
 
-</ViewFormat>
-<LinkCancelMargin onPress={() => { navigation.navigate("Main") }}>Voltar</LinkCancelMargin>
-</ViewLocal>
-</>
+                                <BoxInput
+                                    textLabel={'Número'}
+                                    fieldValue={clinica.endereco.numero}
+                                    editable={false}
+                                    fieldWidth={45}
+                                />
+                                <BoxInput
+                                    textLabel={'Bairro'}
+                                    fieldValue={clinica.endereco.cidade}
+                                    editable={false}
+                                    fieldWidth={46}
+                                />
+
+                            </ViewFormat>
+                            <LinkCancelMargin onPress={() => { navigation.navigate("Main") }}>Voltar</LinkCancelMargin>
+                        </ViewLocal>
+                    </>
                     :
                     <>
-                    <ContainerHeader>
-                        <Text>Localização nao Encontrada</Text>
+                        <ContainerHeader>
+                            <Text>Localização nao Encontrada</Text>
 
-                        <ActivityIndicator />
+                            <ActivityIndicator />
 
-                    </ContainerHeader>
+                        </ContainerHeader>
                     </>
             }
-                      
-          
+
+
         </Container>
     )
 }

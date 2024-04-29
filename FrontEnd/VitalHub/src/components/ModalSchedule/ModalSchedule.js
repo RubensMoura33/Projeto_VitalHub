@@ -8,6 +8,20 @@ import { LinkCancel } from "../Link/Style"
 
 export const ModalSchedule = ({ navigation, visible, setShowModalSchedule , ...rest }) => {
 
+  const [agendamento, setAgendamento] = useState(null);
+  
+  const nivelConsulta = [
+    {id: "395C5E28-07BE-467B-AE19-3DE0B37C6945", tipo: "Rotina"},
+    {id: "95DA7213-24E5-42E8-BE31-EA5CDC6B19A0", tipo: "Exame"},
+    {id: "52785D0D-267F-468A-A671-0FD61A8E4A9E", tipo: "Urgencia"},
+  ]
+
+  async function handleContinue () {
+    await setShowModalSchedule(false);
+
+    navigation.replace('SelectClinic' , {agendamento : agendamento})
+  }
+
   // const [showOptions, setShowOptions] = useState(false);
   // const [selectedOption, setSelectedOption] = useState('');
 
@@ -27,6 +41,7 @@ export const ModalSchedule = ({ navigation, visible, setShowModalSchedule , ...r
     }
     
   }
+  
 
   const[typeAppointment,setTypeAppointment] = useState(null)
 
@@ -61,13 +76,29 @@ export const ModalSchedule = ({ navigation, visible, setShowModalSchedule , ...r
             <LabelSchedule>Qual o nível da consulta</LabelSchedule>
             <RowContainerButton>
 
-              <SmallButton onPress={() => {setTypeAppointment("Rotina")}} isSelected={typeAppointment == "Rotina"}>
+            
+              <SmallButton onPress={() => setAgendamento({...agendamento, 
+                prioridadeId : "395C5E28-07BE-467B-AE19-3DE0B37C6945",
+                prioridadeLabel : "Rotina"             
+                })} 
+                isSelected={agendamento ? agendamento.prioridadeLabel == 'Rotina'  : false} >
+
                 <BlueTitle>Rotina</BlueTitle>
                 </SmallButton>
-              <SmallButton onPress={() => {setTypeAppointment("Exames")}} isSelected={typeAppointment == "Exames"}>
+
+              <SmallButton onPress={() => setAgendamento({...agendamento, 
+                prioridadeId : "95DA7213-24E5-42E8-BE31-EA5CDC6B19A0",
+                prioridadeLabel : "Exames"             
+                })} 
+                isSelected={agendamento ? agendamento.prioridadeLabel == 'Exames' : false}>
                 <BlueTitle>Exames</BlueTitle>
                 </SmallButton>
-              <SmallButton onPress={() => {setTypeAppointment("Urgencia")}} isSelected={typeAppointment == "Urgencia"}>
+
+              <SmallButton onPress={() => setAgendamento({...agendamento, 
+                prioridadeId : "395C5E28-07BE-467B-AE19-3DE0B37C6945",
+                prioridadeLabel : "Urgencia"             
+                })} 
+                isSelected={agendamento ? agendamento.prioridadeLabel == 'Urgencia'  : false}>
                 <BlueTitle>Urgencia</BlueTitle>
                 </SmallButton>
 
@@ -75,11 +106,16 @@ export const ModalSchedule = ({ navigation, visible, setShowModalSchedule , ...r
 
             {/* INFORMAR A LOCALIZACAO */}
             <LabelSchedule>Informe a localizacao desejada</LabelSchedule>
-            <InputAppointment placeholder={"Informe a localizacao"}/>
+            <InputAppointment placeholder={"Informe a localizacao"} 
+            value={ agendamento ? agendamento.localizacao : null}
+            onChangeText={(txt) => setAgendamento({
+              ...agendamento,
+              localizacao : txt
+            })}/>
             
 
           </TypeAppointment>
-          <Btn onPress={() => {onPressHandle()}}>
+          <Btn onPress={() => {handleContinue()}}>
             <ButtonTitle >CONTINUAR</ButtonTitle>
           </Btn>  
 
