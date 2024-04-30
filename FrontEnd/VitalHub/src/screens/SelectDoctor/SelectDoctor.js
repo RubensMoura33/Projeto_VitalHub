@@ -8,16 +8,12 @@ import { BtnSelect, Cancel, Title } from "../SelectClinic/Style"
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
 import api, { medicosClinicaResource, medicosResource } from '../../services/service'
 
-
 const Medicos = [
     { id: 1, nome: "Dra Alessandra", Especialidade: "Demartologa, Esteticista", Foto: require("../../assets/nicole.png") },
     { id: 2, nome: "Dr Kumushiro", Especialidade: "Cirurgião, Cardiologista", Foto: require("../../assets/medico.png") },
     { id: 3, nome: "Dr Rodrigo Santos", Especialidade: "Clínico, Pediatra", Foto: require("../../assets/photo.png") },
     { id: 4, nome: "Dr Gabriel Gab", Especialidade: "Oftamologista", Foto: require("../../assets/gab.jpg") },
-
 ]
-
-
 
 export const SelectDoctor = ({ navigation, route }) => {
 
@@ -45,7 +41,6 @@ export const SelectDoctor = ({ navigation, route }) => {
         }
     }
 
-
     useEffect(() => {
         console.log(route.params);
     }, [route])
@@ -64,7 +59,6 @@ export const SelectDoctor = ({ navigation, route }) => {
 
     }
 
-
     return (
         <Container>
             <Title>Selecionar Medico</Title>
@@ -77,7 +71,8 @@ export const SelectDoctor = ({ navigation, route }) => {
                     <BtnSelect onPress={() => setSelectedDoctor(
                         {
                             medicoClinicaId : item.id,
-                            medicoLabel : item.idNavigation.nome
+                            medicoLabel : item.idNavigation.nome,
+                            especialidade : item.especialidade.especialidade1
                         }
                     )}>
                         <CardDoctor name={item.idNavigation.nome}

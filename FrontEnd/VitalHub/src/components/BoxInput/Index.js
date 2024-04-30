@@ -1,6 +1,5 @@
 
 import { FieldContent, InputLabel, InputText, InputTextModificate } from "./Style"
-import InputScrollView from "react-native-input-scroll-view"
 
 
 export const BoxInput = ({

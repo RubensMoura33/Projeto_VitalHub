@@ -11,17 +11,27 @@ import { ModalResumeAppointment } from "../../components/ModalResumeAppointment/
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule";
 
 export const SelectDate = ({ navigation , route}) => {
-    const [selectedDate, setSelectedDate] = useState();
-    const [selectedTime, setSelectedTime] = useState();
+
+    const [agendamento, setAgendamento] = useState(null);
+    const [selectedDate, setSelectedDate] = useState("");
+    const [selectedTime, setSelectedTime] = useState("");    
+    const [showModalResume, setShowModalResume] = useState(false);
+    const [showModalSchedule, setShowModalSchedule] = useState(false);
+
 
     const Horarios = ["10:30", "12:00", "12:30", "13:00", "17:15", "17:45", "19:00"]
 
-    const [showModalResume, setShowModalResume] = useState(false)
-    const [showModalSchedule, setShowModalSchedule] = useState(false)
-
     useEffect(() => {
-        console.log(route.params);
-    }, [route])
+        console.log(selectedDate);
+    }, [selectedDate])
+
+    function handleContinue(){
+        setAgendamento({
+            ...route.params.agendamento,
+            dataConsulta: `${selectedDate} ${selectedTime}`
+        })
+        setShowModalResume(true)
+    }
 
     const onPressHandle = () => {
         setShowModalSchedule(true)
@@ -34,6 +44,7 @@ export const SelectDate = ({ navigation , route}) => {
         <ContainerSelectDate>
             <Title>Selecionar Data</Title>
             <FullCalender
+                setSelectedDate={setSelectedDate}
                 selectedDate={selectedDate}
                 handleSelectedDateFn={setSelectedDate}
             />
@@ -45,7 +56,7 @@ export const SelectDate = ({ navigation , route}) => {
                 data={Horarios}
             />
 
-            <BtnFull onPress={() => { setShowModalResume(true) }} >
+            <BtnFull onPress={() => { handleContinue() }} >
                 <ButtonTitle>CONFIRMAR</ButtonTitle>
             </BtnFull>
 
@@ -55,6 +66,7 @@ export const SelectDate = ({ navigation , route}) => {
                 setShowModalResume={setShowModalResume}
                 dataConsulta={selectedDate}
                 horarioConsulta={selectedTime}
+                agendamento={agendamento}
             />
 
             <ModalSchedule

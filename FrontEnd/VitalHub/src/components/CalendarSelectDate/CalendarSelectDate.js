@@ -23,7 +23,7 @@ LocaleConfig.locales['br'] = {
 };
 LocaleConfig.defaultLocale = 'br';
 
-export default function FullCalender({ selectedDate = '', handleSelectedDateFn = null }) {
+export default function FullCalender({ selectedDate, setSelectedDate, handleSelectedDateFn = null }) {
     const currentDate = new Date().toUTCString();
 
     // Função para renderizar o cabeçalho do calendário com a fonte personalizada
@@ -47,6 +47,7 @@ export default function FullCalender({ selectedDate = '', handleSelectedDateFn =
                 calendarBackground: 'transparent'
                 
             }}
+            
             renderHeader={renderHeader} // Renderizar o cabeçalho personalizado
             dayComponent={({ date, state }) =>
                 <TouchableOpacity style={styles.button} onPress={() => {
