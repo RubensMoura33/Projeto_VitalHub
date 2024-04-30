@@ -79,7 +79,7 @@ export const ButtonCard = styled.TouchableOpacity`
 export const ButtonText = styled.Text`
 font-family: 'MontserratAlternates_500Medium';
 font-size: 14px;
-color: ${(props) => props.status == "agendada" ? "#c81d25" : "#344f8f"};
+color: ${(props) => props.status == "Pendentes" ? "#c81d25" : "#344f8f"};
 `
 
 export const ImagePoint = styled.Image`

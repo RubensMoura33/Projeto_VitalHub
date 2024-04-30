@@ -80,7 +80,9 @@ export const SelectDoctor = ({ navigation, route }) => {
                             medicoLabel : item.idNavigation.nome
                         }
                     )}>
-                        <CardDoctor name={item.idNavigation.nome}
+                        <CardDoctor 
+                            name={item.idNavigation.nome}
+                            photo={item.idNavigation.foto}
                             espec={item.especialidade.especialidade1}
                             isSelected={selectedDoctor ? item.id == selectedDoctor.medicoClinicaId : false}
                         />

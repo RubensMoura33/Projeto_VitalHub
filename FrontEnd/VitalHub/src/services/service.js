@@ -30,6 +30,7 @@ export const GetIdTipoUsuario = "TiposUsuario"
 export const PutStatusTipoUsuario = "Consultas/Status"
 
 export const InseririrProntuario = "Consultas/Prontuario"
+
 export const RecuperarSenha = "RecuperaraSenha?email="
 
 

@@ -25,7 +25,7 @@ export const ModalAppointment = ({ setShowModalAppointment, navigation, visible,
             <Modal {...rest} visible={visible} transparent={true} animationType="fade" animationsOutTiming={0}>
                 <ViewModal>
                     <ContentModal>
-                        <ProfileImage  source={{uri: data.paciente.idNavigation.foto}} />
+                        <ImagePaciente  source={{uri: data.paciente.idNavigation.foto}} />
 
                         <TitleProfile>{data.paciente.idNavigation.nome}</TitleProfile>
 

@@ -23,7 +23,7 @@ if( data && data.dataConsulta != null){
     <Modal {...rest} visible={visible} transparent={true} animationType="fade">
         <ViewModal>
             <ContentModal>
-                <ImageDoctor source={require("../../assets/doctor.png")}/>
+                <ImageDoctor source={{uri: data.medicoClinica.medico.idNavigation.foto}}/>
                 <TitleProfile>{data.medicoClinica.medico.idNavigation.nome}</TitleProfile>
 
                 <ViewDataDoctor>

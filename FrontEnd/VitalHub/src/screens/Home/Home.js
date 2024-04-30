@@ -15,7 +15,7 @@ import { ModalSeeDoctor } from "../../components/ModalSeeDoctor/ModalSeeDoctor"
 import { userDecodeToken } from "../../Utils/Auth"
 import api, { buscarConsultasMedico, buscarConsultasPaciente } from "../../services/service"
 import moment, { duration } from 'moment';
-import { logProfileData } from "react-native-calendars/src/Profiler"
+
 
 
 
@@ -25,7 +25,6 @@ export const Home = ({ navigation }) => {
    
     const [dataConsulta, setDataConsulta] = useState('');
     const [statusList, setStatusList] = useState("agendada")
-
     const [showModalCancel, setShowModalCancel] = useState(false)
     const [showModalAppointment, setShowModalAppointment] = useState(false)
     const [showModalSchedule, setShowModalSchedule] = useState(false)
@@ -51,7 +50,7 @@ export const Home = ({ navigation }) => {
             const response = await api.get(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
             console.log(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
             setMedicoData(response.data);
-            // console.log(response.data);
+            
         
             
         } else {
@@ -169,6 +168,7 @@ export const Home = ({ navigation }) => {
                         } else if (statusList === 'realizada' && item.situacao.situacao == 'Realizados') {
                             return (
                                 <Card 
+                                id={item.id}
                                 name={item.paciente.idNavigation.nome}
                                 foto={item.paciente.idNavigation.foto}
                                 status={item.situacao.situacao}
@@ -183,6 +183,7 @@ export const Home = ({ navigation }) => {
                         } else if (statusList === 'cancelada'&& item.situacao.situacao == 'Cancelados') {
                             return (
                                 <Card 
+                                id={item.id}
                                 name={item.paciente.idNavigation.nome}
                                 foto={item.paciente.idNavigation.foto}
                                 status={item.situacao.situacao}
@@ -254,7 +255,9 @@ export const Home = ({ navigation }) => {
 
                                 }}>
                                     <Card
+                                    id={item.id}
                                         name={item.medicoClinica.medico.idNavigation.nome}
+                                        foto={item.medicoClinica.medico.idNavigation.foto}
                                         crm={item.medicoClinica.medico.crm}
                                         tipoUser={userData.role}
                                         status={item.situacao.situacao}
@@ -269,6 +272,7 @@ export const Home = ({ navigation }) => {
                                 <Card
                                     id={item.id}
                                     name={item.medicoClinica.medico.idNavigation.nome}
+                                    foto={item.medicoClinica.medico.idNavigation.foto}
                                     tipoUser={userData.role}
                                     crm={item.medicoClinica.medico.crm}
                                     status={item.situacao.situacao}
@@ -282,7 +286,9 @@ export const Home = ({ navigation }) => {
                         } else if (statusList === 'cancelada' && item.situacao.situacao == 'Cancelados') {
                             return (
                                 <Card
+                                id={item.id}
                                     name={item.medicoClinica.medico.idNavigation.nome}
+                                    foto={item.medicoClinica.medico.idNavigation.foto}
                                     tipoUser={userData.role}
                                     crm={item.medicoClinica.medico.crm}
                                     status={item.situacao.situacao}
