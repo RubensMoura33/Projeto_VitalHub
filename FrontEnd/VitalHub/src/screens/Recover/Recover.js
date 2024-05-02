@@ -10,7 +10,6 @@ export const Recover = ({navigation}) => {
     const[email, setEmail] = useState('');
 
     async function EnviarEmail(){
-        console.log(`${RecuperarSenha}${email}`);
         await api.post(`${RecuperarSenha}${email}`)
         .then(() => {
             navigation.replace("VerifyEmail", {email})  

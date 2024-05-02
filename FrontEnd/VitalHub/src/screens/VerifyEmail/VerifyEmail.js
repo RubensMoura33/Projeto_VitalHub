@@ -25,8 +25,8 @@ export const VerifyEmail = ({ navigation, route }) => {
     }
 
     async function ValidarCodigo(){
-     console.log();
-console.log(`RecuperaraSenha/ValidarSenha?email=${route.params.email}&codigo=${codigo}`);
+
+
         await api.post(`RecuperaraSenha/ValidarSenha?email=${route.params.email}&codigo=${codigo}`).then(() => {
             navigation.replace("ResetPwd", {email: route.params.email});
         }).catch(error => {

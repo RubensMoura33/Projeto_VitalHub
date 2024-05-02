@@ -19,9 +19,7 @@ export const SelectDate = ({ navigation , route}) => {
     const [showModalResume, setShowModalResume] = useState(false)
     const [showModalSchedule, setShowModalSchedule] = useState(false)
 
-    useEffect(() => {
-        console.log(route.params);
-    }, [route])
+
 
     const onPressHandle = () => {
         setShowModalSchedule(true)

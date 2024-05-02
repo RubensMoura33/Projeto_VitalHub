@@ -91,7 +91,6 @@ export const Register = ({ navigation }) => {
     useEffect(() => {
 const loadData = async () => {
     const promise = await api.get(`${GetIdTipoUsuario}?tipoUsuario=Paciente`);
-    console.log(promise.data);
     setIdTipoUsuario(promise.data);
 }
 loadData();

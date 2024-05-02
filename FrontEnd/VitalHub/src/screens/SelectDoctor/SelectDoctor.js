@@ -36,7 +36,6 @@ export const SelectDoctor = ({ navigation, route }) => {
     async function listarMedicos() {
         try {
             const response = await api.get(`${medicosClinicaResource}?id=${route.params.agendamento.clinicaId}`);
-            console.log(response.data);
             setMedicoLista(response.data);
 
 
@@ -46,14 +45,10 @@ export const SelectDoctor = ({ navigation, route }) => {
     }
 
 
-    useEffect(() => {
-        console.log(route.params);
-    }, [route])
+
 
     useEffect(() => {
         listarMedicos();
-        console.log(medicoLista);
-        console.log(idClinica);
     }, [])
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [showModalSchedule, setShowModalSchedule] = useState(false)

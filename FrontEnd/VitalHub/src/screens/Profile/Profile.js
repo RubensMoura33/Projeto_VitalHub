@@ -66,7 +66,6 @@ export const Profile = ({ navigation, route }) => {
 
             setFoto(response.data.idNavigation.foto)
             setEspecialidade(response.data.especialidade.especialidade1);
-            console.log(response.data);
             setLogradouro(response.data.endereco.logradouro);
             setCep(response.data.endereco.cep);
             setCrm(response.data.crm);
@@ -83,7 +82,7 @@ export const Profile = ({ navigation, route }) => {
                 setCep(response.data.endereco.cep)
                 setCidade(response.data.endereco.cidade)
             } catch (error) {
-                console.log(error + " erro senai");
+                console.log(error);
             }
         }
 
@@ -117,13 +116,12 @@ export const Profile = ({ navigation, route }) => {
             setProfileEdit(false)
 
         } catch (error) {
-            console.log(error + " erro senai");
+            console.log(error);
         }
     }
 
     async function updateDoctor() {
         try {
-            console.log(token);
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
@@ -148,7 +146,7 @@ export const Profile = ({ navigation, route }) => {
 
             var response = await api.get(GetSpecialtiesResource)
             setEspecialidades(response.data)
-            console.log(especialidades);
+
 
         } catch (error) {
             console.log(error);
@@ -163,13 +161,11 @@ export const Profile = ({ navigation, route }) => {
             arrayOptions.push({ key: e.id, value: e.especialidade1 });
         });
 
-        console.log(arrayOptions);
         return arrayOptions;
     }
 
 
     function onPressPhoto() {
-        console.log("estou aqui");
         navigation.navigate("CameraPhoto", { imageProfile: true, getMediaLibrary: true });
         setIsPhoto(true)
     }
@@ -198,7 +194,6 @@ export const Profile = ({ navigation, route }) => {
     useEffect(() => {
       
         if (photoUri) {
-            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
             AlterarFotoPerfil();
         }
     }, [photoUri])

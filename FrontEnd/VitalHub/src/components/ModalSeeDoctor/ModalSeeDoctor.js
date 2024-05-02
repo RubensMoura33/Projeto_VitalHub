@@ -35,7 +35,7 @@ if( data && data.dataConsulta != null){
                     <ButtonTitle>VER LOCAL DA CONSULTA</ButtonTitle>
                 </BtnModalSeeDoctor>
 
-                <LinkCancelMargin onPress={() => {console.log(data); setShowModalSeeDoctor(false);}}>Cancelar</LinkCancelMargin>
+                <LinkCancelMargin onPress={() => {setShowModalSeeDoctor(false);}}>Cancelar</LinkCancelMargin>
             </ContentModal>
         </ViewModal>
     </Modal> : null

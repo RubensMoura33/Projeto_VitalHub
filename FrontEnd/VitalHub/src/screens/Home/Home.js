@@ -38,7 +38,6 @@ export const Home = ({ navigation }) => {
         const token = await userDecodeToken();
 
         setUserData(token);
-        console.log(token.foto);
         setDataConsulta(moment().format('YYYY-MM-DD'))
 
 
@@ -48,7 +47,7 @@ export const Home = ({ navigation }) => {
 
         if (userData.role == "Medico") {
             const response = await api.get(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
-            console.log(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
+
             setMedicoData(response.data);
             
         
@@ -102,9 +101,9 @@ export const Home = ({ navigation }) => {
         }
     }, [dataConsulta])
 
-//     useEffect(() => {
-// ListarConsultas();
-//     },[showModalCancel])
+    useEffect(() => {
+ListarConsultas();
+    },[showModalCancel])
 
     
 
@@ -148,10 +147,7 @@ export const Home = ({ navigation }) => {
                     renderItem={({ item }) => {
                         if (statusList === 'agendada' && item.situacao.situacao == 'Pendentes') {
                             return (
-                                <TouchableOpacity onPress={async () => {
-                                    MostrarModalInserir('cancelar', item)
-
-                                }}>
+                     
                                     <Card 
                                         id={item.id}
                                         foto={item.paciente.idNavigation.foto}
@@ -163,7 +159,7 @@ export const Home = ({ navigation }) => {
                                         typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
                                         onPressCancel={() => MostrarModal('cancelar', item)}
                                     />
-                                </TouchableOpacity>
+                          
                             )
                         } else if (statusList === 'realizada' && item.situacao.situacao == 'Realizados') {
                             return (

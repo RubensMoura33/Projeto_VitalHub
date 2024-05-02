@@ -44,9 +44,8 @@ export const SelectClinic = ({ navigation, route }) => {
         try {
             response = await api.get(`/Clinica/BuscarPorCidade?cidade=${route.params.agendamento.localizacao}`)
             setClinicas(response.data);
-            console.log(response.data);
         } catch (error) {
-            console.log(error + " erro senai");
+            console.log(error);
         }
     }
 
