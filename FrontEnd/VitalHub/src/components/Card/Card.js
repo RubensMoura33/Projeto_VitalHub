@@ -32,7 +32,7 @@ export const Card = ({
                 <ViewRow>
                     <ClockCard status={status}>
                         <AntDesign name="clockcircle" size={18} color={status == "Pendentes" ? '#49B3BA' : '#4E4B59'} />
-                        <TextBold status={status}>{hour}</TextBold>
+                        <TextBold status={status}>{new Date(hour).toLocaleDateString("pt-BR")}</TextBold>
                     </ClockCard>
 
 

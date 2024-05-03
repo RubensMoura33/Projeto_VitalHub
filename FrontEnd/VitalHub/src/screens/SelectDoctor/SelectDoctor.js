@@ -9,22 +9,20 @@ import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
 import api, { medicosClinicaResource, medicosResource } from '../../services/service'
 
 
-const Medicos = [
-    { id: 1, nome: "Dra Alessandra", Especialidade: "Demartologa, Esteticista", Foto: require("../../assets/nicole.png") },
-    { id: 2, nome: "Dr Kumushiro", Especialidade: "Cirurgião, Cardiologista", Foto: require("../../assets/medico.png") },
-    { id: 3, nome: "Dr Rodrigo Santos", Especialidade: "Clínico, Pediatra", Foto: require("../../assets/photo.png") },
-    { id: 4, nome: "Dr Gabriel Gab", Especialidade: "Oftamologista", Foto: require("../../assets/gab.jpg") },
-
-]
-
 
 
 export const SelectDoctor = ({ navigation, route }) => {
 
     const { idClinica } = route.params || null
-    const [medicoLista, setMedicoLista] = useState([]);
+    const [medicoLista, setMedicoLista] = useState([]); 
+     const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [showModalSchedule, setShowModalSchedule] = useState(false)
 
     function handleContinue() {
+if(selectedDoctor == null){
+    console.warn("É necessário selecionar um médico");
+    return;
+}
         navigation.replace("SelectDate", {
             agendamento : {
                 ...route.params.agendamento,
@@ -50,8 +48,7 @@ export const SelectDoctor = ({ navigation, route }) => {
     useEffect(() => {
         listarMedicos();
     }, [])
-    const [selectedDoctor, setSelectedDoctor] = useState(null);
-    const [showModalSchedule, setShowModalSchedule] = useState(false)
+  
 
     const onPressHandle = () => {
         setShowModalSchedule(true)

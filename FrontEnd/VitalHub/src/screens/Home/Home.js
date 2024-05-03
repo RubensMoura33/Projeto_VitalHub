@@ -47,7 +47,7 @@ export const Home = ({ navigation }) => {
 
         if (userData.role == "Medico") {
             const response = await api.get(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
-
+           
             setMedicoData(response.data);
             
         
@@ -55,7 +55,7 @@ export const Home = ({ navigation }) => {
         } else {
 
             const response = await api.get(`${buscarConsultasPaciente}?data=${dataConsulta}&id=${userData.id}`)
-   
+            console.log(response.data[0].medicoClinica.medico.especialidade.especialidade1);
             setPaciente(response.data);
             
     
@@ -163,17 +163,23 @@ ListarConsultas();
                             )
                         } else if (statusList === 'realizada' && item.situacao.situacao == 'Realizados') {
                             return (
-                                <Card 
-                                id={item.id}
-                                name={item.paciente.idNavigation.nome}
-                                foto={item.paciente.idNavigation.foto}
-                                status={item.situacao.situacao}
-                                tipoUser={userData.role}
-                                age={item.paciente.idade}
-                                hour={item.dataConsulta}
-                                typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
-                                onPressCancel={() => setShowModalCancel(true)}
-                            />
+
+                   
+
+                                    <Card 
+                                    id={item.id}
+                                    name={item.paciente.idNavigation.nome}
+                                    foto={item.paciente.idNavigation.foto}
+                                    status={item.situacao.situacao}
+                                    tipoUser={userData.role}
+                                    age={item.paciente.idade}
+                                    hour={item.dataConsulta}
+                                    typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
+                                    onPressAppointment={() => {
+                                        navigation.replace('MedicalRecord', {data: item})
+                                    }}
+                                />
+
 
                             )
                         } else if (statusList === 'cancelada'&& item.situacao.situacao == 'Cancelados') {
@@ -187,7 +193,7 @@ ListarConsultas();
                                 age={item.paciente.idade}
                                 hour={item.dataConsulta}
                                 typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
-                                onPressCancel={() => setShowModalCancel(true)}
+                          
                             />
                             )
                         }

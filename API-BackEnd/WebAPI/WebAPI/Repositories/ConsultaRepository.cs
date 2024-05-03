@@ -51,7 +51,7 @@ namespace WebAPI.Repositories
 
                 if (buscada.ReceitaId != null)
                 {
-                    buscada.Receita = consulta.Receita;
+                    buscada.Receita.Medicamento = consulta.Receita.Medicamento;
 
                 }
                 else

@@ -19,6 +19,9 @@ export const SeePrescription = ({ navigation, route }) => {
     const [descricaoExame, setDescricaoExame] = useState();
     const [dataConsulta, setDataConsulta] = useState();
     const [renderizar, setRenderizar] = useState(false);
+    const [descricaoConsulta, setDescricaoConsulta] = useState("");
+    const [diagnostico, setDiagnostico] = useState("");
+    const [prescricao, setPrescricao] = useState("");
 
     function onPressPhoto() {
         navigation.navigate("CameraPhoto", { imageProfile: false, getMediaLibrary: true });
@@ -31,6 +34,16 @@ export const SeePrescription = ({ navigation, route }) => {
     }
     useEffect(() => {
         if (route.params.data != null) {
+            if (route.params.data.receita.medicamento != undefined) {
+
+                setPrescricao(route.params.data.receita.medicamento);
+            }
+            if (route.params.data.descricao != undefined) {
+                setDescricaoConsulta(route.params.data.descricao)
+            }
+            if(route.params.data.diagnostico != undefined){
+                setDiagnostico(route.params.data.diagnostico)
+            }
             setRenderizar(true)
             setDataConsulta(route.params.data)
         }
@@ -78,29 +91,29 @@ export const SeePrescription = ({ navigation, route }) => {
         <DoctorImage source={{uri : dataConsulta.medicoClinica.medico.idNavigation.foto}} />
         <ContainerProfile>
 
-            <TitleProfile>{dataConsulta.medicoClinica.medico.idNavigation.nome}</TitleProfile>
+                <TitleProfile>{`Dr(a) ${dataConsulta.medicoClinica.medico.idNavigation.nome}`}</TitleProfile>
             <ViewSuBTitlePrescription>
-                <SubtitleRecord>Cliníco geral</SubtitleRecord>
+                <SubtitleRecord>{dataConsulta.medicoClinica.medico.especialidade.especialidade1}</SubtitleRecord>
                 <SubtitleRecord>{dataConsulta.medicoClinica.medico.crm}</SubtitleRecord>
             </ViewSuBTitlePrescription>
 
             <BoxInput
                 multiline={true}
                 textLabel={"Descrição da consulta"}
-                fieldValue={descricaoExame}
+                fieldValue={descricaoConsulta}
                 placeholder={`O paciente possuí uma infecção no ouvido. Necessário repouse de 2 dias e acompanhamento médico constante`}
                 fieldHeight={150}
             />
             <BoxInput
                 multiline={true}
                 textLabel={"Diagnóstico do paciente"}
-                placeholder={`Infecção no ouvido`}
+                placeholder={diagnostico}
                 fieldHeight={80}
             />
             <BoxInput
                 multiline={true}
                 textLabel={"Prescrição médica"}
-                placeholder={`Medicamento: Advil Dosagem: 50 mg Frequência: 3 vezes ao dia Duração: 3 dias`}
+                placeholder={prescricao}
                 fieldHeight={150}
             />
             <InputExame>Exame medico</InputExame>
