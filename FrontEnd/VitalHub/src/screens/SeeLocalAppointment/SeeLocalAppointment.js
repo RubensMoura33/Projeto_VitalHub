@@ -17,6 +17,7 @@ import {
 import { useEffect, useRef, useState } from "react"
 import MapViewDirections from "react-native-maps-directions"
 import { ContainerHeader } from "../../components/Header/Style"
+import { TitleClinic } from "./Style"
 
 export const SeeLocalAppointment = ({ navigation, route }) => {
     const [clinica, setClinica] = useState(null);
@@ -29,6 +30,8 @@ export const SeeLocalAppointment = ({ navigation, route }) => {
     async function getClinic(id) {
 
         const promise = await api.get(`${buscarClinicId}?id${id}`)
+
+
         setClinica(promise.data);
 
 
@@ -39,12 +42,10 @@ export const SeeLocalAppointment = ({ navigation, route }) => {
     }
 
     useEffect(() => {
-        setClinicaId(route.params.clinicaId);
+        getClinic(route.params.clinicaId)
     }, [route.params])
 
-    useEffect(() => {
-        getClinic(clinicaId)
-    }, [clinica]);
+
 
 
     const mapReference = useRef(null)
@@ -159,7 +160,7 @@ export const SeeLocalAppointment = ({ navigation, route }) => {
 
                         </ContainerMap>
                         <ViewLocal>
-                            <TitleProfile>{clinica.nomeFantasia}</TitleProfile>
+                            <TitleClinic>{clinica.nomeFantasia}</TitleClinic>
                             <SubTitleModalResume>São Paulo, SP</SubTitleModalResume>
 
                             <BoxInput
@@ -171,7 +172,7 @@ export const SeeLocalAppointment = ({ navigation, route }) => {
 
                                 <BoxInput
                                     textLabel={'Número'}
-                                    fieldValue={clinica.endereco.numero}
+                                    fieldValue={`${clinica.endereco.numero}`}
                                     editable={false}
                                     fieldWidth={45}
                                 />

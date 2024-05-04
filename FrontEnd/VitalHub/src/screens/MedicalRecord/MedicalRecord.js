@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ContainerProfile, ContainerScroll, ViewFormat, ViewTitleRecord } from "../../components/Container/Style"
 import { ProfileImage } from "../../components/Images/Style"
 import { ButtonTitle, EmailProfile, SubtitleRecord, TextRecord, TitleProfile } from "../../components/Title/Style"
@@ -6,93 +6,142 @@ import { Text } from "react-native"
 import { BoxInput } from "../../components/BoxInput/Index"
 import { Btn } from "../../components/Button/Button"
 import { LinkCancelMargin } from "../../components/Link/Style"
+import api, { InseririrProntuario } from "../../services/service"
+import { asCalendarConsumer } from "react-native-calendars"
 
-export const MedicalRecord = ({navigation}) => {
+export const MedicalRecord = ({ navigation, route }) => {
 
     const [recordEdit, setRecordEdit] = useState(true)
+    const [dataPaciente, setDataPaciente] = useState();
+    const [renderizar, setRenderizar] = useState(false);
+    const [descricaoConsulta, setDescricaoConsulta] = useState("");
+    const [diagnostico, setDiagnostico] = useState("");
+    const [prescricao, setPrescricao] = useState("");
 
+
+async function AtualizarConsulta(){
+    console.log(dataPaciente.id);
+try {
+    const response = api.put(InseririrProntuario, {
+        ConsultaId: dataPaciente.id,
+    Descricao: descricaoConsulta,
+    Diagnostico: diagnostico,
+   
+        Medicamento: prescricao
+    })
+
+
+    alert("Prontuário inserido com sucesso");
+    setRecordEdit(true)
+    
+    
+} catch (error) {
+    console.log(error);
+}    
+}
+
+
+
+
+
+
+    useEffect(() => {
+        if (route.params.data && route.params.data.paciente != null) {
+            if (route.params.data.receita.medicamento != undefined) {
+
+                setPrescricao(route.params.data.receita.medicamento);
+            }
+            if (route.params.data.descricao != undefined) {
+                setDescricaoConsulta(route.params.data.descricao)
+            }
+            if(route.params.data.diagnostico != undefined){
+                setDiagnostico(route.params.data.diagnostico)
+            }
+
+            console.log();
+            setDataPaciente(route.params.data)
+            setRenderizar(true);
+        }
+    }, [route.params])
     return (
-        <ContainerScroll>
-            {recordEdit ? (
-                <>
-                    <ProfileImage source={require("../../assets/photo.png")} />
+        renderizar ? (
+            <ContainerScroll>
 
-                    <ContainerProfile>
 
-                        <TitleProfile>Richard Kosta</TitleProfile>
-                        <ViewTitleRecord>
-                            <SubtitleRecord>22 anos</SubtitleRecord>
-                            <SubtitleRecord>richard.kosta@gmail.com</SubtitleRecord>
-                        </ViewTitleRecord>
+                <ProfileImage source={{ uri: dataPaciente.paciente.idNavigation.foto }} />
 
-                        <BoxInput
-                            textLabel={'Descrição da consulta'}
-                            placeholder={`O paciente possuí uma infecção no ouvido. Necessário repouse de 2 dias e acompanhamento médico constante`}
-                            fieldHeight={150}
-                            multiline={true}
-                            
-                        />
-                        <BoxInput
-                            textLabel={'Diagnóstico do paciente'}
-                            placeholder={'Infecção no ouvido'}
-                            fieldHeight={80}
-                            multiline={true}
-                        />
-                        <BoxInput
-                            textLabel={'Prescrição médica'} 
-                            placeholder={`Medicamento: Advil                  Dosagem: 50 mg               Frequência: 3 vezes ao dia                Duração: 3 dias`}
-                            fieldHeight={150}
-                            multiline={true}
-                        /> 
-                        <Btn onPress={() => setRecordEdit(false)}> 
-                            <ButtonTitle>EDITAR</ButtonTitle>
-                        </Btn>
+                <ContainerProfile>
 
-                        <LinkCancelMargin onPress={() => {navigation.replace("Main")}}>Cancelar</LinkCancelMargin>
-                    </ContainerProfile>
+                    <TitleProfile>{dataPaciente.paciente.idNavigation.nome}</TitleProfile>
+                    <ViewTitleRecord>
+                        <SubtitleRecord>{dataPaciente.paciente.idade}</SubtitleRecord>
+                        <SubtitleRecord>{dataPaciente.paciente.idNavigation.email}</SubtitleRecord>
+                    </ViewTitleRecord>
 
-                </>
-            ) : (
-                <>
-                    <ProfileImage source={require("../../assets/photo.png")} />
+                    {recordEdit ? (
+                        <>
+                            <BoxInput
+                                textLabel={'Descrição da consulta'}
+                                placeholder={descricaoConsulta}
+                                fieldHeight={150}
+                                multiline={true}
 
-                    <ContainerProfile>
+                            />
+                            <BoxInput
+                                textLabel={'Diagnóstico do paciente'}
+                                placeholder={diagnostico}
+                                fieldHeight={80}
+                                multiline={true}
+                            />
+                            <BoxInput
+                                textLabel={'Prescrição médica'}
+                                placeholder={prescricao}
+                                fieldHeight={150}
+                                multiline={true}
+                            />
+                            <Btn onPress={() => setRecordEdit(false)}>
+                                <ButtonTitle>EDITAR</ButtonTitle>
+                            </Btn>
 
-                        <TitleProfile>Richard Kosta</TitleProfile>
-                        <ViewTitleRecord>
-                            <SubtitleRecord>22 anos</SubtitleRecord>
-                            <SubtitleRecord>richard.kosta@gmail.com</SubtitleRecord>
-                        </ViewTitleRecord>
+                            <LinkCancelMargin onPress={() => { navigation.replace("Main") }}>Cancelar</LinkCancelMargin>
+                        </>) : (
+                        <>
+                            <BoxInput
+                                textLabel={'Descrição da consulta'}
+                                fieldValue={descricaoConsulta}
+                                onChangeText={(text) => setDescricaoConsulta(text)}
+                                fieldHeight={150}
+                                insertRecord={true}
+                                editable={true}
+                                multiline={true}
+                            />
+                            <BoxInput
+                                textLabel={'Diagnóstico do paciente'}
+                                fieldValue={diagnostico}
+                                onChangeText={(text) => setDiagnostico(text)}
+                                insertRecord={true}
+                                fieldHeight={80}
+                                editable={true}
+                                multiline={true}
+                            />
+                            <BoxInput
+                                textLabel={'Prescrição médica'}
+                                fieldValue={prescricao}
+                                onChangeText={(text) => setPrescricao(text)}
+                                insertRecord={true}
+                                fieldHeight={150}
+                                editable={true}
+                                multiline={true}
+                            />
+                            <Btn onPress={() => AtualizarConsulta()}>
+                                <ButtonTitle>SALVAR</ButtonTitle>
+                            </Btn>
 
-                        <BoxInput
-                            textLabel={'Descrição da consulta'}
-                            placeholder={'Descricao'}
-                            fieldHeight={150}
-                            editable={true}
-                            multiline={true}
-                        />
-                        <BoxInput
-                            textLabel={'Diagnóstico do paciente'}
-                            placeholder={'Diagnóstico'}
-                            fieldHeight={80}                  
-                            editable={true}
-                            multiline={true}
-                        />
-                        <BoxInput
-                            textLabel={'Prescrição médica'}
-                            placeholder={'Prescrição médica'}
-                            fieldHeight={150}
-                            editable={true}
-                            multiline={true}
-                        />
-                        <Btn onPress={() => setRecordEdit(true)}>
-                            <ButtonTitle>SALVAR</ButtonTitle>
-                        </Btn>
+                            <LinkCancelMargin onPress={() => { setRecordEdit(true) }}>Cancelar Edição</LinkCancelMargin></>)}
 
-                        <LinkCancelMargin onPress={() => {setRecordEdit(true)}}>Cancelar Edição</LinkCancelMargin>
-                    </ContainerProfile>
-                </>
-            )}
-        </ContainerScroll>
+                </ContainerProfile>
+            </ContainerScroll>
+        ) : null
+
     )
 }

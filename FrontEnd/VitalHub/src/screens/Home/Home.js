@@ -15,7 +15,7 @@ import { ModalSeeDoctor } from "../../components/ModalSeeDoctor/ModalSeeDoctor"
 import { userDecodeToken } from "../../Utils/Auth"
 import api, { buscarConsultasMedico, buscarConsultasPaciente } from "../../services/service"
 import moment, { duration } from 'moment';
-import { logProfileData } from "react-native-calendars/src/Profiler"
+
 
 
 
@@ -25,7 +25,6 @@ export const Home = ({ navigation }) => {
    
     const [dataConsulta, setDataConsulta] = useState('');
     const [statusList, setStatusList] = useState("agendada")
-
     const [showModalCancel, setShowModalCancel] = useState(false)
     const [showModalAppointment, setShowModalAppointment] = useState(false)
     const [showModalSchedule, setShowModalSchedule] = useState(false)
@@ -39,7 +38,6 @@ export const Home = ({ navigation }) => {
         const token = await userDecodeToken();
 
         setUserData(token);
-        console.log(token.foto);
         setDataConsulta(moment().format('YYYY-MM-DD'))
 
 
@@ -49,15 +47,15 @@ export const Home = ({ navigation }) => {
 
         if (userData.role == "Medico") {
             const response = await api.get(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
-            console.log(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
+           
             setMedicoData(response.data);
-            // console.log(response.data);
+            
         
             
         } else {
 
             const response = await api.get(`${buscarConsultasPaciente}?data=${dataConsulta}&id=${userData.id}`)
-   
+            console.log(response.data[0].medicoClinica.medico.especialidade.especialidade1);
             setPaciente(response.data);
             
     
@@ -103,9 +101,9 @@ export const Home = ({ navigation }) => {
         }
     }, [dataConsulta])
 
-//     useEffect(() => {
-// ListarConsultas();
-//     },[showModalCancel])
+    useEffect(() => {
+ListarConsultas();
+    },[showModalCancel])
 
     
 
@@ -149,10 +147,7 @@ export const Home = ({ navigation }) => {
                     renderItem={({ item }) => {
                         if (statusList === 'agendada' && item.situacao.situacao == 'Pendentes') {
                             return (
-                                <TouchableOpacity onPress={async () => {
-                                    MostrarModalInserir('cancelar', item)
-
-                                }}>
+                     
                                     <Card 
                                         id={item.id}
                                         foto={item.paciente.idNavigation.foto}
@@ -164,25 +159,33 @@ export const Home = ({ navigation }) => {
                                         typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
                                         onPressCancel={() => MostrarModal('cancelar', item)}
                                     />
-                                </TouchableOpacity>
+                          
                             )
                         } else if (statusList === 'realizada' && item.situacao.situacao == 'Realizados') {
                             return (
-                                <Card 
-                                name={item.paciente.idNavigation.nome}
-                                foto={item.paciente.idNavigation.foto}
-                                status={item.situacao.situacao}
-                                tipoUser={userData.role}
-                                age={item.paciente.idade}
-                                hour={item.dataConsulta}
-                                typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
-                                onPressCancel={() => setShowModalCancel(true)}
-                            />
+
+                   
+
+                                    <Card 
+                                    id={item.id}
+                                    name={item.paciente.idNavigation.nome}
+                                    foto={item.paciente.idNavigation.foto}
+                                    status={item.situacao.situacao}
+                                    tipoUser={userData.role}
+                                    age={item.paciente.idade}
+                                    hour={item.dataConsulta}
+                                    typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
+                                    onPressAppointment={() => {
+                                        navigation.replace('MedicalRecord', {data: item})
+                                    }}
+                                />
+
 
                             )
                         } else if (statusList === 'cancelada'&& item.situacao.situacao == 'Cancelados') {
                             return (
                                 <Card 
+                                id={item.id}
                                 name={item.paciente.idNavigation.nome}
                                 foto={item.paciente.idNavigation.foto}
                                 status={item.situacao.situacao}
@@ -190,7 +193,7 @@ export const Home = ({ navigation }) => {
                                 age={item.paciente.idade}
                                 hour={item.dataConsulta}
                                 typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
-                                onPressCancel={() => setShowModalCancel(true)}
+                          
                             />
                             )
                         }
@@ -254,7 +257,9 @@ export const Home = ({ navigation }) => {
 
                                 }}>
                                     <Card
+                                    id={item.id}
                                         name={item.medicoClinica.medico.idNavigation.nome}
+                                        foto={item.medicoClinica.medico.idNavigation.foto}
                                         crm={item.medicoClinica.medico.crm}
                                         tipoUser={userData.role}
                                         status={item.situacao.situacao}
@@ -269,6 +274,7 @@ export const Home = ({ navigation }) => {
                                 <Card
                                     id={item.id}
                                     name={item.medicoClinica.medico.idNavigation.nome}
+                                    foto={item.medicoClinica.medico.idNavigation.foto}
                                     tipoUser={userData.role}
                                     crm={item.medicoClinica.medico.crm}
                                     status={item.situacao.situacao}
@@ -282,7 +288,9 @@ export const Home = ({ navigation }) => {
                         } else if (statusList === 'cancelada' && item.situacao.situacao == 'Cancelados') {
                             return (
                                 <Card
+                                id={item.id}
                                     name={item.medicoClinica.medico.idNavigation.nome}
+                                    foto={item.medicoClinica.medico.idNavigation.foto}
                                     tipoUser={userData.role}
                                     crm={item.medicoClinica.medico.crm}
                                     status={item.situacao.situacao}

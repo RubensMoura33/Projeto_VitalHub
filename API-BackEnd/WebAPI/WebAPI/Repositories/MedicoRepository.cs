@@ -11,6 +11,7 @@ namespace WebAPI.Repositories
     
     public class MedicoRepository : IMedicoRepository
     {
+
         VitalContext ctx = new VitalContext();
 
         public Medico AtualizarPerfil(Guid Id, MedicoViewModel medico)
@@ -61,12 +62,11 @@ namespace WebAPI.Repositories
             try
             {
                 return ctx.Consultas
+                     .Include(x => x.Receita)
                      .Include(x => x.Situacao)
                      .Include(x => x.Prioridade)
                      .Include(x => x.MedicoClinica)
                      .Include(x => x.Paciente!.IdNavigation)
-
-                     // diferença em dias entre a Data da Consulta e a dataConsulta é igual a 0.
                      .Where(x => x.MedicoClinica!.MedicoId == idMedico && EF.Functions.DateDiffDay(x.DataConsulta, dataConsulta) == 0)
                      .ToList();
 

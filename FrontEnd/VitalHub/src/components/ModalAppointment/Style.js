@@ -22,6 +22,12 @@ align-items: center;
 export const ImageModalAp = styled.Image`
 margin-top: 20px;
 `
+export const ImagePaciente = styled.Image`
+width: 90%;
+height: 170;
+border-radius: 8px;
+`
+
 
 
 export const ViewData = styled.View`

@@ -2,7 +2,7 @@ import { Image, Modal, Text } from "react-native"
 import { ButtonTitle, TitleProfile } from "../Title/Style"
 import { Btn } from "../Button/Button"
 import { LinkCancel } from "../Link/Style"
-import { ButtonModal, Cancel, ContentModal, TextAge, TextEmail, ViewData, ViewModal } from "./Style"
+import { ButtonModal, Cancel, ContentModal, ImagePaciente, TextAge, TextEmail, ViewData, ViewModal } from "./Style"
 import { useEffect, useState } from "react"
 import { ProfileImage } from "../Images/Style"
 
@@ -25,7 +25,7 @@ export const ModalAppointment = ({ setShowModalAppointment, navigation, visible,
             <Modal {...rest} visible={visible} transparent={true} animationType="fade" animationsOutTiming={0}>
                 <ViewModal>
                     <ContentModal>
-                        <ProfileImage  source={{uri: data.paciente.idNavigation.foto}} />
+                        <ImagePaciente  source={{uri: data.paciente.idNavigation.foto}} />
 
                         <TitleProfile>{data.paciente.idNavigation.nome}</TitleProfile>
 

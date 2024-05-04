@@ -34,6 +34,7 @@ export const SelectDate = ({ navigation , route}) => {
     }
 
     const onPressHandle = () => {
+    
         setShowModalSchedule(true)
         navigation.navigate("Main");
         
@@ -56,7 +57,10 @@ export const SelectDate = ({ navigation , route}) => {
                 data={Horarios}
             />
 
-            <BtnFull onPress={() => { handleContinue() }} >
+            <BtnFull onPress={() => {if(selectedDate == null || selectedTime == null){
+                console.warn("É necessário selecionar a data e o horário");
+                return;
+            } handleContinue() }} >
                 <ButtonTitle>CONFIRMAR</ButtonTitle>
             </BtnFull>
 

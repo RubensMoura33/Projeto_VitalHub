@@ -18,6 +18,10 @@ export const SeePrescription = ({ navigation, route }) => {
     const [isPhoto, setIsPhoto] = useState(true)
     const [descricaoExame, setDescricaoExame] = useState();
     const [dataConsulta, setDataConsulta] = useState();
+    const [renderizar, setRenderizar] = useState(false);
+    const [descricaoConsulta, setDescricaoConsulta] = useState("");
+    const [diagnostico, setDiagnostico] = useState("");
+    const [prescricao, setPrescricao] = useState("");
 
     function onPressPhoto() {
         navigation.navigate("CameraPhoto", { imageProfile: false, getMediaLibrary: true });
@@ -30,7 +34,17 @@ export const SeePrescription = ({ navigation, route }) => {
     }
     useEffect(() => {
         if (route.params.data != null) {
-            console.log(route.params.data);
+            if (route.params.data.receita.medicamento != undefined) {
+
+                setPrescricao(route.params.data.receita.medicamento);
+            }
+            if (route.params.data.descricao != undefined) {
+                setDescricaoConsulta(route.params.data.descricao)
+            }
+            if(route.params.data.diagnostico != undefined){
+                setDiagnostico(route.params.data.diagnostico)
+            }
+            setRenderizar(true)
             setDataConsulta(route.params.data)
         }
     }, [route])
@@ -44,10 +58,9 @@ export const SeePrescription = ({ navigation, route }) => {
             name: `image.${photoUri.split('.').pop()}`,
             type: `image/${photoUri.split('.').pop()}`,
         });
-        console.log(photoUri);
         formData.append("ConsultaId", dataConsulta.id)
 
-        console.log(dataConsulta.id);
+      
 
 
 
@@ -73,77 +86,79 @@ export const SeePrescription = ({ navigation, route }) => {
     }, [photoUri])
 
     return (
-        <ContainerScroll>
-            <DoctorImage source={require("../../assets/doctor.png")} />
-            <ContainerProfile>
+    renderizar ? (
+     <ContainerScroll>
+        <DoctorImage source={{uri : dataConsulta.medicoClinica.medico.idNavigation.foto}} />
+        <ContainerProfile>
 
-                <TitleProfile>Dr Claudio</TitleProfile>
-                <ViewSuBTitlePrescription>
-                    <SubtitleRecord>Cliníco geral</SubtitleRecord>
-                    <SubtitleRecord>CRM-15286</SubtitleRecord>
-                </ViewSuBTitlePrescription>
+                <TitleProfile>{`Dr(a) ${dataConsulta.medicoClinica.medico.idNavigation.nome}`}</TitleProfile>
+            <ViewSuBTitlePrescription>
+                <SubtitleRecord>{dataConsulta.medicoClinica.medico.especialidade.especialidade1}</SubtitleRecord>
+                <SubtitleRecord>{dataConsulta.medicoClinica.medico.crm}</SubtitleRecord>
+            </ViewSuBTitlePrescription>
 
-                <BoxInput
-                    multiline={true}
-                    textLabel={"Descrição da consulta"}
-                    fieldValue={descricaoExame}
-                    placeholder={`O paciente possuí uma infecção no ouvido. Necessário repouse de 2 dias e acompanhamento médico constante`}
-                    fieldHeight={150}
-                />
-                <BoxInput
-                    multiline={true}
-                    textLabel={"Diagnóstico do paciente"}
-                    placeholder={`Infecção no ouvido`}
-                    fieldHeight={80}
-                />
-                <BoxInput
-                    multiline={true}
-                    textLabel={"Prescrição médica"}
-                    placeholder={`Medicamento: Advil Dosagem: 50 mg Frequência: 3 vezes ao dia Duração: 3 dias`}
-                    fieldHeight={150}
-                />
-                <InputExame>Exame medico</InputExame>
-                {
-                    photoUri && isPhoto ?
-                        <PhotoTaked
-                            source={{ uri: photoUri }}
-                            resizeMode="contain"
-                        /> :
-                        <BoxInput
-                            placeholder={`Nenhuma foto informada`}
-                            fieldHeight={150}
-                            marginBottom={0}
-                        />
-                }
-
-
-                <ViewInsertPhoto>
-
-                    <BtnInsertPhoto onPress={() => { !photoUri ? onPressPhoto() : null }}>
-                        <MaterialCommunityIcons name="camera-plus-outline" size={26} color="white" />
-                        <BtnProfile>Enviar</BtnProfile>
-                    </BtnInsertPhoto>
-                    <BtnCancelPhoto onPress={() => onPressCancel()}>
-                        <TitleCancelPhoto>Cancelar</TitleCancelPhoto>
-                    </BtnCancelPhoto>
-
-                </ViewInsertPhoto>
+            <BoxInput
+                multiline={true}
+                textLabel={"Descrição da consulta"}
+                fieldValue={descricaoConsulta}
+                placeholder={`O paciente possuí uma infecção no ouvido. Necessário repouse de 2 dias e acompanhamento médico constante`}
+                fieldHeight={150}
+            />
+            <BoxInput
+                multiline={true}
+                textLabel={"Diagnóstico do paciente"}
+                placeholder={diagnostico}
+                fieldHeight={80}
+            />
+            <BoxInput
+                multiline={true}
+                textLabel={"Prescrição médica"}
+                placeholder={prescricao}
+                fieldHeight={150}
+            />
+            <InputExame>Exame medico</InputExame>
+            {
+                photoUri && isPhoto ?
+                    <PhotoTaked
+                        source={{ uri: photoUri }}
+                        resizeMode="contain"
+                    /> :
+                    <BoxInput
+                        placeholder={`Nenhuma foto informada`}
+                        fieldHeight={150}
+                        marginBottom={0}
+                    />
+            }
 
 
+            <ViewInsertPhoto>
 
-                <Line></Line>
+                <BtnInsertPhoto onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                    <MaterialCommunityIcons name="camera-plus-outline" size={26} color="white" />
+                    <BtnProfile>Enviar</BtnProfile>
+                </BtnInsertPhoto>
+                <BtnCancelPhoto onPress={() => onPressCancel()}>
+                    <TitleCancelPhoto>Cancelar</TitleCancelPhoto>
+                </BtnCancelPhoto>
 
-                <BoxInput
-                    placeholder={"Resultado do exame de sangue : tudo normal"}
-                    multiline={true}
-                    fieldHeight={120}
-                    fieldValue={descricaoExame}
-                    marginBottom={0}
-                />
+            </ViewInsertPhoto>
 
-                <LinkCancelMargin onPress={() => { navigation.replace("Main") }}>Voltar</LinkCancelMargin>
 
-            </ContainerProfile>
-        </ContainerScroll>
+
+            <Line></Line>
+
+            <BoxInput
+                placeholder={"Resultado do exame de sangue : tudo normal"}
+                multiline={true}
+                fieldHeight={120}
+                fieldValue={descricaoExame}
+                marginBottom={0}
+            />
+
+            <LinkCancelMargin onPress={() => { navigation.replace("Main") }}>Voltar</LinkCancelMargin>
+
+        </ContainerProfile>
+    </ContainerScroll>) : null
+       
     )
 }

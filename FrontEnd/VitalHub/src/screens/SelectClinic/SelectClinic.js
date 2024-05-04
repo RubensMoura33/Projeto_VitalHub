@@ -10,12 +10,7 @@ import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
 import api, { clinicasResource } from "../../services/service"
 
 
-const Clinicas = [
-    { id: 1, nome: "Clínica Natureh", Localizacao: "São Paulo, SP", Avaliacao: "4,5", Abertura: "Seg-Sex" },
-    { id: 2, nome: "Diamond Pró-Mulher", Localizacao: "São Paulo, SP", Avaliacao: "4,8", Abertura: "Seg-Sex" },
-    { id: 3, nome: "Clinica Villa Lobos", Localizacao: "Taboão, SP", Avaliacao: "4,2", Abertura: "Seg-Sab" },
-    { id: 4, nome: "SP Oncologia Clínica", Localizacao: "Taboão, SP", Avaliacao: "4,2", Abertura: "Seg-Sab" },
-]
+
 
 export const SelectClinic = ({ navigation, route }) => {
 
@@ -29,6 +24,12 @@ export const SelectClinic = ({ navigation, route }) => {
     }, [])
 
     function handleContinue() {
+
+
+        if(selectedClinic == null){
+            console.warn("É necessário selecionar uma clinica");
+            return;
+        }
         navigation.replace("SelectDoctor" , {
             agendamento:{
             ...route.params.agendamento,
@@ -42,11 +43,10 @@ export const SelectClinic = ({ navigation, route }) => {
     }
     async function loadClinic() {
         try {
-            response = await api.get(`/Clinica/BuscarPorCidade?cidade=${route.params.agendamento.localizacao}`)
+            response = await api.get(`Clinica/BuscarPorCidade?cidade=${route.params.agendamento.localizacao}`)
             setClinicas(response.data);
-            console.log(response.data);
         } catch (error) {
-            console.log(error + " erro senai");
+            console.log(error);
         }
     }
 

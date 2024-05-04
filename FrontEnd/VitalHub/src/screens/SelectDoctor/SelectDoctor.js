@@ -8,19 +8,19 @@ import { BtnSelect, Cancel, Title } from "../SelectClinic/Style"
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
 import api, { medicosClinicaResource, medicosResource } from '../../services/service'
 
-const Medicos = [
-    { id: 1, nome: "Dra Alessandra", Especialidade: "Demartologa, Esteticista", Foto: require("../../assets/nicole.png") },
-    { id: 2, nome: "Dr Kumushiro", Especialidade: "Cirurgião, Cardiologista", Foto: require("../../assets/medico.png") },
-    { id: 3, nome: "Dr Rodrigo Santos", Especialidade: "Clínico, Pediatra", Foto: require("../../assets/photo.png") },
-    { id: 4, nome: "Dr Gabriel Gab", Especialidade: "Oftamologista", Foto: require("../../assets/gab.jpg") },
-]
 
 export const SelectDoctor = ({ navigation, route }) => {
 
     const { idClinica } = route.params || null
-    const [medicoLista, setMedicoLista] = useState([]);
+    const [medicoLista, setMedicoLista] = useState([]); 
+     const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [showModalSchedule, setShowModalSchedule] = useState(false)
 
     function handleContinue() {
+if(selectedDoctor == null){
+    console.warn("É necessário selecionar um médico");
+    return;
+}
         navigation.replace("SelectDate", {
             agendamento : {
                 ...route.params.agendamento,
@@ -32,26 +32,18 @@ export const SelectDoctor = ({ navigation, route }) => {
     async function listarMedicos() {
         try {
             const response = await api.get(`${medicosClinicaResource}?id=${route.params.agendamento.clinicaId}`);
-            console.log(response.data);
             setMedicoLista(response.data);
 
 
         } catch (error) {
             console.log(error);
         }
-    }
-
-    useEffect(() => {
-        console.log(route.params);
-    }, [route])
+    }''
 
     useEffect(() => {
         listarMedicos();
-        console.log(medicoLista);
-        console.log(idClinica);
     }, [])
-    const [selectedDoctor, setSelectedDoctor] = useState(null);
-    const [showModalSchedule, setShowModalSchedule] = useState(false)
+  
 
     const onPressHandle = () => {
         setShowModalSchedule(true)
@@ -75,7 +67,9 @@ export const SelectDoctor = ({ navigation, route }) => {
                             especialidade : item.especialidade.especialidade1
                         }
                     )}>
-                        <CardDoctor name={item.idNavigation.nome}
+                        <CardDoctor 
+                            name={item.idNavigation.nome}
+                            photo={item.idNavigation.foto}
                             espec={item.especialidade.especialidade1}
                             isSelected={selectedDoctor ? item.id == selectedDoctor.medicoClinicaId : false}
                         />
