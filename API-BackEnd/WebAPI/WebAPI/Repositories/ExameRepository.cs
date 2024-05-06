@@ -1,6 +1,7 @@
 ﻿using WebAPI.Contexts;
 using WebAPI.Domains;
 using WebAPI.Interfaces;
+using WebAPI.ViewModels;
 
 namespace WebAPI.Repositories
 {
@@ -21,11 +22,29 @@ namespace WebAPI.Repositories
             }
         }
 
-        public void Cadastrar(Exame exame)
+        public void Cadastrar(ExameViewModel exame)
         {
             try
             {
-                ctx.Exames.Add(exame);
+
+                var exameBuscado = ctx.Exames.FirstOrDefault(x => x.ConsultaId == exame.ConsultaId);
+
+                if(exameBuscado != null)
+                {
+                    exameBuscado.Descricao = exame.Descricao;
+                    ctx.Exames.Update(exameBuscado);
+                }
+                else
+                {
+                    Exame novoExame = new Exame();
+
+                    novoExame.Descricao = exame.Descricao;
+                    novoExame.ConsultaId = exame.ConsultaId;
+                    ctx.Exames.Add(novoExame);
+                }
+
+  
+
                 ctx.SaveChanges();
 
             }

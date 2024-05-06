@@ -32,10 +32,16 @@ export const SeePrescription = ({ navigation, route }) => {
         setIsPhoto(false);
         route.params = null
     }
+
+   async function getExame(){
+
+    const response = await api.get(`Exame/BuscarPorIdConsulta?idConsulta=${route.params.data.id}`)
+    setDescricaoExame(response.data[0].descricao)
+   }
     useEffect(() => {
         if (route.params.data != null) {
             if (route.params.data.receita.medicamento != undefined) {
-
+                console.log(route.params.id);
                 setPrescricao(route.params.data.receita.medicamento);
             }
             if (route.params.data.descricao != undefined) {
@@ -44,6 +50,9 @@ export const SeePrescription = ({ navigation, route }) => {
             if(route.params.data.diagnostico != undefined){
                 setDiagnostico(route.params.data.diagnostico)
             }
+
+
+        getExame();
             setRenderizar(true)
             setDataConsulta(route.params.data)
         }

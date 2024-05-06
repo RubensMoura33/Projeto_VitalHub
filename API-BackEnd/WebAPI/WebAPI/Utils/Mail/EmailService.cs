@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace WebAPI.Utils.Mail
 {
@@ -49,6 +50,7 @@ namespace WebAPI.Utils.Mail
             }
             catch (Exception ex)
             {
+             
             }
         }
     }

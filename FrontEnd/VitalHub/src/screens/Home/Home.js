@@ -47,7 +47,7 @@ export const Home = ({ navigation }) => {
 
         if (userData.role == "Medico") {
             const response = await api.get(`${buscarConsultasMedico}?data=${dataConsulta}&id=${userData.id}`);
-           
+      
             setMedicoData(response.data);
             
         
@@ -55,7 +55,7 @@ export const Home = ({ navigation }) => {
         } else {
 
             const response = await api.get(`${buscarConsultasPaciente}?data=${dataConsulta}&id=${userData.id}`)
-            console.log(response.data[0].medicoClinica.medico.especialidade.especialidade1);
+
             setPaciente(response.data);
             
     
@@ -263,7 +263,7 @@ ListarConsultas();
                                         crm={item.medicoClinica.medico.crm}
                                         tipoUser={userData.role}
                                         status={item.situacao.situacao}
-                                        hour={new Date(item.dataConsulta).toLocaleDateString('pt-BR')}
+                                        hour={item.dataConsulta}
                                         typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
                                         onPressCancel={() => MostrarModal('cancelar', item)}
                                     />

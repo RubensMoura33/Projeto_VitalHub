@@ -47,16 +47,15 @@ namespace WebAPI.Controllers
                     exameViewModel.Descricao = result;
 
                     // Cria um novo objeto Exame com a descrição e o ID da consulta
-                    Exame novoExame = new Exame();
 
-                    novoExame.Descricao = exameViewModel.Descricao;
-                    novoExame.ConsultaId = exameViewModel.ConsultaId;
+
+                
 
                     // Chama o método Cadastrar do repositório de exame para salvar o novo exame
-                    _exameRepository.Cadastrar(novoExame);
+                    _exameRepository.Cadastrar(exameViewModel);
 
                     // Retorna uma resposta de sucesso (código 200 OK) com o novo exame cadastrado
-                    return Ok(novoExame);
+                    return Ok(exameViewModel);
                 }
 
 

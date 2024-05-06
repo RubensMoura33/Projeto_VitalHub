@@ -57,8 +57,6 @@ try {
             if(route.params.data.diagnostico != undefined){
                 setDiagnostico(route.params.data.diagnostico)
             }
-
-            console.log();
             setDataPaciente(route.params.data)
             setRenderizar(true);
         }
