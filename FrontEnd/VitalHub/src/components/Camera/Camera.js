@@ -2,7 +2,7 @@ import { Image, Modal, StyleSheet, View } from "react-native"
 import { Container } from "../Container/Style"
 import { useEffect, useRef, useState } from "react"
 import { BoxCamera, BtnCapture, BtnFlash, BtnFlip, ConfigBtnCapture, LastPhoto, Options } from "./Style"
-import { Camera, CameraType, FlashMode } from 'expo-camera';
+import {CameraView, useCameraPermissions } from 'expo-camera';
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library'
@@ -18,9 +18,9 @@ export const CameraPhoto = ({ navigation, route }) => {
     const cameraRef = useRef(null)
     const [photo, setPhoto] = useState(null)
     const [openModal, setOpenModal] = useState(false)
-    const [tipoCamera, setTipoCamera] = useState(Camera.Constants.Type.front)
-    const [flashOn, setFlashOn] = useState(Camera.Constants.FlashMode.off);
     const [latestPhoto, setLatestPhoto] = useState(null);
+    const [facing , setFacing] = useState('back');
+    const [permission , requestPermission] = useCameraPermissions();
     async function CapturePhoto() {
         if (cameraRef) {
             const photo = await cameraRef.current.takePictureAsync()
@@ -69,21 +69,14 @@ export const CameraPhoto = ({ navigation, route }) => {
         }
     }
 
-    useEffect(() => {
-        (async () => {
-            const { status: cameraStatus } = await Camera.requestCameraPermissionsAsync()
-
-            const { status: mediaStatus } = await MediaLibrary.requestPermissionsAsync()
-        })();
-    }, [])
 
     return (
         <Container>
-            <Camera
+            <CameraView
                 ref={cameraRef}
-                type={tipoCamera}
+                facing={facing}
                 style={styles.camera}
-                flashMode={flashOn}
+
             >
                 <BtnReturnPhoto onPress={() => navigation.navigate("SeePrescription")}>
                     <EvilIcons name="close-o" size={70} color="white" />
@@ -110,12 +103,12 @@ export const CameraPhoto = ({ navigation, route }) => {
                         <ConfigBtnCapture></ConfigBtnCapture>
                     </BtnCapture>
 
-                    <BtnFlip onPress={() => setTipoCamera(tipoCamera == CameraType.front ? CameraType.back : CameraType.front)}>
+                    <BtnFlip onPress={() => setFacing(facing === 'back' ?  "front" : "back")}>
                         <FontAwesome6 name="camera-rotate" size={45} color="white" />
                     </BtnFlip>
 
                 </BoxCamera>
-            </Camera>
+            </CameraView>
 
 
             <Modal
