@@ -93,6 +93,13 @@ namespace WebAPI.Repositories
             try
             {
                 user.Senha = Criptografia.GerarHash(user.Senha!);
+
+                var usuarioBuscado = ctx.Usuarios.FirstOrDefault(x => x.Email == user.Email);
+
+                if(usuarioBuscado != null)
+                {
+                    return;
+                }
                 ctx.Usuarios.Add(user);
                 ctx.SaveChanges();
             }

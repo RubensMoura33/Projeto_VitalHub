@@ -1,4 +1,4 @@
-import { ActivityIndicator, ActivityIndicatorBase, Text } from "react-native"
+import { ActivityIndicator, ActivityIndicatorBase, ScrollView, Text } from "react-native"
 import { Container } from "../../components/Container/Style"
 import { Logo } from "../../components/Logo/Style"
 import { ButtonTitle, TextRec, Title } from "../../components/Title/Style"
@@ -64,12 +64,14 @@ export const Register = ({ navigation }) => {
     }
 
     async function Register() {
-        if (confirmarSenha === senha) {
+   ;
+        if ( senha != null && confirmarSenha === senha && senha.length > 3 ) {
             const formData = new FormData();
             formData.append('Nome', nome);
             formData.append('Email', email);
             formData.append('Senha', senha);
             formData.append('IdTipoUsuario', idTipoUsuario);
+            setSpinner(true);
             try {
                 await api.post("Pacientes", formData, {
                     headers: {
@@ -78,12 +80,15 @@ export const Register = ({ navigation }) => {
                 });
                 navigation.replace("Login");
                 handleCallNotifications();
+                alert("Usuário cadastrado com sucesso")
             } catch (error) {
-                
+                alert("Erro ao cadastrar o usuário!")
             }
+            setSpinner(false);
+          
         }
         else {
-            Alert.alert("Senha de confirmacao nao corresponde a sua senha")
+            alert("Senha Inválida!")
         }
 
     }
@@ -97,7 +102,9 @@ loadData();
     },[])
 
     return (
+            <ScrollView>
         <Container>
+
             <Logo source={require('../../assets/logo.png')}></Logo>
 
             <Title>Criar conta</Title>
@@ -121,5 +128,6 @@ loadData();
             <LinkCancel onPress={() => navigation.replace("Login")}>Cancelar</LinkCancel>
 
         </Container>
+            </ScrollView>
     )
 }

@@ -12,8 +12,8 @@ import api, { loginResource } from "../../services/service"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const Login = ({ navigation, route }) => {
-    const [email, setEmail] = useState("artur@senai.com");
-    const [senha, setSenha] = useState("Senai@134");
+    const [email, setEmail] = useState("teste3@gmail.com");
+    const [senha, setSenha] = useState("12345");
     const [spinner, setSpinner] = useState(false);
     const [user, setUser] = useState({
         email: "",

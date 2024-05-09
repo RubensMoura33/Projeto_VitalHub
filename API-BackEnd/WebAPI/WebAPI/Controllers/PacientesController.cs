@@ -53,6 +53,11 @@ namespace WebAPI.Controllers
         {
             try
             {
+
+
+                
+
+
                 Usuario user = new Usuario();
 
                 user.Nome = pacienteModel.Nome;
