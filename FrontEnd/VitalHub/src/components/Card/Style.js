@@ -50,6 +50,7 @@ font-family: 'Quicksand_400Regular';
 
 export const TextBold = styled(TextAge)`
 font-family: 'Quicksand_600SemiBold';
+font-size: 14px;
 color: ${(props) => props.status == "agendada" ? "#49B3BA" : "#4E4B59"};
 `
 
@@ -64,7 +65,7 @@ justify-content: space-between;
 export const ClockCard = styled.View`
 background-color: ${props => props.status == 'agendada' ? '#E8FCFD' : '#F1F0F5'};
 height: 25px;
-width: 100px;
+width: 120px;
 flex-direction: row;
 justify-content: center;
 gap: 10px;

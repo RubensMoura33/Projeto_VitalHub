@@ -8,6 +8,7 @@ import * as Notifications from "expo-notifications"
 import { useEffect, useState } from "react"
 import api from "../../services/service"
 import { userDecodeToken } from "../../Utils/Auth"
+import moment from "moment"
 
 Notifications.requestPermissionsAsync()
 
@@ -69,6 +70,10 @@ export const ModalResumeAppointment = ({ agendamento, dataConsulta, horarioConsu
             setProfile(token)
     }
 
+    function formatarData(data) {
+        return moment(data).format('DD/MM/YYYY');
+    }
+
     async function PostConsulta(){
         await api.post("/Consultas/Cadastrar", {
             ...agendamento,
@@ -98,7 +103,7 @@ export const ModalResumeAppointment = ({ agendamento, dataConsulta, horarioConsu
 
                         <ViewData fieldHeight={50}>
                             <TitleData>Data da consulta</TitleData>
-                            <TextData>{dataConsulta} {horarioConsulta}</TextData>
+                            <TextData> {formatarData(dataConsulta)} {horarioConsulta}</TextData>
                         </ViewData>
                         <ViewData fieldHeight={80}>
                             <TitleData>Médico(a) da consulta</TitleData>

@@ -22,7 +22,7 @@ import { SeePrescription } from './src/screens/SeePrescription/SeePrescription';
 import { Main } from './src/screens/Main/Main';
 import { InsertRecord } from './src/screens/InsertRecord/InsertRecord';
 import { Camera, CameraPhoto } from './src/components/Camera/Camera';
-import Animated from 'react-native-reanimated';
+import 'react-native-reanimated';
 
 
 export default function App() {

@@ -1,4 +1,4 @@
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps"
+import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps"
 import { BoxInput } from "../../components/BoxInput/Index"
 import { Container, ContainerMap, ViewFormat, ViewLocal } from "../../components/Container/Style"
 import { LinkCancelMargin } from "../../components/Link/Style"
@@ -44,8 +44,6 @@ export const SeeLocalAppointment = ({ navigation, route }) => {
     useEffect(() => {
         getClinic(route.params.clinicaId)
     }, [route.params])
-
-
 
 
     const mapReference = useRef(null)
@@ -119,7 +117,7 @@ export const SeeLocalAppointment = ({ navigation, route }) => {
 
                                 }}
                                 customMapStyle={grayMapStyle}
-                                provider={PROVIDER_GOOGLE}
+                                provider={PROVIDER_DEFAULT}
                                 style={styles.map}
                             >
                                 <Marker

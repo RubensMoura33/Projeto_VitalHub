@@ -13,9 +13,20 @@ const [loadPage, setLoadPage] = useState(false);
         navigation.replace("SeeLocalAppointment",{clinicaId: data.medicoClinica.clinicaId});
         setShowModalSeeDoctor(false)
       }
+      async function CapturarLocalizacao() {
+        const { granted } = await requestForegroundPermissionsAsync()
+
+        if (granted) {
+            const captureLocation = await getCurrentPositionAsync()
+
+            setInitialPosition(captureLocation)
+        }
+    }
 useEffect(() => {
 if( data && data.dataConsulta != null){
     setLoadPage(true)
+    CapturarLocalizacao()
+
 }
 },[data])
     return (
