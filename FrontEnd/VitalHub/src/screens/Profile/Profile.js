@@ -32,8 +32,7 @@ export const Profile = ({ navigation, route }) => {
     const [numero, setNumero] = useState()
     const [cidade, setCidade] = useState()
     const [nome, setNome] = useState();
-    const [idTipoUsuario, setIdTipoUsuario] = useState();
-    const [selected, setSelected] = useState("");
+
 
     //Configuracao token
 
@@ -73,8 +72,15 @@ export const Profile = ({ navigation, route }) => {
         } else {
             try {
                 response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
-                setDataNascimento(new Date(response.data.dataNascimento).toLocaleDateString("pt-BR"))
 
+                console.log(response.data.dataNascimento);
+
+                if (response.data.dataNascimento === undefined) {
+                    setDataNascimento('')
+                }
+                else {
+                    setDataNascimento(new Date(response.data.dataNascimento).toLocaleDateString("pt-BR"))
+                }
 
                 setFoto(response.data.idNavigation.foto);
                 setCpf(response.data.cpf)
@@ -92,10 +98,10 @@ export const Profile = ({ navigation, route }) => {
     }
 
     async function updatePatient() {
-    
+
         const partes = dataNascimento.split("/");
         const novaDataFormatada = `${partes[2]}-${partes[1]}-${partes[0]}`;
- 
+
         try {
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
@@ -180,7 +186,7 @@ export const Profile = ({ navigation, route }) => {
         })
 
 
-  
+
         await api.put(`Usuario/AlterarFotoPerfil?id=${role.id}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data"
@@ -192,7 +198,7 @@ export const Profile = ({ navigation, route }) => {
         })
     }
     useEffect(() => {
-      
+
         if (photoUri) {
             AlterarFotoPerfil();
         }
@@ -399,9 +405,9 @@ export const Profile = ({ navigation, route }) => {
                             editable={true}
                             fieldValue={dataNascimento}
                             insertRecord={true}
-                            onChangeText={(text) =>{
-                              setDataNascimento(text)  ;
-                            } }
+                            onChangeText={(text) => {
+                                setDataNascimento(text);
+                            }}
                         />
                         <BoxInput
                             textLabel={'CPF'}

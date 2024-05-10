@@ -57,7 +57,7 @@ export const SelectDate = ({ navigation , route}) => {
                 data={Horarios}
             />
 
-            <BtnFull onPress={() => {if(selectedDate == null || selectedTime == null){
+            <BtnFull onPress={() => { if(selectedDate == '' || selectedTime == ''){
                 console.warn("É necessário selecionar a data e o horário");
                 return;
             } handleContinue() }} >

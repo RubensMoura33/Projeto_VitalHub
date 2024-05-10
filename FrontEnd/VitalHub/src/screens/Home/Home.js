@@ -10,14 +10,12 @@ import { ModalAppointment } from "../../components/ModalAppointment/ModalAppoint
 import { BtnCard, BtnSchedule } from "../../components/Button/Button"
 import { FontAwesome } from '@expo/vector-icons';
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule"
-import { Text, TouchableOpacity } from "react-native"
+import { Text, TouchableOpacity, View } from "react-native"
 import { ModalSeeDoctor } from "../../components/ModalSeeDoctor/ModalSeeDoctor"
 import { userDecodeToken } from "../../Utils/Auth"
 import api, { buscarConsultasMedico, buscarConsultasPaciente } from "../../services/service"
 import moment, { duration } from 'moment';
-
-
-
+import { TextRec } from "../../components/Title/Style"
 
 
 
@@ -105,6 +103,13 @@ export const Home = ({ navigation }) => {
 ListarConsultas();
     },[showModalCancel])
 
+    const emptyComponent = () => {
+        return(
+            <View style={{width: '100%', alignItems: 'center', height: 50}}>
+            <TextRec> Nenhuma consulta {statusList} nesse dia</TextRec>
+            </View>
+        )
+    }
     
 
     return (
@@ -143,6 +148,7 @@ ListarConsultas();
                 {/* Lista (FlatList)*/}
                 <ListComponent
                     data={medicoData}
+                    ListEmptyComponent={emptyComponent}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => {
                         if (statusList === 'agendada' && item.situacao.situacao == 'Pendentes') {
@@ -248,6 +254,7 @@ ListarConsultas();
 
                 <ListComponent
                     data={paciente}
+                    ListEmptyComponent={emptyComponent}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => {
                         if (statusList === 'agendada' && item.situacao.situacao == 'Pendentes') {
@@ -294,7 +301,7 @@ ListarConsultas();
                                     tipoUser={userData.role}
                                     crm={item.medicoClinica.medico.crm}
                                     status={item.situacao.situacao}
-                                    hour={new Date(item.dataConsulta).toLocaleDateString('pt-BR')}
+                                    hour={item.dataConsulta}
                                     typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
 
                                 />
