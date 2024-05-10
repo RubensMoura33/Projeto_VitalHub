@@ -5,12 +5,30 @@ import { InputCode } from "../../components/Input/Style"
 import { LinkResend } from "../../components/Link/Style"
 import { Logo } from "../../components/Logo/Style"
 import { ButtonTitle, TextRec, TextUser, Title } from "../../components/Title/Style"
-import api from '../../services/service'
+import api, { RecuperarSenha } from '../../services/service'
+import { ActivityIndicator } from 'react-native'
 
 export const VerifyEmail = ({ navigation, route }) => {
     const [codigo, setCodigo] = useState('');
     const inputs = [useRef(null),useRef(null),useRef(null),useRef(null)]
+ const [spinner, setSpinner] = useState(false);
+ const [email, setEmail] = useState();
 
+
+
+
+
+ async function EnviarEmail(){
+   
+    await api.post(`${RecuperarSenha}${email}`)
+    .then(() => {
+        
+    }).catch(error => {
+   console.log(error);
+    })
+
+
+}
     function focusNextInput(index){
         //Se o index é menor do que a quatidade de campos 
         if(index < inputs.length - 1)
@@ -26,14 +44,14 @@ export const VerifyEmail = ({ navigation, route }) => {
 
     async function ValidarCodigo(){
 
-
+        setSpinner(true);
         await api.post(`RecuperaraSenha/ValidarSenha?email=${route.params.email}&codigo=${codigo}`).then(() => {
             navigation.replace("ResetPwd", {email: route.params.email});
         }).catch(error => {
-console.log(error);
+console.warn("Código inválido");
         })
+        setSpinner(false);
     }
-
 
     useEffect(() => {
         inputs[0].current.focus();
@@ -80,11 +98,16 @@ if(text == ""){
             }
             </ContentCode>
 
-            <Btn onPress={() => ValidarCodigo()}>
-                <ButtonTitle>ENTRAR</ButtonTitle>
+            <Btn disabled={spinner} onPress={() => ValidarCodigo()}>
+            {spinner ? (
+
+<ActivityIndicator size="large" color="#fff" />
+
+) : (<ButtonTitle>ENTRAR</ButtonTitle>)}
+
             </Btn>
 
-            <LinkResend>Reenviar Código</LinkResend>
+            <LinkResend onPress={() => EnviarEmail()}>Reenviar Código</LinkResend>
 
         </Container>
     )

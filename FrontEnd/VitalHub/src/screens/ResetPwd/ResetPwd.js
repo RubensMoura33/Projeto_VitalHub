@@ -6,6 +6,7 @@ import { Logo } from "../../components/Logo/Style"
 import { ButtonTitle, TextRec, Title } from "../../components/Title/Style"
 import * as Notifications from "expo-notifications"
 import api from "../../services/service"
+import { ActivityIndicator } from "react-native"
 
 Notifications.requestPermissionsAsync()
 
@@ -25,6 +26,8 @@ export const ResetPwd = ({ navigation, route }) => {
     
     const [newSenha, setNewSenha] = useState('');
     const [confirmNewSenha, setConfirmNewSenha] = useState('');
+    const [spinner, setSpinner] = useState(false);
+  
     const handleCallNotifications = async () => {
 
         const { status } = await Notifications.getPermissionsAsync()
@@ -57,7 +60,7 @@ export const ResetPwd = ({ navigation, route }) => {
             return;
         }
    
-
+        setSpinner(true);
 await api.put(`Usuario/AlterarSenha?email=${route.params.email}`,{
     senhaNova: newSenha
 }).then(() => {
@@ -66,6 +69,7 @@ await api.put(`Usuario/AlterarSenha?email=${route.params.email}`,{
 }).catch(error => {
     console.log(error);
 })
+setSpinner(false);
 
     }
 
@@ -83,12 +87,18 @@ await api.put(`Usuario/AlterarSenha?email=${route.params.email}`,{
 
             <TextRec>Insira e confirme a sua nova senha</TextRec>
 
-            <Input value={newSenha} onChangeText={(txt) => setNewSenha(txt)} placeholder={"Nova senha"} />
-            <Input value={confirmNewSenha} onChangeText={(txt) => setConfirmNewSenha(txt)} placeholder={"Confirmar nova senha"} />
+            <Input       secureTextEntry={true} value={newSenha} onChangeText={(txt) => setNewSenha(txt)} placeholder={"Nova senha"} />
+            <Input       secureTextEntry={true} value={confirmNewSenha} onChangeText={(txt) => setConfirmNewSenha(txt)} placeholder={"Confirmar nova senha"} />
 
-            <Btn onPress={() => onPressHandle()}>
-                <ButtonTitle>Confirmar nova senha</ButtonTitle>
+            <Btn disabled={spinner} onPress={() => onPressHandle()}>
+            {spinner ? (
+
+<ActivityIndicator size="large" color="#fff" />
+
+) : (<ButtonTitle>Confimar nova senha</ButtonTitle>)}
             </Btn>
+            
+        
 
         </Container>
     )

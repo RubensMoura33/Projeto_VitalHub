@@ -78,7 +78,7 @@ export const CameraPhoto = ({ navigation, route }) => {
                 style={styles.camera}
 
             >
-                <BtnReturnPhoto onPress={() => navigation.navigate("SeePrescription")}>
+                <BtnReturnPhoto onPress={() => navigation.replace("Main")}>
                     <EvilIcons name="close-o" size={70} color="white" />
                 </BtnReturnPhoto>
                 <BoxCamera>

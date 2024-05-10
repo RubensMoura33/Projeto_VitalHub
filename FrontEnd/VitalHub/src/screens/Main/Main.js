@@ -46,8 +46,10 @@ export const Main = ({navigation, route}) => {
             
             <BottomTab.Screen
              name="Home"
-             component={Home}
-            />
+            
+            >
+                {(props) => <Home navigation={navigation} route={route}/>}
+                </BottomTab.Screen>
 
             <BottomTab.Screen
              name="Profile"

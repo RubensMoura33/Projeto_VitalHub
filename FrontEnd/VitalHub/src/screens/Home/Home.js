@@ -21,7 +21,7 @@ import moment, { duration } from 'moment';
 
 
 
-export const Home = ({ navigation }) => {
+export const Home = ({ navigation , route}) => {
    
     const [dataConsulta, setDataConsulta] = useState('');
     const [statusList, setStatusList] = useState("agendada")
@@ -33,14 +33,21 @@ export const Home = ({ navigation }) => {
     const [paciente, setPaciente] = useState()
     const [medicoData, setMedicoData] = useState({});
     const [consultaSelecionada, setConsultaSelecionada] = useState(null);
+    const { photoUri } = route.params || {};
+    const [foto, setFoto] = useState()
 
+
+    useEffect(() => {
+      
+        if (photoUri) {
+           setFoto(foto);
+        }
+    }, [photoUri])
     async function loadData() {
         const token = await userDecodeToken();
-
         setUserData(token);
+        setFoto(token.foto)
         setDataConsulta(moment().format('YYYY-MM-DD'))
-
-
     }
     async function ListarConsultas() {
 
@@ -110,7 +117,7 @@ ListarConsultas();
     return (
         userData.role == "Medico" ?
             <Container>
-                <Header nome={`Dr(a). ${userData.name}`} ProfileImage={{uri: userData.foto}} onPress={() => navigation.replace("Profile")} />
+                <Header nome={`Dr(a). ${userData.name}`} ProfileImage={{uri: foto}} onPress={() => navigation.replace("Profile")} />
 
                 <CalendarHome
                     setDataConsulta={setDataConsulta}

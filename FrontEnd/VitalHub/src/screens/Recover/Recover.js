@@ -5,17 +5,23 @@ import { Input } from "../../components/Input/Style"
 import { Btn, BtnReturn, IconReturn } from "../../components/Button/Button"
 import { useState } from "react"
 import api, { RecuperarSenha } from '../../services/service'
+import { ActivityIndicator } from "react-native"
 
 export const Recover = ({navigation}) => {
     const[email, setEmail] = useState('');
+    const [spinner, setSpinner] = useState(false);
 
     async function EnviarEmail(){
+        setSpinner(true);
         await api.post(`${RecuperarSenha}${email}`)
         .then(() => {
             navigation.replace("VerifyEmail", {email})  
         }).catch(error => {
-            console.log(error);
+           console.warn("Email inválido!");
         })
+
+
+        setSpinner(false);
     }
     return (
         <Container>
@@ -34,9 +40,16 @@ export const Recover = ({navigation}) => {
             onChangeText={(txt) => setEmail(txt)}
             placeholder={"Usuário ou E-mail"} />
 
-            <Btn onPress={() => EnviarEmail()}>
-                <ButtonTitle>CONTINUAR</ButtonTitle>
+            <Btn disabled={spinner} onPress={() => EnviarEmail()}>
+            {spinner ? (
+
+<ActivityIndicator size="large" color="#fff" />
+
+) : (<ButtonTitle>CONTINUAR</ButtonTitle>)}
+
             </Btn>  
+            
+
 
         </Container>
     )
