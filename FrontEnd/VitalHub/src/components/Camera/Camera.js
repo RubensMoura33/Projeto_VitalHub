@@ -48,6 +48,8 @@ export const CameraPhoto = ({ navigation, route }) => {
         await setOpenModal(false)
 
         if (route.params.imageProfile) {
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+            console.log(photo);
             navigation.navigate("Main", { photoUri: photo })
         } else {
 
