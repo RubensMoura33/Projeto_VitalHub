@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components"
+import { Btn } from "../Button/Button"
 
 export const ViewModal = styled.View`
 flex: 1;
@@ -13,7 +14,7 @@ background-color: white;
 padding: 20px;
 border-radius: 10px;
 width: 100%;
-height: 75%;
+height: 85%;
 align-items: center;
 
 `
@@ -47,6 +48,10 @@ export const BlueTitle = styled.Text`
 font-family: 'MontserratAlternates_600SemiBold';
 color: #34898F;
 font-size: 15px;
+`
+
+export const BtnModal = styled(Btn)`
+    margin-top: 120px
 `
 
 

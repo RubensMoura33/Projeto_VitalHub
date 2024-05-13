@@ -24,6 +24,8 @@ import { InsertRecord } from './src/screens/InsertRecord/InsertRecord';
 import { Camera, CameraPhoto } from './src/components/Camera/Camera';
 import 'react-native-reanimated';
 
+import { LogBox } from 'react-native';
+
 
 export default function App() {
   ''
@@ -40,6 +42,9 @@ export default function App() {
   if (!fontsLoaded && !fontsError) {
     return null
   }
+
+  LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+  LogBox.ignoreAllLogs();//Ignore all log notifications
 
   return (
 

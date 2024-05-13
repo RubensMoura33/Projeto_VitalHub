@@ -33,6 +33,7 @@ export const Home = ({ navigation , route}) => {
     const [consultaSelecionada, setConsultaSelecionada] = useState(null);
     const { photoUri } = route.params || {};
     const [foto, setFoto] = useState()
+    const [city, setCity] = useState(null);
 
 
     useEffect(() => {
@@ -40,6 +41,7 @@ export const Home = ({ navigation , route}) => {
         if (photoUri) {
            setFoto(foto);
         }
+        
     }, [photoUri])
     async function loadData() {
         const token = await userDecodeToken();
@@ -76,6 +78,15 @@ export const Home = ({ navigation , route}) => {
         }
     }
 
+    async function loadCity() {
+        try {
+          response = await api.get(`Clinica/ListarClinicasEndereco`)
+          setCity(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
     function MostrarModalProntuario(tipoConsulta, consulta) {
         if (tipoConsulta == 'cancelar') {
             setConsultaSelecionada(consulta)
@@ -83,7 +94,7 @@ export const Home = ({ navigation , route}) => {
 
         }
     }
-  async  function MostrarModalInserir(tipoConsulta , consulta)
+  async function MostrarModalInserir(tipoConsulta , consulta)
     {
         if(tipoConsulta == 'cancelar')
         {
@@ -95,9 +106,10 @@ export const Home = ({ navigation , route}) => {
     }
 
 
+
     useEffect(() => {
         loadData();
-        
+        loadCity()
     }, [])
     
     useEffect(() => {
@@ -334,6 +346,7 @@ ListarConsultas();
                     visible={showModalSchedule}
                     navigation={navigation}
                     setShowModalSchedule={setShowModalSchedule}
+                    city={city}
                 />
 
                 <ModalSeeDoctor

@@ -1,41 +1,32 @@
 import { Modal, Text } from "react-native"
-import { BlueTitle, ContentModal, RowContainerButton, TypeButton, SmallButton, TypeAppointment, ViewModal, InputAppointment } from "./Style"
+import { BlueTitle, ContentModal, RowContainerButton, TypeButton, SmallButton, TypeAppointment, ViewModal, InputAppointment, BtnModal } from "./Style"
 import { ButtonTitle, LabelSchedule, Title, TitleProfile } from "../Title/Style"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Btn } from "../Button/Button"
 import { LinkCancel } from "../Link/Style"
+import { SelectList } from "react-native-dropdown-select-list"
+import api from "../../services/service"
 
 
-export const ModalSchedule = ({ navigation, visible, setShowModalSchedule, ...rest }) => {
+export const ModalSchedule = ({ navigation, visible, setShowModalSchedule, city, ...rest}) => {
 
   const [agendamento, setAgendamento] = useState(null);
-
+  const [typeAppointment, setTypeAppointment] = useState(null)
+  const [citySelected, setCitySelected] = useState(null)
+  const [renderizar, setRenderizar] = useState(false);
 
 
   async function handleContinue() {
 
-
-
-
     if (agendamento == null || agendamento.prioridadeLabel == null || agendamento.localizacao == null) {
-      console.warn("Todos os campos são obrigatórios");
+      alert("Todos os campos são obrigatórios");
       return;
     }
 
     await setShowModalSchedule(false);
 
-    navigation.replace('SelectClinic' , {agendamento : agendamento})
+    navigation.replace('SelectClinic', { agendamento: agendamento })
   }
-
-  // const [showOptions, setShowOptions] = useState(false);
-  // const [selectedOption, setSelectedOption] = useState('');
-
-  // const opcoes = ['Pediatria', 'Clinico geral', 'Cardiologista'];
-
-  // const onPressOption = (option) => {
-  //   setSelectedOption(option);
-  //   setShowOptions(false);
-  // };s
 
   async function onPressHandle() {
     await setShowModalSchedule(false)
@@ -47,9 +38,16 @@ export const ModalSchedule = ({ navigation, visible, setShowModalSchedule, ...re
 
   }
 
-
-  const [typeAppointment, setTypeAppointment] = useState(null)
-
+     function dePara(retornoApi) {
+      if (city != null) {
+        let arrayOptions = [];
+        retornoApi.forEach((e) => {
+       arrayOptions.push({ value: e.endereco.cidade});
+     });
+ 
+     return arrayOptions;
+    }
+  }
 
   return (
     <Modal {...rest} visible={visible} transparent={true} animationType="fade" animationsOutTiming={0}>
@@ -114,18 +112,36 @@ export const ModalSchedule = ({ navigation, visible, setShowModalSchedule, ...re
 
             {/* INFORMAR A LOCALIZACAO */}
             <LabelSchedule>Informe a localizacao desejada</LabelSchedule>
-            <InputAppointment placeholder={"Informe a localizacao"}
+
+            <SelectList
+              boxStyles={{ width: "100%", height: 70, alignItems: "center", marginTop: 20 }}
+              fontFamily="Quicksand_500Medium"
+              searchPlaceholder="Pesquise"
+              placeholder="Selecione uma cidade"
+              maxHeight={100}
+              dropdownTextStyles={{ fontSize: 18 }}
+              inputStyles={{ fontSize: 18 }}
+              setSelected={(txt) => setAgendamento({
+                ...agendamento,
+                localizacao: txt
+              })}
+              notFoundText='Nenhum dado encontrado'
+              data={dePara(city)}
+              save="endereco.cidade"
+            />
+
+            {/* <InputAppointment placeholder={"Informe a localizacao"}
               value={agendamento ? agendamento.localizacao : null}
               onChangeText={(txt) => setAgendamento({
                 ...agendamento,
                 localizacao: txt
-              })} />
+              })} /> */}
 
 
           </TypeAppointment>
-          <Btn onPress={() => { handleContinue() }}>
+          <BtnModal onPress={() => { handleContinue() }}>
             <ButtonTitle >CONTINUAR</ButtonTitle>
-          </Btn>
+          </BtnModal>
 
           <LinkCancel onPress={() => setShowModalSchedule(false)}>Cancelar</LinkCancel>
 
