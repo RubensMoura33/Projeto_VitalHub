@@ -43,6 +43,13 @@ try {
         Diagnostico: dignostico
 
     });
+    if (promise) {
+        try {
+            await api.put(`/Consultas/Status?idConsulta=${route.params.id}&status=Realizados`)
+        } catch (error) {
+            Alert.alert("erro ao marcar como realizada")
+        }
+    }
 
     alert("Prontuário inserido com sucesso!")
     navigation.replace("Main")

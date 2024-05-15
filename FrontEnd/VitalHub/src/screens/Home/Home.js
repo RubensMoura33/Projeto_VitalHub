@@ -95,7 +95,7 @@ export const Home = ({ navigation , route}) => {
 
         }
     }
-  async function MostrarModalInserir(tipoConsulta , consulta)
+   function MostrarModalInserir(tipoConsulta , consulta)
     {
         if(tipoConsulta == 'cancelar')
         {
@@ -182,7 +182,9 @@ ListarConsultas();
                     renderItem={({ item }) => {
                         if (statusList === 'agendada' && item.situacao.situacao == 'Pendentes') {
                             return (
-                     
+                                <TouchableOpacity onPress={ () =>
+                                    MostrarModalInserir('cancelar', item)
+                                }>
                                     <Card 
                                         id={item.id}
                                         foto={item.paciente.idNavigation.foto}
@@ -194,6 +196,7 @@ ListarConsultas();
                                         typeAppointment={item.prioridade.prioridade == 0 ? 'Rotina' : item.prioridade.prioridade == 1 ? 'Exames' : 'Urgencia'}
                                         onPressCancel={() => MostrarModal('cancelar', item)}
                                     />
+                                    </TouchableOpacity>
                           
                             )
                         } else if (statusList === 'realizada' && item.situacao.situacao == 'Realizados') {
