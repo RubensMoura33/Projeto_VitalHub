@@ -43,6 +43,7 @@ export const Home = ({ navigation , route}) => {
         }
         
     }, [photoUri])
+
     async function loadData() {
         const token = await userDecodeToken();
         setUserData(token);
@@ -130,11 +131,20 @@ ListarConsultas();
         )
     }
     
-
+    useEffect(() => {
+      
+        console.log(route.params);
+       if(route.params != null && route.params.photoUri != null && route.params.photoUri != undefined )
+       {
+           console.log(route.params.photoUri);
+           setFoto(route.params.photoUri);
+       }
+       
+    }, [route.params])
     return (
         userData.role == "Medico" ?
             <Container>
-                <Header nome={`Dr(a). ${userData.name}`} ProfileImage={{uri: foto}} onPress={() => navigation.replace("Profile")} />
+                <Header nome={`Dr(a). ${userData.name}`} ProfileImage={{uri: foto}} onPress={() => navigation.replace("Main", {name: "Profile"})} />
 
                 <CalendarHome
                     setDataConsulta={setDataConsulta}
@@ -246,7 +256,7 @@ ListarConsultas();
             </Container>
             :
             <Container>
-                <Header nome={userData.name} ProfileImage={{uri: userData.foto}} onPress={() => navigation.replace("Profile")} />
+                <Header nome={userData.name} ProfileImage={{uri: foto}} onPress={() => navigation.replace("Main", {name: "Profile"})} />
                 <CalendarHome
                     setDataConsulta={setDataConsulta}
                 />

@@ -38,6 +38,30 @@ namespace WebAPI.Repositories
                 .ToList();
         }
 
+        public List<Clinica> ListarEnderecosClinicas()
+        {
+            var listaClinicasCidades = ctx.Clinicas.Where(x => ctx.Enderecos.Any(y => y.Id == x.EnderecoId)).Select(x => new Clinica
+            {
+                EnderecoId = x.EnderecoId,
+                Endereco = new Endereco
+                {
+                    Cidade = x.Endereco.Cidade,
+                }
+            }).Distinct().ToList();
+
+            //        var listaEnderecos = ctx.Enderecos
+            //.Where(e => ctx.Clinicas.Any(c => c.EnderecoId == e.Id))
+            //.Select(e => new Endereco
+            //{
+            //    Id = e.Id,
+            //    Cidade = e.Cidade
+            //})
+            //.Distinct()
+            //.ToList();
+
+            return listaClinicasCidades;
+        }
+
         public List<Clinica> ListarPorCidade(string cidade)
         {
             return ctx.Clinicas

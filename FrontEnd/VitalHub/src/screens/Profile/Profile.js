@@ -185,7 +185,7 @@ export const Profile = ({ navigation, route }) => {
             type: `image/${photoUri.split(".")[1]}`
         })
 
-
+        console.log(role.id);
 
         await api.put(`Usuario/AlterarFotoPerfil?id=${role.id}`, formData, {
             headers: {
@@ -197,6 +197,7 @@ export const Profile = ({ navigation, route }) => {
             console.log(error);
         })
     }
+    
     useEffect(() => {
 
         if (photoUri) {
@@ -283,6 +284,7 @@ export const Profile = ({ navigation, route }) => {
                             textLabel={'Logradouro'}
                             placeholder={'Insira um logradouro'}
                             fieldValue={logradouro}
+                            insertRecord={true}
                             editable={true}
                             onChangeText={setLogradouro}
                         />
@@ -291,6 +293,7 @@ export const Profile = ({ navigation, route }) => {
                             textLabel={'CEP'}
                             fieldValue={cep}
                             editable={true}
+                            insertRecord={true}
                             onChangeText={setCep}
                         />
 
