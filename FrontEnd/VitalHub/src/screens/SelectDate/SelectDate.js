@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FullCalender from "../../components/CalendarSelectDate/CalendarSelectDate";
 import { ContainerSelectDate } from "../../components/Container/Style"
 import { Title } from "../SelectClinic/Style"
@@ -10,16 +10,31 @@ import InputSelect from "../../components/InputSelect/InputSelect";
 import { ModalResumeAppointment } from "../../components/ModalResumeAppointment/ModalResumeAppointment";
 import { ModalSchedule } from "../../components/ModalSchedule/ModalSchedule";
 
-export const SelectDate = ({ navigation }) => {
-    const [selectedDate, setSelectedDate] = useState();
-    const [selectedTime, setSelectedTime] = useState();
+export const SelectDate = ({ navigation , route}) => {
+
+    const [agendamento, setAgendamento] = useState(null);
+    const [selectedDate, setSelectedDate] = useState("");
+    const [selectedTime, setSelectedTime] = useState("");    
+    const [showModalResume, setShowModalResume] = useState(false);
+    const [showModalSchedule, setShowModalSchedule] = useState(false);
+
 
     const Horarios = ["10:30", "12:00", "12:30", "13:00", "17:15", "17:45", "19:00"]
 
-    const [showModalResume, setShowModalResume] = useState(false)
-    const [showModalSchedule, setShowModalSchedule] = useState(false)
+    useEffect(() => {
+        console.log(selectedDate);
+    }, [selectedDate])
+
+    function handleContinue(){
+        setAgendamento({
+            ...route.params.agendamento,
+            dataConsulta: `${selectedDate} ${selectedTime}`
+        })
+        setShowModalResume(true)
+    }
 
     const onPressHandle = () => {
+    
         setShowModalSchedule(true)
         navigation.navigate("Main");
         
@@ -30,6 +45,7 @@ export const SelectDate = ({ navigation }) => {
         <ContainerSelectDate>
             <Title>Selecionar Data</Title>
             <FullCalender
+                setSelectedDate={setSelectedDate}
                 selectedDate={selectedDate}
                 handleSelectedDateFn={setSelectedDate}
             />
@@ -41,7 +57,10 @@ export const SelectDate = ({ navigation }) => {
                 data={Horarios}
             />
 
-            <BtnFull onPress={() => { setShowModalResume(true) }} >
+            <BtnFull onPress={() => { if(selectedDate == '' || selectedTime == ''){
+                console.warn("É necessário selecionar a data e o horário");
+                return;
+            } handleContinue() }} >
                 <ButtonTitle>CONFIRMAR</ButtonTitle>
             </BtnFull>
 
@@ -51,6 +70,7 @@ export const SelectDate = ({ navigation }) => {
                 setShowModalResume={setShowModalResume}
                 dataConsulta={selectedDate}
                 horarioConsulta={selectedTime}
+                agendamento={agendamento}
             />
 
             <ModalSchedule

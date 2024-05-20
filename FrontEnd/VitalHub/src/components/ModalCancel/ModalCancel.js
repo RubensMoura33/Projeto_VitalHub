@@ -3,9 +3,10 @@ import { ButtonTitle, TextRec, Title } from "../Title/Style"
 import { Btn } from "../Button/Button"
 import { LinkCancel } from "../Link/Style"
 import { ContentModal, ViewModal } from "./Style"
-
+import api,{PutStatusTipoUsuario} from "../../services/service"
 // Importar a biblioteca
 import * as Notifications from "expo-notifications"
+import { useEffect, useState } from "react"
 
 // Solicitar as permissoes de notificacao ao iniciar o app
 Notifications.requestPermissionsAsync()
@@ -24,8 +25,9 @@ Notifications.setNotificationHandler({
   })
 })
 
-export const ModalCancel = ({ visible, setShowModalCancel, ...rest }) => {
+export const ModalCancel = ({ visible, setShowModalCancel,data, ...rest }) => {
 
+  const [idConsulta,setIdConsulta] = useState();
     // Funcao para lidar com a chamada da notificacao
   const handleCallNotifications = async () => {
 
@@ -58,10 +60,20 @@ export const ModalCancel = ({ visible, setShowModalCancel, ...rest }) => {
   }
 
   async function onPressHandle() {
-    handleCallNotifications(),
-    setShowModalCancel(false)
+
+      const promise = await api.put(`Consultas/Status?idConsulta=${idConsulta}&status=Cancelados`)
+   
+    
+  
+    handleCallNotifications();
+    setShowModalCancel(false);
+  }
+useEffect(() => {
+  if(data && data.id != null){
+setIdConsulta(data.id)
   }
 
+},[data])
 
     return (
         <Modal {...rest} visible={visible} transparent={true} animationType="fade">

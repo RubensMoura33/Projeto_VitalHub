@@ -50,6 +50,7 @@ font-family: 'Quicksand_400Regular';
 
 export const TextBold = styled(TextAge)`
 font-family: 'Quicksand_600SemiBold';
+font-size: 14px;
 color: ${(props) => props.status == "agendada" ? "#49B3BA" : "#4E4B59"};
 `
 
@@ -64,7 +65,7 @@ justify-content: space-between;
 export const ClockCard = styled.View`
 background-color: ${props => props.status == 'agendada' ? '#E8FCFD' : '#F1F0F5'};
 height: 25px;
-width: 100px;
+width: 120px;
 flex-direction: row;
 justify-content: center;
 gap: 10px;
@@ -79,7 +80,7 @@ export const ButtonCard = styled.TouchableOpacity`
 export const ButtonText = styled.Text`
 font-family: 'MontserratAlternates_500Medium';
 font-size: 14px;
-color: ${(props) => props.status == "agendada" ? "#c81d25" : "#344f8f"};
+color: ${(props) => props.status == "Pendentes" ? "#c81d25" : "#344f8f"};
 `
 
 export const ImagePoint = styled.Image`

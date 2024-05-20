@@ -1,4 +1,4 @@
-import { ActivityIndicator, ActivityIndicatorBase, Text } from "react-native"
+import { ActivityIndicator, ActivityIndicatorBase, ScrollView, Text } from "react-native"
 import { Container } from "../../components/Container/Style"
 import { Logo } from "../../components/Logo/Style"
 import { ButtonTitle, TextRec, Title } from "../../components/Title/Style"
@@ -6,7 +6,8 @@ import { Input } from "../../components/Input/Style"
 import { Btn } from "../../components/Button/Button"
 import { LinkCancel } from "../../components/Link/Style"
 import * as Notifications from "expo-notifications"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import api, { PostUser, GetIdTipoUsuario } from "../../services/service"
 
 Notifications.requestPermissionsAsync()
 
@@ -22,12 +23,25 @@ Notifications.setNotificationHandler({
 })
 
 export const Register = ({ navigation }) => {
+
     const [spinner, setSpinner] = useState(false);
+    const [rg, setRg] = useState();
+    const [cpf, setCpf] = useState();
+    const [dataNascimento, setDataNascimento] = useState();
+    const [cep, setCep] = useState();
+    const[logradouro, setLograoduro] = useState()
+    const[numero, setNumero] = useState()
+    const[cidade, setCidade] = useState()
+    const [nome, setNome] = useState();
+    const [email, setEmail] = useState();
+    const [senha, setSenha] = useState();
+    const [confirmarSenha, setConfirmarSenha] = useState();
+    const [foto, setFoto] = useState();
+    const [idTipoUsuario, setIdTipoUsuario] = useState();
 
     const handleCallNotifications = async () => {
 
         const { status } = await Notifications.getPermissionsAsync()
-
         if (status !== "granted") {
             alert("Voce nao permitiu as notificacoes estarem ativas")
             return
@@ -50,22 +64,57 @@ export const Register = ({ navigation }) => {
     }
 
     async function Register() {
-        setSpinner(spinner ? false : true);
-        // navigation.replace("Main")
-        // handleCallNotifications()
+   ;
+        if ( senha != null && confirmarSenha === senha && senha.length > 3 ) {
+            const formData = new FormData();
+            formData.append('Nome', nome);
+            formData.append('Email', email);
+            formData.append('Senha', senha);
+            formData.append('IdTipoUsuario', idTipoUsuario);
+            setSpinner(true);
+            try {
+                await api.post("Pacientes", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                navigation.replace("Login");
+                handleCallNotifications();
+                alert("Usuário cadastrado com sucesso")
+            } catch (error) {
+                alert("Erro ao cadastrar o usuário!")
+            }
+            setSpinner(false);
+          
+        }
+        else {
+            alert("Senha Inválida!")
+        }
+
     }
 
+    useEffect(() => {
+const loadData = async () => {
+    const promise = await api.get(`${GetIdTipoUsuario}?tipoUsuario=Paciente`);
+    setIdTipoUsuario(promise.data);
+}
+loadData();
+    },[])
+
     return (
+            <ScrollView>
         <Container>
+
             <Logo source={require('../../assets/logo.png')}></Logo>
 
             <Title>Criar conta</Title>
 
             <TextRec>Insira seu endereço de e-mail e senha para realizar seu cadastro.</TextRec>
 
-            <Input placeholder={"Usuario ou Email"} />
-            <Input placeholder={"Senha"} />
-            <Input placeholder={"Confirmar senha"} />
+            <Input placeholder={"Nome"} value={nome} onChangeText={setNome} />
+            <Input placeholder={"Email"} value={email} onChangeText={setEmail} />
+            <Input placeholder={"Senha"} value={senha} onChangeText={setSenha} secureTextEntry={true}/>
+            <Input placeholder={"Confirmar senha"} value={confirmarSenha} onChangeText={setConfirmarSenha} secureTextEntry={true}/>
 
             <Btn disabled={spinner} onPress={() => Register()}>
                 {spinner ? (
@@ -79,5 +128,6 @@ export const Register = ({ navigation }) => {
             <LinkCancel onPress={() => navigation.replace("Login")}>Cancelar</LinkCancel>
 
         </Container>
+            </ScrollView>
     )
 }

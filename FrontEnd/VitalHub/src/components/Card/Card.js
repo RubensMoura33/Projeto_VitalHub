@@ -7,6 +7,8 @@ import { AntDesign } from '@expo/vector-icons';
 
 export const Card = ({
     status = "Pendentes",
+    id,
+    foto,
     onPressCancel,
     onPressAppointment,
     tipoUser,
@@ -15,7 +17,7 @@ export const Card = ({
     return (
         <ContainerCard>
             {/* Imagem do Card */}
-            <ProfileImage source={require('../../assets/nicole.png')} />
+            <ProfileImage source={{uri: foto}} />
 
 
             <ContentCard>
@@ -30,7 +32,7 @@ export const Card = ({
                 <ViewRow>
                     <ClockCard status={status}>
                         <AntDesign name="clockcircle" size={18} color={status == "Pendentes" ? '#49B3BA' : '#4E4B59'} />
-                        <TextBold status={status}>{hour}</TextBold>
+                        <TextBold status={status}>{new Date(hour).toLocaleDateString("pt-BR")}</TextBold>
                     </ClockCard>
 
 
@@ -50,7 +52,6 @@ export const Card = ({
                             </ButtonCard>
                         )
                     }
-
 
                 </ViewRow>
             </ContentCard>

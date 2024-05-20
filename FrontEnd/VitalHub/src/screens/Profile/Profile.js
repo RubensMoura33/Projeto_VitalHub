@@ -10,9 +10,13 @@ import { LinkCancelMargin } from "../../components/Link/Style"
 import { userDecodeToken } from "../../Utils/Auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import InputSelect from "../../components/InputSelect/InputSelect"
-import api, { especialidadeResource, buscarPacienteResource, medicosResource, GetSpecialtiesResource, buscarMedicoResource } from "../../services/service"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
+import api, { especialidadeResource, buscarPacienteResource, medicosResource, GetSpecialtiesResource, buscarMedicoResource, PostUser, GetIdTipoUsuario } from "../../services/service"
+import { ButtonCamera, ContainerImage } from "./Style"
+import { SelectList } from "react-native-dropdown-select-list"
+import { InputLabel } from "../../components/BoxInput/Style"
 
-export const Profile = ({ navigation }) => {
+export const Profile = ({ navigation, route }) => {
 
     const [profileEdit, setProfileEdit] = useState(false);
     const [especialidade, setEspecialidade] = useState();
@@ -20,80 +24,198 @@ export const Profile = ({ navigation }) => {
     const [cep, setCep] = useState();
     const [especialidades, setEspecialidades] = useState([]);
     const [dataUser, setDataUser] = useState({});
-    const [endereco, setEndereco] = useState({});
+    const [rg, setRg] = useState();
+    const [cpf, setCpf] = useState();
+    const [crm, setCrm] = useState();
+    const [dataNascimento, setDataNascimento] = useState();
+    const [foto, setFoto] = useState();
+    const [numero, setNumero] = useState()
+    const [cidade, setCidade] = useState()
+    const [nome, setNome] = useState();
+
+
+    //Configuracao token
 
     const [role, setRole] = useState({});
+    const [token, setToken] = useState()
 
+    const { photoUri } = route.params || {};
+    const [isPhoto, setIsPhoto] = useState(true)
     async function logOut() {
         AsyncStorage.removeItem("token");
         navigation.replace("Login")
     }
-    
+
+    useEffect(() => {
+        loadData();
+        GetSpecialties();
+    }, []);
+
+
+
     async function loadData() {
         const token = await userDecodeToken();
         setRole(token);
+        setToken(token.token)
 
         var response = null
 
-        if(token.role == "Medico")
-        {
+        if (token.role == "Medico") {
             response = await api.get(`${buscarMedicoResource}?id=${token.id}`)
-            setEspecialidade(response.data.especialidade.especialidade1)
-            setLogradouro(response.data.endereco.logradouro)
-            setCep(response.data.endereco.cep)
-        }else{
+
+            setFoto(response.data.idNavigation.foto)
+            setEspecialidade(response.data.especialidade.especialidade1);
+            setLogradouro(response.data.endereco.logradouro);
+            setCep(response.data.endereco.cep);
+            setCrm(response.data.crm);
+
+        } else {
             try {
                 response = await api.get(`${buscarPacienteResource}?id=${token.id}`)
-                
+
+                console.log(response.data.dataNascimento);
+
+                if (response.data.dataNascimento === undefined) {
+                    setDataNascimento('')
+                }
+                else {
+                    setDataNascimento(new Date(response.data.dataNascimento).toLocaleDateString("pt-BR"))
+                }
+
+                setFoto(response.data.idNavigation.foto);
+                setCpf(response.data.cpf)
+                setLogradouro(response.data.endereco.logradouro)
+                setCep(response.data.endereco.cep)
+                setCidade(response.data.endereco.cidade)
             } catch (error) {
-                console.log(error + " erro senai");
+                console.log(error);
             }
         }
 
         setDataUser(response.data);
-        setEndereco(response.data.endereco);
-                
+
+
+    }
+
+    async function updatePatient() {
+
+        const partes = dataNascimento.split("/");
+        const novaDataFormatada = `${partes[2]}-${partes[1]}-${partes[0]}`;
+
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${token}` }
+            };
+
+            await api.put(`${PostUser}?idUsuario=${role.id}`, {
+                rg: rg,
+                cpf: cpf,
+                dataNascimento: novaDataFormatada,
+                cep: cep,
+                logradouro: logradouro,
+                numero: numero,
+                cidade: cidade,
+                nome: nome,
+                email: dataUser.idNavigation.email
+
+            }, config)
+            setProfileEdit(false)
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function updateDoctor() {
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${token}` }
+            };
+
+            const response = await api.put(medicosResource, {
+                crm: crm,
+                cep: cep,
+                logradouro: logradouro,
+                especialidadeId: especialidade,
+
+            }, config)
+            await loadData()
+            setProfileEdit(false)
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 
     async function GetSpecialties() {
         try {
 
-             var response = await api.get(GetSpecialtiesResource)
+            var response = await api.get(GetSpecialtiesResource)
             setEspecialidades(response.data)
-                       
+
+
         } catch (error) {
-            console.log(error + " erro senai");
-        }        
+            console.log(error);
+        }
+
     }
 
-    
     //DEPARA
-  function dePara(retornoApi) {
-    let arrayOptions = [];
-    retornoApi.forEach((e) => {
-      arrayOptions.push({ value: e.id, text: e.especialidade1});
-    });
-    // let arrayText = [];
-    // arrayOptions.forEach((e) => {
-    //     arrayText.push({text: e.text})
-    // })
-    console.log(arrayOptions);
-    return arrayOptions;   
-  }
+    function dePara(retornoApi) {
+        let arrayOptions = [];
+        retornoApi.forEach((e) => {
+            arrayOptions.push({ key: e.id, value: e.especialidade1 });
+        });
+
+        return arrayOptions;
+    }
 
 
+    function onPressPhoto() {
+        navigation.navigate("CameraPhoto", { imageProfile: true, getMediaLibrary: true });
+        setIsPhoto(true)
+    }
+
+
+    async function AlterarFotoPerfil() {
+        const formData = new FormData();
+        formData.append("Arquivo", {
+            uri: photoUri,
+            name: `image.${photoUri.split(".")[1]}`,
+            type: `image/${photoUri.split(".")[1]}`
+        })
+
+        console.log(role.id);
+
+        await api.put(`Usuario/AlterarFotoPerfil?id=${role.id}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }).then(response => {
+            console.log("Deu certo Alteração da foto");
+        }).catch(error => {
+            console.log(error);
+        })
+    }
+    
     useEffect(() => {
-        loadData();
-        GetSpecialties();
-        dePara(especialidades)
-    }, [])
 
+        if (photoUri) {
+            AlterarFotoPerfil();
+        }
+    }, [photoUri])
     return (
         <ContainerScroll>
 
             {role.role == "Medico" && !profileEdit ? (
                 <>
-                    <ProfileImage source={require("../../assets/photo.png")} />
+                    <ContainerImage>
+                        <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
+                        <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                            <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                        </ButtonCamera>
+                    </ContainerImage>
+
 
                     <ContainerProfile>
                         <TitleProfile>{role.name}</TitleProfile>
@@ -103,14 +225,9 @@ export const Profile = ({ navigation }) => {
                         <BoxInput
                             textLabel={'CRM'}
                             placeholder={'859********'}
-                            fieldValue={dataUser.crm}
+                            fieldValue={crm}
                         />
 
-                        <BoxInput
-                            textLabel={'Especialidade'}
-                            placeholder={'Insira uma especialidade'}
-                            fieldValue={especialidade}
-                        />
                         <BoxInput
                             textLabel={'Logradouro'}
                             placeholder={'Insira um logradouro'}
@@ -121,7 +238,12 @@ export const Profile = ({ navigation }) => {
                             placeholder={'Insira um CEP'}
                             fieldValue={cep}
                         />
-                        
+
+                        <BoxInput
+                            textLabel={'Especialidade'}
+                            placeholder={'Insira uma especialidade'}
+                            fieldValue={especialidade}
+                        />
                         <Btn onPress={() => setProfileEdit(true)}>
                             <ButtonTitle>EDITAR</ButtonTitle>
                         </Btn>
@@ -135,7 +257,13 @@ export const Profile = ({ navigation }) => {
             ) : role.role == "Medico" && profileEdit ? (
 
                 <>
-                    <ProfileImage source={require("../../assets/photo.png")} />
+                    <ContainerImage>
+                        <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
+                        <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                            <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                        </ButtonCamera>
+                    </ContainerImage>
+
 
                     <ContainerProfile>
                         <TitleProfile>{role.name}</TitleProfile>
@@ -145,66 +273,104 @@ export const Profile = ({ navigation }) => {
                         <BoxInput
                             textLabel={'CRM'}
                             placeholder={'859********'}
+                            fieldValue={crm}
+                            editable={true}
+                            insertRecord={true}
+                            onChangeText={setCrm}
                         />
 
-                        <InputSelect
-                            textButton="Selecionar Especialidade"
-                            handleSelectedFn={setEspecialidade}
-                            data={dePara(especialidades)}
+
+                        <BoxInput
+                            textLabel={'Logradouro'}
+                            placeholder={'Insira um logradouro'}
+                            fieldValue={logradouro}
+                            insertRecord={true}
+                            editable={true}
+                            onChangeText={setLogradouro}
                         />
-                        <Btn onPress={() => setProfileEdit(false)}>
+
+                        <BoxInput
+                            textLabel={'CEP'}
+                            fieldValue={cep}
+                            editable={true}
+                            insertRecord={true}
+                            onChangeText={setCep}
+                        />
+
+                        <InputLabel>Especialidades</InputLabel>
+                        <SelectList
+                            boxStyles={{ width: "100%", height: 70, alignItems: "center", marginTop: 20 }}
+                            fontFamily="Quicksand_500Medium"
+                            searchPlaceholder="Pesquise"
+                            placeholder="Selecione uma especialidade"
+                            maxHeight={140}
+                            dropdownTextStyles={{ fontSize: 18 }}
+                            inputStyles={{ fontSize: 18 }}
+                            setSelected={(val) => setEspecialidade(val)}
+                            data={dePara(especialidades)}
+                            save="especialidade1"
+                        />
+
+
+                        <Btn onPress={() => updateDoctor()}>
                             <ButtonTitle>SALVAR</ButtonTitle>
                         </Btn>
                         <Btn onPress={() => logOut()}>
                             <ButtonTitle>SAIR</ButtonTitle>
                         </Btn>
-                       <LinkCancelMargin onPress={() => { setProfileEdit(false) }}>Cancelar Edição</LinkCancelMargin>
+                        <LinkCancelMargin onPress={() => { setProfileEdit(false) }}>Cancelar Edição</LinkCancelMargin>
 
                     </ContainerProfile>
                 </>
 
             ) : role.role == "Paciente" && !profileEdit ? (<>
-                <ProfileImage source={require("../../assets/photo.png")} />
+
+                <ContainerImage>
+
+                    <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
 
 
-                <ViewTitle>
-                    <TitleProfile>{role.name}</TitleProfile>
-                    <SubTitleProfile>{role.email}</SubTitleProfile>
-                </ViewTitle>
+                    <ViewTitle>
+                        <TitleProfile>{role.name}</TitleProfile>
+                        <SubTitleProfile>{role.email}</SubTitleProfile>
+                        <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                            <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                        </ButtonCamera>
+                    </ViewTitle>
+                </ContainerImage>
 
                 <ContainerSafeEdit>
-                     <BoxInput
+                    <BoxInput
                         textLabel={'Data de nascimento:'}
-                        fieldValue={new Date(dataUser.dataNascimento).toLocaleDateString("pt-BR")}
+                        fieldValue={dataNascimento}
                         editable={false}
 
                     />
-              
+
                     <BoxInput
                         textLabel={'CPF'}
-                        fieldValue={dataUser.cpf}
+                        fieldValue={cpf}
                         editable={false}
                     />
-                              
+
                     <BoxInput
-                        textLabel={'Endereço'}
-                        fieldValue={endereco.logradouro}
+                        textLabel={'Logradouro'}
+                        fieldValue={logradouro}
                         editable={false}
                     />
-                 
+
                     <ViewFormat>
                         <BoxInput
                             textLabel={'Cep'}
-                           fieldValue={endereco.cep}
+                            fieldValue={cep}
                             fieldWidth={'45'}
                             editable={false}
                         />
                         <BoxInput
                             textLabel={'Cidade'}
-                            placeholder={'Moema-SP'}
                             fieldWidth={'45'}
                             editable={false}
-
+                            fieldValue={cidade}
                         />
                     </ViewFormat>
 
@@ -214,54 +380,72 @@ export const Profile = ({ navigation }) => {
                     <Btn onPress={() => logOut()}>
                         <ButtonTitle>SAIR</ButtonTitle>
                     </Btn>
-                    
+
                     <LinkCancelMargin onPress={() => navigation.replace("Main")}>Voltar</LinkCancelMargin>
 
                 </ContainerSafeEdit>
             </>) : (
                 <>
-                    <ProfileImage source={require("../../assets/photo.png")} />
 
 
-                    <ViewTitle>
-                        <TitleProfile>{role.name}</TitleProfile>
-                        <SubTitleProfile>{role.email}</SubTitleProfile>
-                    </ViewTitle>
+                    <ContainerImage>
+
+                        <ProfileImage source={photoUri != null ? { uri: photoUri } : { uri: foto }} />
+
+
+                        <ViewTitle>
+                            <TitleProfile>{role.name}</TitleProfile>
+                            <SubTitleProfile>{role.email}</SubTitleProfile>
+                            <ButtonCamera onPress={() => { !photoUri ? onPressPhoto() : null }}>
+                                <MaterialCommunityIcons name="camera-plus" size={20} color="#fbfbfb" />
+                            </ButtonCamera>
+                        </ViewTitle>
+                    </ContainerImage>
 
                     <ContainerSafeEdit>
                         <BoxInput
                             textLabel={'Data de nascimento:'}
-                            placeholder={'04/05/1999'}
                             editable={true}
-
+                            fieldValue={dataNascimento}
+                            insertRecord={true}
+                            onChangeText={(text) => {
+                                setDataNascimento(text);
+                            }}
                         />
                         <BoxInput
                             textLabel={'CPF'}
-                            placeholder={'859********'}
                             editable={true}
+                            insertRecord={true}
+                            fieldValue={cpf}
+                            onChangeText={setCpf}
                         />
                         <BoxInput
-                            textLabel={'Endereço'}
-                            fieldValue={'Rua Vicenso Silva, 987'}
+                            textLabel={'Logradouro'}
                             editable={true}
+                            fieldValue={logradouro}
+                            insertRecord={true}
+                            onChangeText={setLogradouro}
                         />
                         <ViewFormat>
                             <BoxInput
                                 textLabel={'Cep'}
-                                placeholder={'06548-909'}
                                 fieldWidth={'45'}
                                 editable={true}
+                                insertRecord={true}
+                                fieldValue={cep}
+                                onChangeText={setCep}
                             />
                             <BoxInput
                                 textLabel={'Cidade'}
-                                placeholder={'Moema-SP'}
                                 fieldWidth={'45'}
+                                insertRecord={true}
                                 editable={true}
-
+                                fieldValue={cidade}
+                                onChangeText={setCidade}
                             />
                         </ViewFormat>
 
-                        <Btn onPress={() => setProfileEdit(false)}>
+                        <Btn onPress={() => updatePatient()}>
                             <ButtonTitle>SALVAR</ButtonTitle>
                         </Btn>
                         <Btn onPress={() => logOut()}>

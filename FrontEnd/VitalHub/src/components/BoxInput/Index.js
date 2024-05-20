@@ -2,7 +2,6 @@
 import { FieldContent, InputLabel, InputText, InputTextModificate } from "./Style"
 
 
-
 export const BoxInput = ({
     fieldWidth = 100,
     textLabel,
@@ -11,7 +10,7 @@ export const BoxInput = ({
     fieldHeight = 80,
     editable = false,
     multiline = false,
-    marginBottom = 40,
+    marginBottom = 30,
     insertRecord = false,
     onChangeText,
 }) => {

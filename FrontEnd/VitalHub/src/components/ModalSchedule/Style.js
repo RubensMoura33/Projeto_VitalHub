@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components"
+import { Btn } from "../Button/Button"
 
 export const ViewModal = styled.View`
 flex: 1;
@@ -13,7 +14,7 @@ background-color: white;
 padding: 20px;
 border-radius: 10px;
 width: 100%;
-height: 75%;
+height: 85%;
 align-items: center;
 
 `
@@ -49,10 +50,15 @@ color: #34898F;
 font-size: 15px;
 `
 
+export const BtnModal = styled(Btn)`
+    margin-top: 120px
+`
+
 
 export const InputAppointment = styled.TextInput.attrs({
     placeholderTextColor: '#34898F'
-})`
+})
+`
 padding: 10px;
 margin-bottom: 0px;
 border: 2px #60BFC5;

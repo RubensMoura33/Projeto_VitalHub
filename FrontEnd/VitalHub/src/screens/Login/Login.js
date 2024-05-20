@@ -7,13 +7,13 @@ import { LinkCreate, LinkMedium } from "../../components/Link/Style"
 import { Btn, BtnGoogle } from "../../components/Button/Button"
 import { ActivityIndicator, Alert, Keyboard, TouchableWithoutFeedback } from "react-native"
 import { AntDesign } from '@expo/vector-icons';
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import api, { loginResource } from "../../services/service"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
-export const Login = ({ navigation }) => {
-    const [email, setEmail] = useState("artur@senai.com");
-    const [senha, setSenha] = useState("Senai@134");
+export const Login = ({ navigation, route }) => {
+    const [email, setEmail] = useState("");
+    const [senha, setSenha] = useState("");
     const [spinner, setSpinner] = useState(false);
     const [user, setUser] = useState({
         email: "",
@@ -30,7 +30,6 @@ setSpinner(true)
                 email: email,
                 senha: senha
             })
-            console.log(response.data);
             await AsyncStorage.setItem('token', JSON.stringify(response.data));
             navigation.replace("Main")
             
@@ -39,6 +38,12 @@ setSpinner(true)
         }
         setSpinner(false)
     }
+    useEffect(() => {
+      if(route && route.params != null)
+      {
+        setEmail(route.params.email)
+      }
+    },[route])
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
